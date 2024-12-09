@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import * as apis from "../../apis"
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
@@ -13,7 +13,7 @@ function Register() {
         password: "",
         phoneNumber: ""
     })
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState([]);
 
     function validate(data) {
         let errors = {};

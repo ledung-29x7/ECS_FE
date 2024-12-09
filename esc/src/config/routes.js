@@ -7,6 +7,10 @@ const routes = {
     live: '/live',
     login: '/login',
     register: '/register',
+    employee: '/employee',
+    detailEmployee: '/employee/:employeeId',
+    service: '/service',
+    department: '/department'
 };
 
 export default routes;

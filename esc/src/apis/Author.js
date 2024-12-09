@@ -3,7 +3,7 @@ import axios from "../axios";
 export const login = (param) => new Promise(async (resolve, reject) => {
     try {
         const response = await axios({
-            url: "/Auth/login",
+            url: "/Authentication/login",
             method: "post",
             data: param,
             withCredentials: true
