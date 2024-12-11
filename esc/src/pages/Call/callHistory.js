@@ -1,4 +1,9 @@
+
 function CallHistory() {
+    const handleSubmitAdd = (e) => {
+        e.preventDefault();
+
+    }
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -124,21 +129,34 @@ function CallHistory() {
                                             </div>{" "}
                                         </div>
                                     </div>
+                                    <div className="add-new">
+                                        <button
+                                            className="btn btn-primary waves-effect waves-light"
+                                            data-bs-toggle="offcanvas"
+                                            data-bs-target="#offcanvasAddUser"
+                                        >
+                                            <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
+                                            <span className="d-none d-sm-inline-block">
+                                                {" "}
+                                                Add New User{" "}
+                                            </span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <table
-                                className="datatables-order table dataTable no-footer dtr-column collapsed"
+                                className="datatables-order table dataTable no-footer dtr-column"
                                 id="DataTables_Table_0"
                                 aria-describedby="DataTables_Table_0_info"
-                                style={{ width: 1143 }}
+                                style={{ width: 1384 }}
                             >
                                 <thead>
                                     <tr>
                                         <th
-                                            className="control sorting_disabled"
+                                            className="control sorting_disabled dtr-hidden"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0 }}
+                                            style={{ width: 0, display: "none" }}
                                             aria-label=""
                                         />
                                         <th
@@ -151,24 +169,14 @@ function CallHistory() {
                                         >
                                             <input type="checkbox" className="form-check-input" />
                                         </th>
-                                        <th
-                                            className="sorting"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 46 }}
-                                            aria-label="order: activate to sort column ascending"
-                                        >
-                                            order
-                                        </th>
+                                     
                                         <th
                                             className="sorting sorting_asc"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 126 }}
+                                            style={{ width: 154 }}
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -180,7 +188,7 @@ function CallHistory() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 253 }}
+                                            style={{ width: 302 }}
                                             aria-label="customers: activate to sort column ascending"
                                         >
                                             Staff
@@ -191,10 +199,10 @@ function CallHistory() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 94 }}
+                                            style={{ width: 117 }}
                                             aria-label="payment: activate to sort column ascending"
                                         >
-                                            phone number
+                                            Phone Number
                                         </th>
                                         <th
                                             className="sorting"
@@ -202,27 +210,17 @@ function CallHistory() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 111 }}
+                                            style={{    width: 136 }}
                                             aria-label="status: activate to sort column ascending"
                                         >
                                             status
                                         </th>
+                                        
                                         <th
-                                            className="sorting"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
+                                            className="sorting_disabled"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 139 }}
-                                            aria-label="method: activate to sort column ascending"
-                                        >
-                                            method
-                                        </th>
-                                        <th
-                                            className="sorting_disabled dtr-hidden"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 0, display: "none" }}
+                                            style={{ width: 76 }}
                                             aria-label="Actions"
                                         >
                                             Actions
@@ -231,18 +229,18 @@ function CallHistory() {
                                 </thead>
                                 <tbody>
                                     <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
+                                        <td
+                                            className="  control"
+                                            tabIndex={0}
+                                            style={{ display: "none" }}
+                                        />
                                         <td className="  dt-checkboxes-cell">
                                             <input
                                                 type="checkbox"
                                                 className="dt-checkboxes form-check-input"
                                             />
                                         </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
+                                    
                                         <td className="sorting_1">
                                             <span className="text-nowrap">Apr 15, 2023, 10:21</span>
                                         </td>
@@ -271,42 +269,33 @@ function CallHistory() {
                                             </div>
                                         </td>
                                         <td>
+                                            <span
+                                                className="badge px-2 rounded-pill bg-label-success"
+                                                text-capitalized=""
+                                            >
+                                                0971279512
+                                            </span>
+                                        </td>
+                                        <td>
                                             <h6 className="mb-0 w-px-100 d-flex align-items-center text-warning">
                                                 <i className="ri-circle-fill ri-10px me-1" />
                                                 Pending
                                             </h6>
                                         </td>
+                                        
                                         <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                Delivered
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/master-light.png"
-                                                    alt="master-light"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    2356
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
                                             <div>
                                                 <button
                                                     className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown"
+                                                    aria-expanded="false"
                                                 >
                                                     <i className="ri-more-2-line" />
                                                 </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
+                                                <div
+                                                    className="dropdown-menu dropdown-menu-end m-0"
+                                                    style={{}}
+                                                >
                                                     <a
                                                         href="app-ecommerce-order-details.html"
                                                         className="dropdown-item"
@@ -324,18 +313,18 @@ function CallHistory() {
                                         </td>
                                     </tr>
                                     <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
+                                        <td
+                                            className="  control"
+                                            tabIndex={0}
+                                            style={{ display: "none" }}
+                                        />
                                         <td className="  dt-checkboxes-cell">
                                             <input
                                                 type="checkbox"
                                                 className="dt-checkboxes form-check-input"
                                             />
                                         </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6624</span>
-                                            </a>
-                                        </td>
+                                        
                                         <td className="sorting_1">
                                             <span className="text-nowrap">Apr 17, 2023, 6:43 </span>
                                         </td>
@@ -343,7 +332,7 @@ function CallHistory() {
                                             <div className="d-flex justify-content-start align-items-center user-name">
                                                 <div className="avatar-wrapper me-3">
                                                     <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-dark">
+                                                        <span className="avatar-initial rounded-circle bg-label-primary">
                                                             FS
                                                         </span>
                                                     </div>
@@ -362,34 +351,21 @@ function CallHistory() {
                                             </div>
                                         </td>
                                         <td>
+                                            <span
+                                                className="badge px-2 rounded-pill bg-label-success"
+                                                text-capitalized=""
+                                            >
+                                                    0359512788
+                                            </span>
+                                        </td>
+                                        <td>
                                             <h6 className="mb-0 w-px-100 d-flex align-items-center text-danger">
                                                 <i className="ri-circle-fill ri-10px me-1" />
                                                 Failed
                                             </h6>
                                         </td>
+                                        
                                         <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                Delivered
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/master-light.png"
-                                                    alt="master-light"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    2077
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
                                             <div>
                                                 <button
                                                     className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
@@ -415,18 +391,18 @@ function CallHistory() {
                                         </td>
                                     </tr>
                                     <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
+                                        <td
+                                            className="  control"
+                                            tabIndex={0}
+                                            style={{ display: "none" }}
+                                        />
                                         <td className="  dt-checkboxes-cell">
                                             <input
                                                 type="checkbox"
                                                 className="dt-checkboxes form-check-input"
                                             />
                                         </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#9305</span>
-                                            </a>
-                                        </td>
+                                        
                                         <td className="sorting_1">
                                             <span className="text-nowrap">Apr 17, 2023, 8:05 </span>
                                         </td>
@@ -434,7 +410,7 @@ function CallHistory() {
                                             <div className="d-flex justify-content-start align-items-center user-name">
                                                 <div className="avatar-wrapper me-3">
                                                     <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-dark">
+                                                        <span className="avatar-initial rounded-circle bg-label-success">
                                                             PP
                                                         </span>
                                                     </div>
@@ -453,188 +429,12 @@ function CallHistory() {
                                             </div>
                                         </td>
                                         <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Cancelled
-                                            </h6>
-                                        </td>
-                                        <td>
                                             <span
                                                 className="badge px-2 rounded-pill bg-label-primary"
                                                 text-capitalized=""
                                             >
-                                                Out for Delivery
+                                                0311212378
                                             </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/paypal.png"
-                                                    alt="paypal"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    @gmail.com
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#8005</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Apr 22, 2023, 3:01 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <img
-                                                            src="../../assets/img/avatars/17.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Maurits Nealey</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        mnealeyf@japanpost.jp
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-success">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Paid
-                                            </h6>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-warning"
-                                                text-capitalized=""
-                                            >
-                                                Dispatched
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/master-light.png"
-                                                    alt="master-light"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    1555
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#5859</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Apr 29, 2023, 9:52 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-primary">
-                                                            EV
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Eydie Vogelein</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        evogelein2g@forbes.com
-                                                    </small>
-                                                </div>
-                                            </div>
                                         </td>
                                         <td>
                                             <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
@@ -642,29 +442,8 @@ function CallHistory() {
                                                 Cancelled
                                             </h6>
                                         </td>
+                                        
                                         <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-primary"
-                                                text-capitalized=""
-                                            >
-                                                Out for Delivery
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/paypal.png"
-                                                    alt="paypal"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    @gmail.com
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
                                             <div>
                                                 <button
                                                     className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
@@ -689,112 +468,20 @@ function CallHistory() {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#8114</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Apr 8, 2023, 3:39 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <img
-                                                            src="../../assets/img/avatars/20.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Ulysses Goodlife</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        ugoodlife2p@blogger.com
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-danger">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Failed
-                                            </h6>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-primary"
-                                                text-capitalized=""
-                                            >
-                                                Out for Delivery
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/master-light.png"
-                                                    alt="master-light"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    4509
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    
                                     <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
+                                        <td
+                                            className="  control"
+                                            tabIndex={0}
+                                            style={{ display: "none" }}
+                                        />
                                         <td className="  dt-checkboxes-cell">
                                             <input
                                                 type="checkbox"
                                                 className="dt-checkboxes form-check-input"
                                             />
                                         </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6890</span>
-                                            </a>
-                                        </td>
+                                        
                                         <td className="sorting_1">
                                             <span className="text-nowrap">Aug 1, 2022, 7:24 </span>
                                         </td>
@@ -821,34 +508,21 @@ function CallHistory() {
                                             </div>
                                         </td>
                                         <td>
+                                            <span
+                                                className="badge px-2 rounded-pill bg-label-info"
+                                                text-capitalized=""
+                                            >
+                                                03456784688
+                                            </span>
+                                        </td>
+                                        <td>
                                             <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
                                                 <i className="ri-circle-fill ri-10px me-1" />
                                                 Cancelled
                                             </h6>
                                         </td>
+                                        
                                         <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-info"
-                                                text-capitalized=""
-                                            >
-                                                Ready to Pickup
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/master-light.png"
-                                                    alt="master-light"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    3507
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
                                             <div>
                                                 <button
                                                     className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
@@ -874,18 +548,18 @@ function CallHistory() {
                                         </td>
                                     </tr>
                                     <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
+                                        <td
+                                            className="  control"
+                                            tabIndex={0}
+                                            style={{ display: "none" }}
+                                        />
                                         <td className="  dt-checkboxes-cell">
                                             <input
                                                 type="checkbox"
                                                 className="dt-checkboxes form-check-input"
                                             />
                                         </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#5911</span>
-                                            </a>
-                                        </td>
+                                        
                                         <td className="sorting_1">
                                             <span className="text-nowrap">Aug 14, 2022, 3:26 </span>
                                         </td>
@@ -893,7 +567,7 @@ function CallHistory() {
                                             <div className="d-flex justify-content-start align-items-center user-name">
                                                 <div className="avatar-wrapper me-3">
                                                     <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-success">
+                                                        <span className="avatar-initial rounded-circle bg-label-dark">
                                                             HM
                                                         </span>
                                                     </div>
@@ -912,34 +586,21 @@ function CallHistory() {
                                             </div>
                                         </td>
                                         <td>
+                                            <span
+                                                className="badge px-2 rounded-pill bg-label-success"
+                                                text-capitalized=""
+                                            >
+                                                09734562719
+                                            </span>
+                                        </td>
+                                        <td>
                                             <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
                                                 <i className="ri-circle-fill ri-10px me-1" />
                                                 Cancelled
                                             </h6>
                                         </td>
+                                        
                                         <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                Delivered
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/paypal.png"
-                                                    alt="paypal"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    @gmail.com
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
                                             <div>
                                                 <button
                                                     className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
@@ -964,112 +625,20 @@ function CallHistory() {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#5531</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Aug 20, 2022, 3:21 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <img
-                                                            src="../../assets/img/avatars/19.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Cletus Arias</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        carias21@rambler.ru
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-danger">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Failed
-                                            </h6>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-warning"
-                                                text-capitalized=""
-                                            >
-                                                Dispatched
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/master-light.png"
-                                                    alt="master-light"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    5851
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    
                                     <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
+                                        <td
+                                            className="  control"
+                                            tabIndex={0}
+                                            style={{ display: "none" }}
+                                        />
                                         <td className="  dt-checkboxes-cell">
                                             <input
                                                 type="checkbox"
                                                 className="dt-checkboxes form-check-input"
                                             />
                                         </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#8044</span>
-                                            </a>
-                                        </td>
+                                        
                                         <td className="sorting_1">
                                             <span className="text-nowrap">Aug 22, 2022, 6:36 </span>
                                         </td>
@@ -1098,34 +667,21 @@ function CallHistory() {
                                             </div>
                                         </td>
                                         <td>
+                                            <span
+                                                className="badge px-2 rounded-pill bg-label-primary"
+                                                text-capitalized=""
+                                            >
+                                                09865721153
+                                            </span>
+                                        </td>
+                                        <td>
                                             <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
                                                 <i className="ri-circle-fill ri-10px me-1" />
                                                 Cancelled
                                             </h6>
                                         </td>
+                                        
                                         <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-primary"
-                                                text-capitalized=""
-                                            >
-                                                Out for Delivery
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center text-nowrap">
-                                                <img
-                                                    src="../../assets/img/icons/payments/paypal.png"
-                                                    alt="paypal"
-                                                    className="me-2"
-                                                    width={29}
-                                                />
-                                                <span>
-                                                    <i className="ri-more-line" />
-                                                    @gmail.com
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="dtr-hidden" style={{ display: "none" }}>
                                             <div>
                                                 <button
                                                     className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
@@ -1292,7 +848,136 @@ function CallHistory() {
                                 </div>
                             </div>
                             <div style={{ width: "1%" }} />
-                            <div style={{ width: "1%" }} />
+                        </div>
+                    </div>
+                    {/* Offcanvas to add new user */}
+                    <div
+                        className="offcanvas offcanvas-end"
+                        tabIndex={-1}
+                        id="offcanvasAddUser"
+                        aria-labelledby="offcanvasAddUserLabel"
+                    >
+                        <div className="offcanvas-header border-bottom">
+                            <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
+                                Add Call History
+                            </h5>
+                            <button
+                                type="button"
+                                className="btn-close text-reset"
+                                data-bs-dismiss="offcanvas"
+                                aria-label="Close"
+                            />
+                        </div>
+                        <div className="offcanvas-body mx-0 flex-grow-0 h-100">
+                            <form
+                                onSubmit={handleSubmitAdd}
+                                className="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
+                                id="addNewUserForm"
+                                onsubmit="return false"
+                                noValidate="novalidate"
+                            >
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="add-user-fullname"
+                                        placeholder="John Doe"
+                                        name="employeeId"
+                                        aria-label="John Doe"
+                                    />
+                                    <label htmlFor="add-user-fullname">Implementation staff</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                
+                                <div className="form-floating form-floating-outline mb-5">
+                                    <input
+                                        type="text"
+                                        id="add-user-contact"
+                                        className="form-control phone-mask"
+                                        placeholder="+84 974365472"
+                                        aria-label="john.doe@example.com"
+                                        name="phoneNumber"
+                                    />
+                                    <label htmlFor="add-user-contact">Contact</label>
+                                </div>
+                                
+                                <div className="form-floating form-floating-outline mb-5 form-floating-select2">
+                                    <div className="position-relative">
+                                        <select
+                                            id="country"
+                                            className="select2 form-select"
+                                            data-select2-id="country"
+                                            tabIndex={-1}
+                                            aria-hidden="true"
+                                        >
+                                            <option value="" data-select2-id={2}>
+                                                Select
+                                            </option>
+                                            <option value="Australia">Australia</option>
+                                            <option value="Bangladesh">Bangladesh</option>
+                                            <option value="Belarus">Belarus</option>
+                                            <option value="Brazil">Brazil</option>
+                                            <option value="Canada">Canada</option>
+                                            <option value="China">China</option>
+                                            <option value="France">France</option>
+                                            <option value="Germany">Germany</option>
+                                            <option value="India">India</option>
+                                            <option value="Indonesia">Indonesia</option>
+                                            <option value="Israel">Israel</option>
+                                            <option value="Italy">Italy</option>
+                                            <option value="Japan">Japan</option>
+                                            <option value="Korea">Korea, Republic of</option>
+                                            <option value="Mexico">Mexico</option>
+                                            <option value="Philippines">Philippines</option>
+                                            <option value="Russia">Russian Federation</option>
+                                            <option value="South Africa">South Africa</option>
+                                            <option value="Thailand">Thailand</option>
+                                            <option value="Turkey">Turkey</option>
+                                            <option value="Ukraine">Ukraine</option>
+                                            <option value="United Arab Emirates">
+                                                United Arab Emirates
+                                            </option>
+                                            <option value="United Kingdom">United Kingdom</option>
+                                            <option value="United States">United States</option>
+                                        </select>
+                                        
+                                    </div>
+                                    <label htmlFor="country">Status</label>
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5">
+                                    <select id="user-role" className="form-select">
+                                        <option value="subscriber">Subscriber</option>
+                                        <option value="editor">Editor</option>
+                                        <option value="maintainer">Maintainer</option>
+                                        <option value="author">Author</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                    <label htmlFor="user-role">User Role</label>
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5">
+                                    <select id="user-plan" className="form-select">
+                                        <option value="basic">Basic</option>
+                                        <option value="enterprise">Enterprise</option>
+                                        <option value="company">Company</option>
+                                        <option value="team">Team</option>
+                                    </select>
+                                    <label htmlFor="user-plan">Select Plan</label>
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary me-sm-3 me-1 data-submit waves-effect waves-light"
+                                >
+                                    Submit
+                                </button>
+                                <button
+                                    type="reset"
+                                    className="btn btn-outline-danger waves-effect"
+                                    data-bs-dismiss="offcanvas"
+                                >
+                                    Cancel
+                                </button>
+                                <input type="hidden" />
+                            </form>
                         </div>
                     </div>
                 </div>

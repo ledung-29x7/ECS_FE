@@ -10,9 +10,39 @@ function Login() {
    const dispatch = useDispatch();
    const navigate = useNavigate();
    const [formData,setFormData]=useState({
-    Email:"",
-    Password:""
+    email: "",
+    password: ""
    })
+   const handleChange =(e) =>{
+    setFormData({...formData,[e.target.name]: e.target.value})
+   }
+
+   const handleSubmit =(e) =>{
+        e.preventDefault();
+        const Login = async() =>{
+            try {
+                await apis.login(formData)
+            .then(res =>{
+                if(res.status === 200){
+                    window.sessionStorage.setItem("token",res.data.token);
+                    dispatch(actions.checkLogin(true))
+                    switch (res.data.role) {
+                        case "Admin":
+                            navigate("/")
+                        case "Manage":
+                            navigate("/employee")
+                        default:
+                            navigate("/")
+                    }
+                }
+            })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        Login()
+   }    
+
     return (
         <>
             <div className="authentication-wrapper authentication-cover">
@@ -140,6 +170,7 @@ function Login() {
                             </p>
                             <form
                                 id="formAuthentication"
+                                onSubmit={handleSubmit}
                                 className="mb-5"
                                 action="https://demos.themeselection.com/materio-aspnet-core-mvc-admin-template/html/vertical-menu-template/index.html"
                                 method="GET"
@@ -149,9 +180,10 @@ function Login() {
                                         type="text"
                                         className="form-control"
                                         id="email"
-                                        name="email-username"
+                                        name="email"
                                         placeholder="Enter your email or username"
                                         autofocus=""
+                                        onChange={handleChange}
                                     />
                                     <label htmlFor="email">Email or Username</label>
                                 </div>
@@ -166,6 +198,7 @@ function Login() {
                                                     name="password"
                                                     placeholder="············"
                                                     aria-describedby="password"
+                                                    onChange={handleChange}
                                                 />
                                                 <label htmlFor="password">Password</label>
                                             </div>
