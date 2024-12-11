@@ -16,6 +16,7 @@ const routes = {
     product: '/product',
     productCategory: '/category',
     customer: "/customer",
+    callhistory: "/callhistory"
 };
 
 export default routes;

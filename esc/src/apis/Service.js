@@ -16,8 +16,53 @@ export const AddService=(name)=>new Promise(async(resolve,reject)=>{
             url:"/service",
             method:"post",
             data:name,
+            withCredentials:true,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("tokent")}`
+                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+            }
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+export const DeleteService=(id)=>new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/service/${id}`,
+            method:"delete",
+            headers:{
+                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+            }
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+export const PutService=(id,name)=>new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/service/${id}`,
+            method:"put",
+            data:name
+            // headers:{
+            //     Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+            // }
+        })
+        resolve(response)
+
+    } catch (error) {
+        reject(error)
+    }
+})
+export const GetServiceById=(id)=>new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/service/${id}`,
+            method:"get",
+            headers:{
+                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
             }
         })
         resolve(response)

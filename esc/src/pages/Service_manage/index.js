@@ -1,50 +1,108 @@
 import { useEffect, useState } from 'react';
+import React from 'react';
 import * as apis from '../../apis';
 import { useParams } from 'react-router-dom';
 import { useStore } from 'react-redux';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function ServiceManage() {
-    const [service,setService]=useState([])
-    const [valueAdd,setValueAdd]=useState({
-        serviceName:"",
-        costPerDay:0
-    })
-    const FetchApi = async ()=>{
+    const [service, setService] = useState([]);
+    const [valueAdd, setValueAdd] = useState({
+        serviceName: '',
+        costPerDay: 0,
+    });
+    const [valueEdit, setValueEdit] = useState({
+        serviceId: 0,
+        serviceName: '',
+        costPerDay: 0,
+    });
+
+    const FetchApi = async () => {
         try {
-            await apis.GetAllService()
-            .then((res)=>{
-                if(res.status === 200){
-                    console.log(res)
-                    setService(res.data)
-                }
-            })
-            .catch((error)=>{
-                console.log(error)
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    useEffect(()=>{
-        FetchApi();
-    },[])
-    function handleChange(e){
-        setValueAdd({...valueAdd,[e.target.name]:e.target.value})
-    }
-    const handleSumbit=(e)=>{
-        e.preventDefault();
-        const FetchData = async () =>{
-            try {
-                await apis.AddService(valueAdd).then((res)=>{
-                    console.log(res)
-                    if(res.status === 200){
-                        window.location.reload();
+            await apis
+                .GetAllService()
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res);
+                        setService(res.data);
                     }
                 })
-            } catch (error) {
-                console.log(error)
-            }
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            toast.error('get error');
         }
+    };
+    useEffect(() => {
+        FetchApi();
+    }, []);
+    function handleChange(e) {
+        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
+    }
+    function handleChangeEdit(e) {
+        setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
+    }
+    const handleSumbit = (e) => {
+        e.preventDefault();
+        const FetchData = async () => {
+            try {
+                await apis.AddService(valueAdd).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
         FetchData();
+    };
+    const handleDelete = async (id) => {
+        try {
+            console.log('try');
+            const res = await apis.DeleteService(id);
+            console.log(res);
+            if (res.status === 200) {
+                console.log('delete success');
+                FetchApi();
+            }
+        } catch (error) {
+            toast.error('delete error');
+        }
+    };
+    const handleSumbitEdit = async (e) => {
+        e.preventDefault();
+        const FetchData = async () => {
+            try {
+                await apis.PutService(valueEdit.serviceId, valueEdit).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        FetchApi();
+                        const closeButton = document.querySelector('#editUser .btn-close');
+                        if (closeButton) {
+                          closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                        }
+                    }
+                });
+            } catch (error) {
+                toast.error("edit error")
+            }
+        };
+        FetchData();
+    };
+    async function GetServiceById(id) {
+        try {
+            const res = await apis.GetServiceById(id);
+            console.log(res);
+            if (res.status === 200) {
+                setValueEdit(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -323,7 +381,7 @@ function ServiceManage() {
                                                         className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
                                                         data-bs-toggle="tooltip"
                                                         title="Delete Invoice"
-                                                        // onClick={() => handleDelete(res.departmentID)}
+                                                        onClick={() => handleDelete(res.serviceId)}
                                                     >
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
@@ -351,18 +409,26 @@ function ServiceManage() {
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
+                                                            onClick={() => GetServiceById(res?.serviceId)}
                                                         >
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>Edit</span>
                                                         </a>
-                                                        <a
-                                                            href="javascript:;"
-                                                            // onClick={() => handleDelete(res?.departmentID)}
-                                                            className="dropdown-item delete-record"
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-primary"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#staticBackdrop"
                                                         >
-                                                            <i className="ri-delete-bin-7-line me-2" />
-                                                            <span>Delete</span>
-                                                        </a>
+                                                            <a
+                                                                href="javascript:;"
+                                                                onClick={() => handleDelete(res?.serviceId)}
+                                                                className="dropdown-item delete-record"
+                                                            >
+                                                                <i className="ri-delete-bin-7-line me-2" />
+                                                                <span>Delete</span>
+                                                            </a>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </td>
@@ -556,33 +622,35 @@ function ServiceManage() {
                                 <h4 className="mb-2">Edit despartment</h4>
                             </div>
                             <form
-                                // onSubmit={()=>handleSumbitEdit()}
+                                onSubmit={handleSumbitEdit}
                                 id="editUserForm"
                                 className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
                                 noValidate="novalidate"
                             >
-                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="John Doe"
-                                        name="departmentName"
-                                        aria-label="John Doe"
-                                        // onChange={handleChangeEdit}
-                                    />
-                                    <label htmlFor="add-user-fullname">departmentName</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
                                         className="form-control"
                                         placeholder="John Doe"
-                                        name="managerId"
+                                        name="serviceName"
                                         aria-label="John Doe"
-                                        // onChange={handleChangeEdit}
+                                        value={valueEdit.serviceName}
+                                        onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">managerId</label>
+                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="costPerDay"
+                                        aria-label="John Doe"
+                                        value={valueEdit.costPerDay}
+                                        onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">costPerDay</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 {/* <div className="col-12 col-md-6">
@@ -664,6 +732,6 @@ function ServiceManage() {
             {/* / Footer */}
             <div className="content-backdrop fade" />
         </div>
-        )
+    );
 }
 export default ServiceManage;
