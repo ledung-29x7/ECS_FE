@@ -27,7 +27,7 @@ export const publicRoutes = [
     { path: config.routes.detailEmployee, component: DetailEmployee},
     { path: config.routes.department, component: Department},
     { path: config.routes.order, component: Order},
-    { path: config.routes.customer, component: OrderDetail},
+    { path: config.routes.detailEmployee, component: OrderDetail},
     { path: config.routes.product, component: Product},
     { path: config.routes.productCategory, component: ProductCategory},
     { path: config.routes.customer, component: Customer}
