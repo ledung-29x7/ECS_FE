@@ -3,24 +3,32 @@ import classNames from 'classnames/bind';
 import styles from './Sidebar.module.scss';
 import * as userService from '~/services/userService';
 
-const cx = classNames.bind(styles);
+import React from 'react';
 
-function Sidebar() {
+const Sidebar = () => {
     useEffect(() => {
-        const layoutMenu = document.querySelector('#layout-menu');
-
-        if (layoutMenu) {
-            const menuInstance = new window.Menu(layoutMenu, {
+        try {
+          // Kiểm tra sự tồn tại của window.Menu
+          if (typeof window.Menu === 'function') {
+            const layoutMenu = document.querySelector('#layout-menu');
+            if (layoutMenu) {
+              new window.Menu(layoutMenu, {
                 orientation: 'vertical',
                 accordion: true,
                 animate: true,
-                closeChildren: true,
-            });
-
-            // Ví dụ: Mở menu đầu tiên
-            menuInstance.open(document.querySelector('.menu-item'));
+              });
+              console.log('Menu initialized successfully.');
+            } else {
+              console.error('Menu element not found.');
+            }
+          } else {
+            console.error('window.Menu không tồn tại hoặc không phải là constructor.');
+          }
+        } catch (error) {
+          console.error('Lỗi khởi tạo Menu:', error);
         }
-    }, []);
+      }, []); 
+
     return (
         <aside
             id="layout-menu"
@@ -954,6 +962,6 @@ function Sidebar() {
         </aside>
 
     );
-}
+};
 
 export default Sidebar;
