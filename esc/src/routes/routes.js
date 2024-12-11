@@ -30,7 +30,7 @@ export const publicRoutes = [
     { path: config.routes.detailEmployee, component: OrderDetail},
     { path: config.routes.product, component: Product},
     { path: config.routes.productCategory, component: ProductCategory},
-    { path: config.routes.customer, component: Customer}
+    { path: config.routes.customer, component: Customer},
 ];
 
 // Private routes
