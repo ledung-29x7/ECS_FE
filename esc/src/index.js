@@ -11,11 +11,11 @@ const store = reduxConfig();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
-        <React.StrictMode>
+        
             <GlobalStyles>
                 <App />
             </GlobalStyles>
-        </React.StrictMode>
+       
     </Provider>
 );
 
