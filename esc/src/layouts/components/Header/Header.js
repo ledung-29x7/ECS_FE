@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Tippy from '@tippyjs/react';
 import classNames from 'classnames/bind';
 import 'tippy.js/dist/tippy.css';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate,useLocation } from 'react-router-dom';
 
 import Button from '~/components/Button';
 import { MessageIcon, NotificationIcon, UploadIcon } from '~/components/Icons';
@@ -22,7 +22,10 @@ import Menu from '~/components/Popper/Menu';
 import styles from './Header.module.scss';
 import Search from '~/layouts/components/Search';
 import config from '~/config';
-
+import * as apis from "../../../apis"
+import * as actions from "../../../store/actions"
+import { useSelector,useDispatch } from "react-redux";
+import { useState,useEffect } from "react";
 const cx = classNames.bind(styles);
 
 const MENU_ITEMS = [
@@ -70,6 +73,41 @@ function Header() {
                 break;
         }
     };
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const location = useLocation()
+    const {checklogin} = useSelector(state => state.app)
+    const [isChecking, setIsChecking] = useState(false);
+    const [search,setSearch] = useState("")
+    const username = window.sessionStorage.getItem("name")
+    
+  useEffect(() => {
+    checkLoggedIn();
+  }, [checklogin]);
+// Hàm để lấy giá trị của một cookie
+function getCookie(name) {
+    const cookies = document.cookie.split("; ");
+    console.log(cookies)
+    for (let cookie of cookies) {
+        const [key, value] = cookie.split("=");
+        if (key === name) {
+            return decodeURIComponent(value);
+        }
+    }
+    return undefined;
+}
+// check xem người dùng đã đăng nhập chưa
+function checkLoggedIn() {
+    var token = getCookie("token");
+    if (token) {
+      // Gọi các API hoặc thực hiện các hành động khác khi người dùng đã đăng nhập
+      setIsChecking(true);
+    } else {
+      // Hiển thị form đăng nhập hoặc các nút chức năng đăng nhập
+      setIsChecking(false);
+    }
+  }
+  
 
     const userMenu = [
         {
@@ -95,7 +133,7 @@ function Header() {
             separate: true,
         },
     ];
-
+    
     return (
         <header className="">
             <nav

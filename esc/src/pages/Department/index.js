@@ -1,5 +1,92 @@
+import { useEffect, useState } from 'react';
+import * as apis from '../../apis';
+import { useParams } from 'react-router-dom';
+import { useStore } from 'react-redux';
+
 function Department() {
-    
+    const [department, setDepartment] = useState([]);
+    const [valueAdd, setValueAdd] = useState({
+        departmentName: '',
+        managerId: null,
+    });
+    const [valueEdit, setValueEdit] = useState({
+        departmentName: '',
+        managerId: '',
+    });
+
+    const FetchApi = async () => {
+        try {
+            await apis
+                .GetAllDepartment()
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res);
+                        setDepartment(res.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        FetchApi();
+    }, []);
+    function handleChange(e) {
+        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
+    }
+    function handleChangeEdit(e) {
+        setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
+    }
+    const handleSumbit = (e) => {
+        e.preventDefault();
+        const FetchData = async () => {
+            try {
+                await apis.AddDepartment(valueAdd).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        FetchData();
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            console.log('try');
+            const res = await apis.DeleteDepartment(id);
+            console.log(res);
+            if (res.status === 204) {
+                console.log('delete success');
+                FetchApi();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const handleSumbitEdit = async (e) => {
+        e.preventDefault();
+        const FetchData = async () => {
+            try {
+                await apis.PutDepartment(valueEdit).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        FetchData();
+    };
+
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -115,10 +202,7 @@ function Department() {
                                 </select>
                             </div>
                             <div className="col-md-4 user_status">
-                                <select
-                                    id="FilterTransaction"
-                                    className="form-select text-capitalize"
-                                >
+                                <select id="FilterTransaction" className="form-select text-capitalize">
                                     <option value=""> Select Status </option>
                                     <option value="Pending" className="text-capitalize">
                                         Pending
@@ -134,10 +218,7 @@ function Department() {
                         </div>
                     </div>
                     <div className="card-datatable table-responsive">
-                        <div
-                            id="DataTables_Table_0_wrapper"
-                            className="dataTables_wrapper dt-bootstrap5 no-footer"
-                        >
+                        <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                             <div className="row mx-1">
                                 <div className="col-md-2 d-flex align-items-center justify-content-md-start justify-content-center ps-4">
                                     <div className="dt-action-buttons mt-4 mt-md-0">
@@ -152,21 +233,18 @@ function Department() {
                                                     aria-expanded="false"
                                                 >
                                                     <span>
-                                                        <i className="ri-download-line ri-16px me-1" />{" "}
+                                                        <i className="ri-download-line ri-16px me-1" />{' '}
                                                         <span className="d-none d-sm-inline-block">Export</span>
                                                     </span>
                                                 </button>
-                                            </div>{" "}
+                                            </div>{' '}
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-md-10">
                                     <div className="d-flex align-items-center justify-content-md-end justify-content-center">
                                         <div className="me-4">
-                                            <div
-                                                id="DataTables_Table_0_filter"
-                                                className="dataTables_filter"
-                                            >
+                                            <div id="DataTables_Table_0_filter" className="dataTables_filter">
                                                 <label>
                                                     <input
                                                         type="search"
@@ -184,10 +262,7 @@ function Department() {
                                                 data-bs-target="#offcanvasAddUser"
                                             >
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                <span className="d-none d-sm-inline-block">
-                                                    {" "}
-                                                    New Department{" "}
-                                                </span>
+                                                <span className="d-none d-sm-inline-block"> New Department </span>
                                             </button>
                                         </div>
                                     </div>
@@ -205,7 +280,7 @@ function Department() {
                                             className="control sorting_disabled dtr-hidden"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0, display: "none" }}
+                                            style={{ width: 0, display: 'none' }}
                                             aria-label=""
                                         />
                                         <th
@@ -258,7 +333,7 @@ function Department() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 99,display: "none" }}
+                                            style={{ width: 99, display: 'none' }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
                                             Plan
@@ -269,7 +344,7 @@ function Department() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 99, display:"none" }}
+                                            style={{ width: 99, display: 'none' }}
                                             aria-label="Status: activate to sort column ascending"
                                         >
                                             Status
@@ -286,477 +361,103 @@ function Department() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="odd">
-                                        <td
-                                            className="control dtr-hidden"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
+                                    {department.map((res) => (
+                                        <tr className="odd">
+                                            <td
+                                                className="control dtr-hidden"
+                                                tabIndex={0}
+                                                style={{ display: 'none' }}
                                             />
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                HR
-                                            </span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/2.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
+                                            <td className="  dt-checkboxes-cell">
+                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
+                                            </td>
+                                            <td>
+                                                <span className="text-truncate d-flex align-items-center text-heading">
+                                                    <i className="ri-pie-chart-line ri-22px text-success me-2" />
+                                                    {res?.departmentName}
+                                                </span>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="avatar-wrapper">
+                                                        <div className="avatar avatar-sm me-4">
+                                                            <img
+                                                                src="../../assets/img/avatars/2.png"
+                                                                alt="Avatar"
+                                                                className="rounded-circle"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="d-flex flex-column">
+                                                        <a
+                                                            href="app-user-view-account.html"
+                                                            className="text-heading text-truncate"
+                                                        >
+                                                            <span className="fw-medium">{res?.managerId}</span>
+                                                        </a>
+                                                        <small>@zmcclevertye</small>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Zsazsa McCleverty</span>
-                                                    </a>
-                                                    <small>@zmcclevertye</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-user-line ri-22px text-primary me-2" />
-                                                10
-                                            </span>
-                                        </td>
-                                    
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
+                                            </td>
+                                            <td>
+                                                <span className="text-truncate d-flex align-items-center text-heading">
+                                                    <i className="ri-user-line ri-22px text-primary me-2" />
+                                                    10
+                                                </span>
+                                            </td>
+
+                                            <td className="" style={{}}>
+                                                <div className="d-flex align-items-center">
                                                     <a
                                                         href="javascript:;"
-                                                        className="dropdown-item delete-record"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Delete Invoice"
+                                                        onClick={() => handleDelete(res.departmentID)}
                                                     >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
+                                                        <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="control dtr-hidden"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                HR
-                                            </span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/2.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
+                                                    <a
+                                                        href="app-user-view-account.html"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Preview"
+                                                    >
+                                                        <i className="ri-eye-line ri-22px" />
+                                                    </a>
+                                                    <button
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
+                                                        data-bs-toggle="dropdown"
+                                                    >
+                                                        <i className="ri-more-2-line ri-22px" />
+                                                    </button>
+                                                    <div className="dropdown-menu dropdown-menu-end m-0">
+                                                        <a href="app-user-view-account.html" className="dropdown-item">
+                                                            <i className="ri-eye-line me-2" />
+                                                            <span>View</span>
+                                                        </a>
+                                                        <a
+                                                            href="javascript:;"
+                                                            className="dropdown-item delete-record"
+                                                            data-bs-target="#editUser"
+                                                            data-bs-toggle="modal"
+                                                        >
+                                                            <i className="ri-edit-box-line me-2" />
+                                                            <span>Edit</span>
+                                                        </a>
+                                                        <a
+                                                            href="javascript:;"
+                                                            onClick={() => handleDelete(res?.departmentID)}
+                                                            className="dropdown-item delete-record"
+                                                        >
+                                                            <i className="ri-delete-bin-7-line me-2" />
+                                                            <span>Delete</span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Zsazsa McCleverty</span>
-                                                    </a>
-                                                    <small>@zmcclevertye</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-user-line ri-22px text-primary me-2" />
-                                                10
-                                            </span>
-                                        </td>
-                                    
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="control dtr-hidden"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                HR
-                                            </span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/2.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Zsazsa McCleverty</span>
-                                                    </a>
-                                                    <small>@zmcclevertye</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-user-line ri-22px text-primary me-2" />
-                                                10
-                                            </span>
-                                        </td>
-                                    
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="control dtr-hidden"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                HR
-                                            </span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/2.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="/"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Zsazsa McCleverty</span>
-                                                    </a>
-                                                    <small>@zmcclevertye</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-user-line ri-22px text-primary me-2" />
-                                                10
-                                            </span>
-                                        </td>
-                                    
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="control dtr-hidden"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                HR
-                                            </span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/2.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Zsazsa McCleverty</span>
-                                                    </a>
-                                                    <small>@zmcclevertye</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-user-line ri-22px text-primary me-2" />
-                                                10
-                                            </span>
-                                        </td>
-                                    
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
- 
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -852,10 +553,7 @@ function Department() {
                                                     5
                                                 </a>
                                             </li>
-                                            <li
-                                                className="paginate_button page-item next"
-                                                id="DataTables_Table_0_next"
-                                            >
+                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
                                                 <a
                                                     href="#"
                                                     aria-controls="DataTables_Table_0"
@@ -871,7 +569,7 @@ function Department() {
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ width: "1%" }} />
+                            <div style={{ width: '1%' }} />
                         </div>
                     </div>
                     {/* Offcanvas to add new user */}
@@ -894,158 +592,23 @@ function Department() {
                         </div>
                         <div className="offcanvas-body mx-0 flex-grow-0 h-100">
                             <form
-                                className="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
-                                id="addNewUserForm"
-                                onsubmit="return false"
+                                onSubmit={handleSumbit}
+                                className=" pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
                                 noValidate="novalidate"
                             >
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="add-user-fullname"
                                         placeholder="John Doe"
-                                        name="userFullname"
+                                        name="departmentName"
                                         aria-label="John Doe"
+                                        onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">Full Name</label>
+                                    <label htmlFor="add-user-fullname">departmentName</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        id="add-user-email"
-                                        className="form-control"
-                                        placeholder="john.doe@example.com"
-                                        aria-label="john.doe@example.com"
-                                        name="userEmail"
-                                    />
-                                    <label htmlFor="add-user-email">Email</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <input
-                                        type="text"
-                                        id="add-user-contact"
-                                        className="form-control phone-mask"
-                                        placeholder="+1 (609) 988-44-11"
-                                        aria-label="john.doe@example.com"
-                                        name="userContact"
-                                    />
-                                    <label htmlFor="add-user-contact">Contact</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <input
-                                        type="text"
-                                        id="add-user-company"
-                                        className="form-control"
-                                        placeholder="Web Developer"
-                                        aria-label="jdoe1"
-                                        name="companyName"
-                                    />
-                                    <label htmlFor="add-user-company">Company</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5 form-floating-select2">
-                                    <div className="position-relative">
-                                        <select
-                                            id="country"
-                                            className="select2 form-select select2-hidden-accessible"
-                                            data-select2-id="country"
-                                            tabIndex={-1}
-                                            aria-hidden="true"
-                                        >
-                                            <option value="" data-select2-id={2}>
-                                                Select
-                                            </option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Bangladesh">Bangladesh</option>
-                                            <option value="Belarus">Belarus</option>
-                                            <option value="Brazil">Brazil</option>
-                                            <option value="Canada">Canada</option>
-                                            <option value="China">China</option>
-                                            <option value="France">France</option>
-                                            <option value="Germany">Germany</option>
-                                            <option value="India">India</option>
-                                            <option value="Indonesia">Indonesia</option>
-                                            <option value="Israel">Israel</option>
-                                            <option value="Italy">Italy</option>
-                                            <option value="Japan">Japan</option>
-                                            <option value="Korea">Korea, Republic of</option>
-                                            <option value="Mexico">Mexico</option>
-                                            <option value="Philippines">Philippines</option>
-                                            <option value="Russia">Russian Federation</option>
-                                            <option value="South Africa">South Africa</option>
-                                            <option value="Thailand">Thailand</option>
-                                            <option value="Turkey">Turkey</option>
-                                            <option value="Ukraine">Ukraine</option>
-                                            <option value="United Arab Emirates">
-                                                United Arab Emirates
-                                            </option>
-                                            <option value="United Kingdom">United Kingdom</option>
-                                            <option value="United States">United States</option>
-                                        </select>
-                                        <span
-                                            className="select2 select2-container select2-container--default"
-                                            dir="ltr"
-                                            data-select2-id={1}
-                                            style={{ width: 360 }}
-                                        >
-                                            <span className="selection">
-                                                <span
-                                                    className="select2-selection select2-selection--single"
-                                                    role="combobox"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                    tabIndex={0}
-                                                    aria-disabled="false"
-                                                    aria-labelledby="select2-country-container"
-                                                >
-                                                    <span
-                                                        className="select2-selection__rendered"
-                                                        id="select2-country-container"
-                                                        role="textbox"
-                                                        aria-readonly="true"
-                                                    >
-                                                        <span className="select2-selection__placeholder">
-                                                            Select Country
-                                                        </span>
-                                                    </span>
-                                                    <span
-                                                        className="select2-selection__arrow"
-                                                        role="presentation"
-                                                    >
-                                                        <b role="presentation" />
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span className="dropdown-wrapper" aria-hidden="true" />
-                                        </span>
-                                    </div>
-                                    <label htmlFor="country">Country</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-role" className="form-select">
-                                        <option value="subscriber">Subscriber</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="maintainer">Maintainer</option>
-                                        <option value="author">Author</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                    <label htmlFor="user-role">User Role</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-plan" className="form-select">
-                                        <option value="basic">Basic</option>
-                                        <option value="enterprise">Enterprise</option>
-                                        <option value="company">Company</option>
-                                        <option value="team">Team</option>
-                                    </select>
-                                    <label htmlFor="user-plan">Select Plan</label>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary me-sm-3 me-1 data-submit waves-effect waves-light"
-                                >
+                                <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
                                     Submit
                                 </button>
                                 <button
@@ -1061,38 +624,101 @@ function Department() {
                     </div>
                 </div>
             </div>
+            {/* edit */}
+            <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-edit-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">Edit despartment</h4>
+                            </div>
+                            <form
+                                onSubmit={()=>handleSumbitEdit()}
+                                id="editUserForm"
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
+                            >
+                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="departmentName"
+                                        aria-label="John Doe"
+                                        onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">departmentName</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="managerId"
+                                        aria-label="John Doe"
+                                        onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">managerId</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                {/* <div className="col-12 col-md-6">
+                                    <div className="form-floating form-floating-outline">
+                                        <select
+                                            id="modalEditUserStatus"
+                                            name="managerId"
+                                            className="form-select"
+                                            aria-label="Default select example"
+                                        >
+                                            <option value={1} selected="">
+                                                1
+                                            </option>
+                                            <option value={2}>2</option>
+                                            <option value={3}>3</option>
+                                        </select>
+                                        <label htmlFor="modalEditUserStatus">Status</label>
+                                    </div>
+                                </div> */}
+                                <div className="col-12 text-center">
+                                    <button type="submit" className="btn btn-primary me-3 waves-effect waves-light">
+                                        Submit
+                                    </button>
+                                    <button
+                                        type="reset"
+                                        className="btn btn-outline-secondary waves-effect"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">
                 <div className="container-xxl">
                     <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
                         <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{" "}
+                            © 2024, made with{' '}
                             <span className="text-danger">
                                 <i className="tf-icons ri-heart-fill" />
-                            </span>{" "}
-                            by{" "}
-                            <a
-                                href="https://themeselection.com"
-                                target="_blank"
-                                className="footer-link"
-                            >
+                            </span>{' '}
+                            by{' '}
+                            <a href="https://themeselection.com" target="_blank" className="footer-link">
                                 ThemeSelection
                             </a>
                         </div>
                         <div className="d-none d-lg-inline-block">
-                            <a
-                                href="https://themeselection.com/license/"
-                                className="footer-link me-4"
-                                target="_blank"
-                            >
+                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
                                 License
                             </a>
-                            <a
-                                href="https://themeselection.com/"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
+                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
                                 More Themes
                             </a>
                             <a
@@ -1116,7 +742,6 @@ function Department() {
             {/* / Footer */}
             <div className="content-backdrop fade" />
         </div>
-
-    )
+    );
 }
-export default Department
+export default Department;
