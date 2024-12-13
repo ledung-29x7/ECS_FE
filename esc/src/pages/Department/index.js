@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import * as apis from '../../apis';
 import { useParams } from 'react-router-dom';
 import { useStore } from 'react-redux';
+import { toast } from 'react-toastify';
 
 function Department() {
     const [department, setDepartment] = useState([]);
@@ -9,9 +10,11 @@ function Department() {
         departmentName: '',
         managerId: null,
     });
+    const [departmentId, setDepartmentId] = useState({});
     const [valueEdit, setValueEdit] = useState({
+        departmentID:0,
         departmentName: '',
-        managerId: '',
+        managerId:null,
     });
 
     const FetchApi = async () => {
@@ -74,18 +77,43 @@ function Department() {
         e.preventDefault();
         const FetchData = async () => {
             try {
-                await apis.PutDepartment(valueEdit).then((res) => {
+                await apis.PutDepartment(valueEdit.departmentID,valueEdit).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
-                        window.location.reload();
+                        FetchApi();
+                        const closeButton = document.querySelector('#editUser .btn-close');
+                        if (closeButton) {
+                            closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                        }
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error('edit error');
             }
         };
         FetchData();
     };
+    async function GetDepartmentById(id) {
+        try {
+            const res = await apis.GetDepartmentById(id);
+            console.log(res)
+            if(res.status === 200){
+                setDepartmentId(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async function GetDepartmentByIdEdit(id) {
+        try {
+            const res = await apis.GetDepartmentById(id);
+            if(res.status ===200){
+                setValueEdit(res.data)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div className="content-wrapper">
@@ -418,10 +446,13 @@ function Department() {
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
                                                     <a
-                                                        href="app-user-view-account.html"
-                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                        data-bs-toggle="tooltip"
+                                                        href="javascript:;"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record"
+                                                        data-bs-target="#viewUser"
                                                         title="Preview"
+                                                        data-bs-toggle="modal"
+                                                        onClick={() => GetDepartmentById(res.departmentID)}
+
                                                     >
                                                         <i className="ri-eye-line ri-22px" />
                                                     </a>
@@ -432,15 +463,22 @@ function Department() {
                                                         <i className="ri-more-2-line ri-22px" />
                                                     </button>
                                                     <div className="dropdown-menu dropdown-menu-end m-0">
-                                                        <a href="app-user-view-account.html" className="dropdown-item">
-                                                            <i className="ri-eye-line me-2" />
-                                                            <span>View</span>
+                                                    <a
+                                                            href="javascript:;"
+                                                            className="dropdown-item view-record"
+                                                            data-bs-target="#viewUser"
+                                                            data-bs-toggle="modal"
+                                                            onClick={() => GetDepartmentById(res?.departmentID)}
+                                                        >
+                                                            <i className="ri-edit-box-line me-2" />
+                                                            <span>view</span>
                                                         </a>
                                                         <a
                                                             href="javascript:;"
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
+                                                            onClick={()=>GetDepartmentByIdEdit(res.departmentID)}
                                                         >
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>Edit</span>
@@ -646,6 +684,7 @@ function Department() {
                                         placeholder="John Doe"
                                         name="departmentName"
                                         aria-label="John Doe"
+                                        value={valueEdit.departmentName}
                                         onChange={handleChangeEdit}
                                     />
                                     <label htmlFor="add-user-fullname">departmentName</label>
@@ -658,6 +697,7 @@ function Department() {
                                         placeholder="John Doe"
                                         name="managerId"
                                         aria-label="John Doe"
+                                        value={valueEdit.managerId}
                                         onChange={handleChangeEdit}
                                     />
                                     <label htmlFor="add-user-fullname">managerId</label>
@@ -699,6 +739,87 @@ function Department() {
                     </div>
                 </div>
             </div>
+              {/* getbyid */}
+              <div className="modal fade" id="viewUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-view-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">details despartment</h4>
+                            </div>
+                            <form
+                                id="viewUserForm"
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
+                            >
+                                <table
+                                    className="datatables-users table dataTable no-footer dtr-column"
+                                    id="DataTables_Table_0"
+                                    aria-describedby="DataTables_Table_0_info"
+                                    style={{ width: 1394 }}
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                className="sorting sorting_desc"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 272 }}
+                                                aria-label="User: activate to sort column ascending"
+                                                aria-sort="descending"
+                                            >
+                                                departmentName
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 315 }}
+                                                aria-label="Email: activate to sort column ascending"
+                                            >
+                                                managerId
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="odd">
+                                            <td>
+                                                <span className="text-truncate d-flex align-items-center text-heading">
+                                                    <i className="ri-pie-chart-line ri-22px text-success me-2" />
+                                                    {departmentId?.departmentName}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className="text-truncate d-flex align-items-center text-heading">
+                                                    {departmentId?.managerId}
+                                                </span>
+                                            </td>
+                                           
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className="col-12 text-center">
+                                    <button
+                                        type="reset"
+                                        className="btn btn-outline-secondary waves-effect"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* getbyid */}
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">

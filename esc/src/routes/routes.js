@@ -19,6 +19,7 @@ import Customer from '~/pages/Customer';
 import CallHistory from '~/pages/Call/callHistory';
 import AddProducts from '~/pages/Product/addProduct';
 
+import Role from '~/pages/Role';
 
 // Public routes
 export const publicRoutes = [
@@ -35,7 +36,8 @@ export const publicRoutes = [
     { path: config.routes.addProduct, component: AddProducts},
     { path: config.routes.productCategory, component: ProductCategory},
     { path: config.routes.customer, component: Customer},
-    { path: config.routes.callhistory, component: CallHistory}
+    { path: config.routes.callhistory, component: CallHistory},
+    { path: config.routes.role, component: Role}
 ];
 
 // Private routes

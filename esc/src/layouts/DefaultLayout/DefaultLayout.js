@@ -8,8 +8,8 @@ const cx = classNames.bind(styles);
 
 function DefaultLayout({ children }) {
     return (
-        <div className='layout-wrapper layout-content-navbar'>
-            <div className='layout-container'>
+        <div className="layout-wrapper layout-content-navbar">
+            <div className="layout-container">
                 <Sidebar />
                 <div class="layout-page">
                     <Header />
@@ -18,6 +18,7 @@ function DefaultLayout({ children }) {
                     </div>
                 </div>
             </div>
+            
         </div>
     );
 }

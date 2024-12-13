@@ -6,116 +6,106 @@ import { useStore } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function ServiceManage() {
-    const [service, setService] = useState([]);
-    const [serviceId, setServiceId] = useState({});
-    const [valueAdd, setValueAdd] = useState({
-        serviceName: '',
-        costPerDay: 0,
-    });
-    const [valueEdit, setValueEdit] = useState({
-        serviceId: 0,
-        serviceName: '',
-        costPerDay: 0,
-    });
-
-    const FetchApi = async () => {
+function Role() {
+    const[role,setRole]=useState([])
+    const[valueAdd,setValueAdd]=useState({
+        roleName:"",
+        baseSalary:0
+    })
+    const[roleId,setRoleId]=useState({})
+    const[valueEdit,setValueEdit]=useState({
+        RoleId:0,
+        roleName:"",
+        baseSalary:0
+    })
+    const FetchApi =async()=>{
         try {
-            await apis
-                .GetAllService()
-                .then((res) => {
-                    if (res.status === 200) {
-                        console.log(res);
-                        setService(res.data);
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            await apis.GetAllRole()
+            .then((res)=>{
+                if(res.status === 200){
+                    console.log(res);
+                    setRole(res.data);
+                }
+            }) 
         } catch (error) {
             toast.error('get error');
-        }
-    };
 
-    useEffect(() => {
+        }
+    }
+    useEffect(()=>{
         FetchApi();
-    }, []);
-    function handleChange(e) {
-        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
+    },[])
+    function handleChange(e){
+        setValueAdd({...valueAdd,[e.target.name]:e.target.value})
     }
-    function handleChangeEdit(e) {
-        setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
+    function handleChangeEdit(e){
+        setValueEdit({...valueEdit,[e.target.name]:e.target.value})
     }
-    const handleSumbit = (e) => {
+    const handleSumbit = (e)=>{
         e.preventDefault();
-        const FetchData = async () => {
+        const FetchData=async()=>{
             try {
-                await apis.AddService(valueAdd).then((res) => {
-                    console.log(res);
-                    if (res.status === 200) {
+                await apis.AddRole(valueAdd).then((res)=>{
+                    if(res.status === 200){
                         window.location.reload();
                     }
-                });
+                })
             } catch (error) {
-                console.log(error);
+                console.log(error)
             }
-        };
-        FetchData();
-    };
-    const handleDelete = async (id) => {
-        try {
-            console.log('try');
-            const res = await apis.DeleteService(id);
-            console.log(res);
-            if (res.status === 200) {
-                console.log('delete success');
-                FetchApi();
-            }
-        } catch (error) {
-            toast.error('delete error');
         }
-    };
-    const handleSumbitEdit = async (e) => {
+        FetchData();
+    }
+    async function GetRoleById (id) {
+        try {
+            const res= await apis.GetRoleById(id);
+            if(res.status === 200){
+                setRoleId(res.data)
+            }    
+        } catch (error) {
+            console.log(error)
+        } 
+    }
+    const handleSumbitEdit = (e)=>{
         e.preventDefault();
-        const FetchData = async () => {
+        const FetchData = async ()=>{
             try {
-                await apis.PutService(valueEdit.serviceId, valueEdit).then((res) => {
-                    console.log(res);
-                    if (res.status === 200) {
+                await apis.PutRole(valueEdit.roleId,valueEdit).then((res)=>{
+                    if(res.status === 200){
                         FetchApi();
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
                             closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
                         }
                     }
-                });
+                })
             } catch (error) {
                 toast.error('edit error');
+
             }
-        };
+        }
         FetchData();
-    };
-    async function GetServiceByIdEdit(id) {
+    }
+    const handleDelete = async (id)=>{
         try {
-            const res = await apis.GetServiceById(id);
-            console.log(res);
-            if (res.status === 200) {
+            const res = await apis.DeleteRole(id);
+            if(res.status === 200){
+                FetchApi();
+            }
+        } catch (error) {
+            toast.error("delete error")
+        }
+    }
+    async function GetRoleByIdEdit(id) {
+        try {
+            const res= await apis.GetRoleById(id);
+            if(res.status ===200){
                 setValueEdit(res.data);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('get error');
         }
-    }
-    async function GetServiceById(id) {
-        try {
-            const res = await apis.GetServiceById(id);
-            console.log(res);
-            if (res.status === 200) {
-                setServiceId(res.data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        
     }
 
     return (
@@ -293,7 +283,7 @@ function ServiceManage() {
                                                 data-bs-target="#offcanvasAddUser"
                                             >
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                <span className="d-none d-sm-inline-block"> New Service </span>
+                                                <span className="d-none d-sm-inline-block"> New Role </span>
                                             </button>
                                         </div>
                                     </div>
@@ -334,7 +324,7 @@ function ServiceManage() {
                                             aria-label="User: activate to sort column ascending"
                                             aria-sort="descending"
                                         >
-                                            serviceName
+                                            roleName
                                         </th>
                                         <th
                                             className="sorting"
@@ -345,7 +335,7 @@ function ServiceManage() {
                                             style={{ width: 315 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
-                                            costPerDay
+                                            baseSalary
                                         </th>
                                         <th
                                             className="sorting_disabled"
@@ -359,7 +349,7 @@ function ServiceManage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {service.map((res) => (
+                                    {role.map((res) => (
                                         <tr className="odd">
                                             <td
                                                 className="control dtr-hidden"
@@ -372,7 +362,7 @@ function ServiceManage() {
                                             <td>
                                                 <span className="text-truncate d-flex align-items-center text-heading">
                                                     <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                    {res?.serviceName}
+                                                    {res?.roleName}
                                                 </span>
                                             </td>
                                             <td className="sorting_1">
@@ -381,7 +371,7 @@ function ServiceManage() {
                                                         <a
                                                             className="text-heading text-truncate"
                                                         >
-                                                            <span className="fw-medium">{res?.costPerDay}$</span>
+                                                            <span className="fw-medium">{res?.baseSalary}$</span>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -393,7 +383,7 @@ function ServiceManage() {
                                                         className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
                                                         data-bs-toggle="tooltip"
                                                         title="Delete Invoice"
-                                                        onClick={() => handleDelete(res.serviceId)}
+                                                        onClick={() => handleDelete(res?.roleId)}
                                                     >
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
@@ -403,7 +393,7 @@ function ServiceManage() {
                                                         data-bs-target="#viewUser"
                                                         title="Preview"
                                                         data-bs-toggle="modal"
-                                                        onClick={() => GetServiceById(res.serviceId)}
+                                                        onClick={() => GetRoleById(res?.roleId)}
 
                                                     >
                                                         <i className="ri-eye-line ri-22px" />
@@ -420,7 +410,7 @@ function ServiceManage() {
                                                             className="dropdown-item view-record"
                                                             data-bs-target="#viewUser"
                                                             data-bs-toggle="modal"
-                                                            onClick={() => GetServiceById(res?.serviceId)}
+                                                            onClick={() => GetRoleById(res?.roleId)}
                                                         >
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>view</span>
@@ -430,7 +420,7 @@ function ServiceManage() {
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
-                                                            onClick={() => GetServiceByIdEdit(res?.serviceId)}
+                                                            onClick={() => GetRoleByIdEdit(res?.roleId)}
                                                         >
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>Edit</span>
@@ -438,7 +428,7 @@ function ServiceManage() {
 
                                                             <a
                                                                 href="javascript:;"
-                                                                onClick={() => handleDelete(res?.serviceId)}
+                                                                onClick={() => handleDelete(res?.roleId)}
                                                                 className="dropdown-item delete-record"
                                                             >
                                                                 <i className="ri-edit-box-line me-2" />
@@ -572,7 +562,7 @@ function ServiceManage() {
                     >
                         <div className="offcanvas-header border-bottom">
                             <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
-                                Add Service
+                                Add Role
                             </h5>
                             <button
                                 type="button"
@@ -592,11 +582,11 @@ function ServiceManage() {
                                         type="text"
                                         className="form-control"
                                         placeholder=""
-                                        name="serviceName"
+                                        name="roleName"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <label htmlFor="add-user-fullname">roleName</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -604,11 +594,11 @@ function ServiceManage() {
                                         type="number"
                                         className="form-control"
                                         placeholder=""
-                                        name="costPerDay"
+                                        name="baseSalary"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">costPerDay</label>
+                                    <label htmlFor="add-user-fullname">baseSalary</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
@@ -634,7 +624,7 @@ function ServiceManage() {
                         <div className="modal-body p-0">
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                             <div className="text-center mb-6">
-                                <h4 className="mb-2">Edit despartment</h4>
+                                <h4 className="mb-2">Edit role</h4>
                             </div>
                             <form
                                 onSubmit={handleSumbitEdit}
@@ -647,25 +637,25 @@ function ServiceManage() {
                                         type="text"
                                         className="form-control"
                                         placeholder="John Doe"
-                                        name="serviceName"
+                                        name="roleName"
                                         aria-label="John Doe"
-                                        value={valueEdit.serviceName}
+                                        value={valueEdit.roleName}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <label htmlFor="add-user-fullname">roleName</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="number"
                                         className="form-control"
-                                        placeholder="John Doe"
-                                        name="costPerDay"
-                                        aria-label="John Doe"
-                                        value={valueEdit.costPerDay}
+                                        placeholder=""
+                                        name="baseSalary"
+                                        aria-label=""
+                                        value={valueEdit.baseSalary}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">costPerDay</label>
+                                    <label htmlFor="add-user-fullname">baseSalary</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 {/* <div className="col-12 col-md-6">
@@ -711,7 +701,7 @@ function ServiceManage() {
                         <div className="modal-body p-0">
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                             <div className="text-center mb-6">
-                                <h4 className="mb-2">details despartment</h4>
+                                <h4 className="mb-2">details role</h4>
                             </div>
                             <form
                                 id="viewUserForm"
@@ -736,7 +726,7 @@ function ServiceManage() {
                                                 aria-label="User: activate to sort column ascending"
                                                 aria-sort="descending"
                                             >
-                                                serviceName
+                                                roleName
                                             </th>
                                             <th
                                                 className="sorting"
@@ -747,7 +737,7 @@ function ServiceManage() {
                                                 style={{ width: 315 }}
                                                 aria-label="Email: activate to sort column ascending"
                                             >
-                                                costPerDay
+                                                baseSalary
                                             </th>
                                         </tr>
                                     </thead>
@@ -756,12 +746,12 @@ function ServiceManage() {
                                             <td>
                                                 <span className="text-truncate d-flex align-items-center text-heading">
                                                     <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                    {serviceId?.serviceName}
+                                                    {roleId?.roleName}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span className="text-truncate d-flex align-items-center text-heading">
-                                                    {serviceId?.costPerDay}$
+                                                    {roleId?.baseSalary}$
                                                 </span>
                                             </td>
                                            
@@ -831,4 +821,4 @@ function ServiceManage() {
         </div>
     );
 }
-export default ServiceManage;
+export default Role;

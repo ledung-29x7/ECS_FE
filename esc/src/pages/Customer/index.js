@@ -1,4 +1,39 @@
+import { useEffect, useState } from 'react';
+import * as apis from '../../apis';
+import { useParams } from 'react-router-dom';
+import { useStore } from 'react-redux';
 function Customer() {
+    const [valueAdd,setValueAdd]=useState({
+        clientName:"",
+        contactPerson:"",
+        email:"",
+        phoneNumber:"",
+        address:"",
+        password:""
+    });
+
+    function handleChange(e){
+        setValueAdd({...valueAdd,[e.target.name]:e.target.value})
+    }
+
+    const handleSumbit=(e)=>{
+        e.preventDefault();
+        const FetchData = async ()=>{
+            try {
+                console.log("try")
+                await apis.addClient(valueAdd).then((res)=>{
+                    console.log("try1")
+                    console.log(res)
+                    if(res.status === 200){
+                        window.location.reload();
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        };
+        FetchData();
+    }
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -14,7 +49,7 @@ function Customer() {
                                             <h4 className="mb-1 me-2">21,459</h4>
                                             <p className="text-success mb-1">(+29%)</p>
                                         </div>
-                                        <small className="mb-0">Total Users</small>
+                                        <small className="mb-0">Total client</small>
                                     </div>
                                     <div className="avatar">
                                         <div className="avatar-initial bg-label-primary rounded">
@@ -30,7 +65,7 @@ function Customer() {
                             <div className="card-body">
                                 <div className="d-flex justify-content-between">
                                     <div className="me-1">
-                                        <p className="text-heading mb-1">Paid Users</p>
+                                        <p className="text-heading mb-1">Paid client</p>
                                         <div className="d-flex align-items-center">
                                             <h4 className="mb-1 me-2">4,567</h4>
                                             <p className="text-success mb-1">(+18%)</p>
@@ -51,7 +86,7 @@ function Customer() {
                             <div className="card-body">
                                 <div className="d-flex justify-content-between">
                                     <div className="me-1">
-                                        <p className="text-heading mb-1">Active Users</p>
+                                        <p className="text-heading mb-1">Active client</p>
                                         <div className="d-flex align-items-center">
                                             <h4 className="mb-1 me-2">19,860</h4>
                                             <p className="text-danger mb-1">(-14%)</p>
@@ -72,7 +107,7 @@ function Customer() {
                             <div className="card-body">
                                 <div className="d-flex justify-content-between">
                                     <div className="me-1">
-                                        <p className="text-heading mb-1">Pending Users</p>
+                                        <p className="text-heading mb-1">Pending client</p>
                                         <div className="d-flex align-items-center">
                                             <h4 className="mb-1 me-2">237</h4>
                                             <p className="text-success mb-1">(+42%)</p>
@@ -185,7 +220,7 @@ function Customer() {
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
                                                 <span className="d-none d-sm-inline-block">
                                                     {" "}
-                                                    Add New User{" "}
+                                                    Add New client{" "}
                                                 </span>
                                             </button>
                                         </div>
@@ -227,7 +262,7 @@ function Customer() {
                                             aria-label="User: activate to sort column ascending"
                                             aria-sort="descending"
                                         >
-                                            User
+                                            client
                                         </th>
                                         <th
                                             className="sorting"
@@ -249,7 +284,7 @@ function Customer() {
                                             style={{ width: 139 }}
                                             aria-label="Role: activate to sort column ascending"
                                         >
-                                            Role
+                                            phoneNumber
                                         </th>
                                         <th
                                             className="sorting"
@@ -260,7 +295,7 @@ function Customer() {
                                             style={{ width: 98 }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
-                                            Plan
+                                            address
                                         </th>
                                         <th
                                             className="sorting"
@@ -271,7 +306,7 @@ function Customer() {
                                             style={{ width: 98 }}
                                             aria-label="Status: activate to sort column ascending"
                                         >
-                                            Status
+                                            Password
                                         </th>
                                         <th
                                             className="sorting_disabled"
@@ -487,804 +522,6 @@ function Customer() {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/6.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Wesley Burland</span>
-                                                    </a>
-                                                    <small>@wburlandj</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>wburlandj@uiuc.edu</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-edit-box-line ri-22px text-info me-2" />
-                                                Editor
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Team</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-secondary"
-                                                text-capitalized=""
-                                            >
-                                                Inactive
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <span className="avatar-initial rounded-circle bg-label-dark">
-                                                            VK
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Vladamir Koschek</span>
-                                                    </a>
-                                                    <small>@vkoschek17</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>vkoschek17@abc.net.au</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-vip-crown-line ri-22px text-warning me-2" />
-                                                Author
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Team</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                Active
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <span className="avatar-initial rounded-circle bg-label-primary">
-                                                            TW
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Tyne Widmore</span>
-                                                    </a>
-                                                    <small>@twidmore12</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>twidmore12@bravesites.com</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-user-line ri-22px text-primary me-2" />
-                                                Subscriber
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Team</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-warning"
-                                                text-capitalized=""
-                                            >
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <span className="avatar-initial rounded-circle bg-label-success">
-                                                            TB
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Travus Bruntjen</span>
-                                                    </a>
-                                                    <small>@tbruntjeni</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>tbruntjeni@sitemeter.com</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-computer-line ri-22px text-danger me-2" />
-                                                Admin
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Enterprise</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                Active
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/1.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Stu Delamaine</span>
-                                                    </a>
-                                                    <small>@sdelamainek</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>sdelamainek@who.int</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-vip-crown-line ri-22px text-warning me-2" />
-                                                Author
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Basic</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-warning"
-                                                text-capitalized=""
-                                            >
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <span className="avatar-initial rounded-circle bg-label-primary">
-                                                            SO
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Saunder Offner</span>
-                                                    </a>
-                                                    <small>@soffner19</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>soffner19@mac.com</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                Maintainer
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Enterprise</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-warning"
-                                                text-capitalized=""
-                                            >
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <span className="avatar-initial rounded-circle bg-label-dark">
-                                                            SM
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Stephen MacGilfoyle</span>
-                                                    </a>
-                                                    <small>@smacgilfoyley</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>smacgilfoyley@bigcartel.com</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-pie-chart-line ri-22px text-success me-2" />
-                                                Maintainer
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Company</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-warning"
-                                                text-capitalized=""
-                                            >
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper">
-                                                    <div className="avatar avatar-sm me-4">
-                                                        <img
-                                                            src="../../assets/img/avatars/9.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="text-heading text-truncate"
-                                                    >
-                                                        <span className="fw-medium">Skip Hebblethwaite</span>
-                                                    </a>
-                                                    <small>@shebblethwaite10</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>shebblethwaite10@arizona.edu</span>
-                                        </td>
-                                        <td>
-                                            <span className="text-truncate d-flex align-items-center text-heading">
-                                                <i className="ri-computer-line ri-22px text-danger me-2" />
-                                                Admin
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className="text-heading">Company</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge rounded-pill bg-label-secondary"
-                                                text-capitalized=""
-                                            >
-                                                Inactive
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                                <a
-                                                    href="app-user-view-account.html"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Preview"
-                                                >
-                                                    <i className="ri-eye-line ri-22px" />
-                                                </a>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line ri-22px" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-user-view-account.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        <i className="ri-eye-line me-2" />
-                                                        <span>View</span>
-                                                    </a>
-                                                    <a href="javascript:;" className="dropdown-item">
-                                                        <i className="ri-edit-box-line me-2" />
-                                                        <span>Edit</span>
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        <i className="ri-delete-bin-7-line me-2" />
-                                                        <span>Delete</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -1411,7 +648,7 @@ function Customer() {
                     >
                         <div className="offcanvas-header border-bottom">
                             <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
-                                Add User
+                                Add client
                             </h5>
                             <button
                                 type="button"
@@ -1424,151 +661,72 @@ function Customer() {
                             <form
                                 className="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
                                 id="addNewUserForm"
-                                onsubmit="return false"
+                                onSubmit={handleSumbit}
                                 noValidate="novalidate"
                             >
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="add-user-fullname"
                                         placeholder="John Doe"
-                                        name="userFullname"
+                                        name="clientName"
                                         aria-label="John Doe"
+                                        onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">Full Name</label>
+                                    <label htmlFor="add-user-fullname">clientName</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5">
+                                    <input
+                                        type="text"
+                                        className="form-control phone-mask"
+                                        placeholder=""
+                                        name="contactPerson"
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="add-user-contact">contactPerson</label>
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                        type="text"
-                                        id="add-user-email"
+                                        type="email"
                                         className="form-control"
                                         placeholder="john.doe@example.com"
-                                        aria-label="john.doe@example.com"
-                                        name="userEmail"
+                                        name="email"
+                                        onChange={handleChange}
                                     />
                                     <label htmlFor="add-user-email">Email</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
+                               
                                 <div className="form-floating form-floating-outline mb-5">
                                     <input
                                         type="text"
-                                        id="add-user-contact"
-                                        className="form-control phone-mask"
-                                        placeholder="+1 (609) 988-44-11"
-                                        aria-label="john.doe@example.com"
-                                        name="userContact"
-                                    />
-                                    <label htmlFor="add-user-contact">Contact</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <input
-                                        type="text"
-                                        id="add-user-company"
                                         className="form-control"
-                                        placeholder="Web Developer"
-                                        aria-label="jdoe1"
-                                        name="companyName"
+                                        placeholder="+1 (609) 988-44-11"
+                                        name="phoneNumber"
+                                        onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-company">Company</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5 form-floating-select2">
-                                    <div className="position-relative">
-                                        <select
-                                            id="country"
-                                            className="select2 form-select select2-hidden-accessible"
-                                            data-select2-id="country"
-                                            tabIndex={-1}
-                                            aria-hidden="true"
-                                        >
-                                            <option value="" data-select2-id={2}>
-                                                Select
-                                            </option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Bangladesh">Bangladesh</option>
-                                            <option value="Belarus">Belarus</option>
-                                            <option value="Brazil">Brazil</option>
-                                            <option value="Canada">Canada</option>
-                                            <option value="China">China</option>
-                                            <option value="France">France</option>
-                                            <option value="Germany">Germany</option>
-                                            <option value="India">India</option>
-                                            <option value="Indonesia">Indonesia</option>
-                                            <option value="Israel">Israel</option>
-                                            <option value="Italy">Italy</option>
-                                            <option value="Japan">Japan</option>
-                                            <option value="Korea">Korea, Republic of</option>
-                                            <option value="Mexico">Mexico</option>
-                                            <option value="Philippines">Philippines</option>
-                                            <option value="Russia">Russian Federation</option>
-                                            <option value="South Africa">South Africa</option>
-                                            <option value="Thailand">Thailand</option>
-                                            <option value="Turkey">Turkey</option>
-                                            <option value="Ukraine">Ukraine</option>
-                                            <option value="United Arab Emirates">
-                                                United Arab Emirates
-                                            </option>
-                                            <option value="United Kingdom">United Kingdom</option>
-                                            <option value="United States">United States</option>
-                                        </select>
-                                        <span
-                                            className="select2 select2-container select2-container--default"
-                                            dir="ltr"
-                                            data-select2-id={1}
-                                            style={{ width: 360 }}
-                                        >
-                                            <span className="selection">
-                                                <span
-                                                    className="select2-selection select2-selection--single"
-                                                    role="combobox"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false"
-                                                    tabIndex={0}
-                                                    aria-disabled="false"
-                                                    aria-labelledby="select2-country-container"
-                                                >
-                                                    <span
-                                                        className="select2-selection__rendered"
-                                                        id="select2-country-container"
-                                                        role="textbox"
-                                                        aria-readonly="true"
-                                                    >
-                                                        <span className="select2-selection__placeholder">
-                                                            Select Country
-                                                        </span>
-                                                    </span>
-                                                    <span
-                                                        className="select2-selection__arrow"
-                                                        role="presentation"
-                                                    >
-                                                        <b role="presentation" />
-                                                    </span>
-                                                </span>
-                                            </span>
-                                            <span className="dropdown-wrapper" aria-hidden="true" />
-                                        </span>
-                                    </div>
-                                    <label htmlFor="country">Country</label>
+                                    <label htmlFor="add-user-company">phoneNumber</label>
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-role" className="form-select">
-                                        <option value="subscriber">Subscriber</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="maintainer">Maintainer</option>
-                                        <option value="author">Author</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                    <label htmlFor="user-role">User Role</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        aria-label=""
+                                        name="address"
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="add-user-company">address</label>
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-plan" className="form-select">
-                                        <option value="basic">Basic</option>
-                                        <option value="enterprise">Enterprise</option>
-                                        <option value="company">Company</option>
-                                        <option value="team">Team</option>
-                                    </select>
-                                    <label htmlFor="user-plan">Select Plan</label>
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        aria-label=""
+                                        name="password"
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="add-user-company">password</label>
                                 </div>
                                 <button
                                     type="submit"
