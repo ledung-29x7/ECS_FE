@@ -1,9 +1,9 @@
 import axios from "../axios";
 
-export const GetAllProduct =  () => new Promise(async (resolve, reject) =>{
+export const GetAllProductByClient =  (idClient) => new Promise(async (resolve, reject) =>{
     try {
         const response = await axios({
-            url:"/Product",
+            url:`/Product/client/${idClient}`,
             method: "get"
         })
         resolve(response)

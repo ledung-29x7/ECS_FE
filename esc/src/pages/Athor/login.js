@@ -25,14 +25,15 @@ function Login() {
             .then(res =>{
                 if(res.status === 200){
                     window.sessionStorage.setItem("token",res.data.token);
+                    window.sessionStorage.setItem('idClient',res.data.employeeID)
                     dispatch(actions.checkLogin(true))
                     switch (res.data.role) {
-                        case "Admin":
-                            navigate("/")
-                        case "Manage":
+                        case "Administrative":
+                            navigate("/admin")
+                        case "Employee":
                             navigate("/employee")
                         default:
-                            navigate("/")
+                            navigate("/client")
                     }
                 }
             })

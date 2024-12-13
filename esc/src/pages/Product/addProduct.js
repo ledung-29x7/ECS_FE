@@ -1,0 +1,860 @@
+import { useState } from "react";
+import * as apis from "../../apis"
+function AddProducts() {
+
+    const [valueAdd, setValueAdd] = useState({
+        ClientId: "",
+        categoryId: 0,
+        productName: "",
+        price: 0,
+        initialQuantity: 0,
+        description: "",
+        imageFiles: []
+    });
+
+    function handleChange(e) {
+        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
+    }
+
+    const handleSumbit = (e) => {
+        e.preventDefault();
+        const FetchData = async () => {
+            try {
+                await apis.AddProduct(valueAdd).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        FetchData();
+    };
+    return (
+        <div className="content-wrapper">
+            {/* Content */}
+            <div className="container-xxl flex-grow-1 container-p-y">
+                <div className="app-ecommerce">
+                    {/* Add Product */}
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-6 gap-4 gap-md-0">
+                        <div className="d-flex flex-column justify-content-center">
+                            <h4 className="mb-1">Add a new Product</h4>
+                            <p className="mb-0">Orders placed across your store</p>
+                        </div>
+                        <div className="d-flex align-content-center flex-wrap gap-4">
+                            <button className="btn btn-outline-secondary waves-effect">Discard</button>
+                            <button className="btn btn-outline-primary waves-effect">Save draft</button>
+                            <button type="submit" className="btn btn-primary waves-effect waves-light">
+                                Publish product
+                            </button>
+                        </div>
+                    </div>
+                    <div className="row">
+                        {/* First column*/}
+                        <div className="col-12 col-lg-8">
+                            {/* Product Information */}
+                            <div className="card mb-6">
+                                <div className="card-header">
+                                    <h5 className="card-tile mb-0">Product information</h5>
+                                </div>
+                                <div className="card-body">
+                                    <form className="form-repeater">
+                                        <div className="form-floating form-floating-outline mb-5">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                id="ecommerce-product-name"
+                                                placeholder="Product title"
+                                                name="productName"
+                                                onChange={handleChange}
+                                                aria-label="Product title"
+                                            />
+                                            <label htmlFor="ecommerce-product-name">Name</label>
+                                        </div>
+                                        <div className="row gx-5 mb-5">
+                                            <div className="col">
+                                                <div className="form-floating form-floating-outline form-floating-select2">
+                                                    <div className="position-relative">
+                                                        <select
+                                                            id="select2Basic"
+                                                            className="select2 form-select select2-hidden-accessible "
+                                                            data-placeholder="Option"
+                                                            data-allow-clear="true"
+                                                            data-select2-id="select2Basic"
+                                                            name="categoryId"
+                                                            onChange={handleChange}
+                                                            aria-hidden="true"
+                                                        >
+                                                            <option value="" data-select2-id={2}>
+                                                                Option
+                                                            </option>
+                                                            <option value="size">Size</option>
+                                                            <option value="color">Color</option>
+                                                            <option value="weight">Weight</option>
+                                                            <option value="smell">Smell</option>
+                                                        </select>
+                                                        <span
+                                                            className="select2 select2-container select2-container--default"
+                                                            dir="ltr"
+                                                            data-select2-id={1}
+                                                        >
+
+                                                        </span>
+                                                    </div>
+                                                    <label htmlFor="select2Basic">Option</label>
+                                                </div>
+                                            </div>
+                                            <div className="col">
+                                                <div className="form-floating form-floating-outline">
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        id="ecommerce-product-barcode"
+                                                        placeholder="0123-4567"
+                                                        name="price"
+                                                        min={1}
+                                                        onChange={handleChange}
+                                                        aria-label="Product barcode"
+                                                    />
+                                                    <label htmlFor="ecommerce-product-name">Price</label>
+                                                </div>
+                                            </div>
+                                            <div className="col">
+                                                <div className="form-floating form-floating-outline">
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        id="ecommerce-product-barcode"
+                                                        placeholder="0123-4567"
+                                                        name="initialQuantity"
+                                                        min={1}
+                                                        onChange={handleChange}
+                                                        aria-label="Product barcode"
+                                                    />
+                                                    <label htmlFor="ecommerce-product-name">Quantity</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {/* Comment */}
+                                        <div>
+                                            <label className="mb-1">Description (Optional)</label>
+                                            <div className="form-control p-0 pt-1">
+                                                
+                                                <div
+                                                    className="comment-editor border-0 pb-1 ql-container ql-snow"
+                                                    id="ecommerce-category-description"
+                                                >
+                                                    <div
+                                                        className="ql-editor ql-blank"
+                                                        data-gramm="false"
+                                                        contentEditable="true"
+                                                        data-placeholder="Product Description"
+                                                    >
+                                                        
+                                                    </div>
+                                                    <div className="ql-clipboard" contentEditable="true" tabIndex={-1} />
+                                                    <div className="ql-tooltip ql-hidden">
+                                                        <a
+                                                            className="ql-preview"
+                                                            rel="noopener noreferrer"
+                                                            target="_blank"
+                                                            href="about:blank"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className=""
+                                                            data-formula="e=mc^2"
+                                                            data-link="https://quilljs.com"
+                                                            data-video="Embed URL"
+                                                        />
+                                                        <a className="ql-action" />
+                                                        <a className="ql-remove" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {/* /Product Information */}
+                            {/* Media */}
+                            <div className="card mb-6">
+                                <div className="card-header d-flex justify-content-between align-items-center">
+                                    <h5 className="mb-0 card-title">Product Image</h5>
+                                    <a href="javascript:void(0);" className="fw-medium">
+                                        Add media from URL
+                                    </a>
+                                </div>
+                                <div className="card-body">
+                                    <form
+                                        action="/upload"
+                                        className="dropzone needsclick dz-clickable"
+                                        id="dropzone-basic"
+                                    >
+                                        <div className="dz-message needsclick">
+                                            <div className="d-flex justify-content-center">
+                                                <div className="avatar avatar-md">
+                                                    <span className="avatar-initial rounded bg-label-secondary">
+                                                        <i className="ri-upload-2-line ri-24px" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <p className="h4 needsclick my-2">Drag and drop your image here</p>
+                                            <small className="text-muted d-block fs-6 my-2">or</small>
+                                            <span
+                                                className="needsclick btn btn-sm btn-outline-primary waves-effect"
+                                                id="btnBrowse"
+                                            >
+                                                Browse image
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {/* /Media */}
+                            {/* Variants */}
+                            <div className="card mb-6">
+                                <div className="card-header">
+                                    <h5 className="card-title mb-0">Variants</h5>
+                                </div>
+                                <div className="card-body">
+                                    <form className="form-repeater">
+                                        
+                                        <div>
+                                            <button
+                                                className="btn btn-primary waves-effect waves-light"
+                                                data-repeater-create=""
+                                            >
+                                                <i className="ri-add-line ri-16px me-1_5" />
+                                                Add another option
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {/* /Variants */}
+                            {/* Inventory */}
+                            <div className="card mb-6">
+                                <div className="card-header">
+                                    <h5 className="card-title mb-0">Inventory</h5>
+                                </div>
+                                <div className="card-body">
+                                    <div className="row">
+                                        {/* Navigation */}
+                                        <div className="col-12 col-md-4 col-xl-5 col-xxl-4 mx-auto card-separator">
+                                            <div className="d-flex justify-content-between flex-column mb-4 mb-md-0 pe-md-4">
+                                                <div className="nav-align-left">
+                                                    <ul className="nav nav-pills flex-column w-100" role="tablist">
+                                                        <li className="nav-item" role="presentation">
+                                                            <button
+                                                                className="nav-link active waves-effect waves-light"
+                                                                data-bs-toggle="tab"
+                                                                data-bs-target="#restock"
+                                                                aria-selected="true"
+                                                                role="tab"
+                                                            >
+                                                                <i className="ri-add-line me-1_5" />
+                                                                <span className="align-middle">Restock</span>
+                                                            </button>
+                                                        </li>
+                                                        <li className="nav-item" role="presentation">
+                                                            <button
+                                                                className="nav-link waves-effect waves-light"
+                                                                data-bs-toggle="tab"
+                                                                data-bs-target="#shipping"
+                                                                aria-selected="false"
+                                                                tabIndex={-1}
+                                                                role="tab"
+                                                            >
+                                                                <i className="ri-car-line me-1_5" />
+                                                                <span className="align-middle">Shipping</span>
+                                                            </button>
+                                                        </li>
+                                                        <li className="nav-item" role="presentation">
+                                                            <button
+                                                                className="nav-link waves-effect waves-light"
+                                                                data-bs-toggle="tab"
+                                                                data-bs-target="#global-delivery"
+                                                                aria-selected="false"
+                                                                tabIndex={-1}
+                                                                role="tab"
+                                                            >
+                                                                <i className="ri-global-line me-1_5" />
+                                                                <span className="align-middle">Global Delivery</span>
+                                                            </button>
+                                                        </li>
+                                                        <li className="nav-item" role="presentation">
+                                                            <button
+                                                                className="nav-link waves-effect waves-light"
+                                                                data-bs-toggle="tab"
+                                                                data-bs-target="#attributes"
+                                                                aria-selected="false"
+                                                                tabIndex={-1}
+                                                                role="tab"
+                                                            >
+                                                                <i className="ri-link-m me-1_5" />
+                                                                <span className="align-middle">Attributes</span>
+                                                            </button>
+                                                        </li>
+                                                        <li className="nav-item" role="presentation">
+                                                            <button
+                                                                className="nav-link waves-effect waves-light"
+                                                                data-bs-toggle="tab"
+                                                                data-bs-target="#advanced"
+                                                                aria-selected="false"
+                                                                tabIndex={-1}
+                                                                role="tab"
+                                                            >
+                                                                <i className="ri-lock-unlock-line me-1_5" />
+                                                                <span className="align-middle">Advanced</span>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* /Navigation */}
+                                        {/* Options */}
+                                        <div className="col-12 col-md-8 col-xl-7 col-xxl-8 pt-6 pt-md-0">
+                                            <div className="tab-content p-0 pe-xl-0 ps-md-4">
+                                                {/* Restock Tab */}
+                                                <div className="tab-pane fade show active" id="restock" role="tabpanel">
+                                                    <h6 className="text-body">Options</h6>
+                                                    <div className="row mb-4 g-4">
+                                                        <div className="col-12 col-sm-8 col-lg-12 col-xxl-8">
+                                                            <div>
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control form-control-sm"
+                                                                    id="ecommerce-product-stock"
+                                                                    placeholder="Add to Stock"
+                                                                    name="Add to Stock"
+                                                                    aria-label="Add to Stock"
+                                                                />{' '}
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-6 col-sm-4 col-lg-6 col-xxl-4">
+                                                            <button className="btn btn-primary waves-effect waves-light">
+                                                                <i className="ri-check-line ri-16px me-1_5" />
+                                                                Confirm
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h6 className="mb-2 fw-normal">Product in stock now: 54</h6>
+                                                        <h6 className="mb-2 fw-normal">Product in transit: 390</h6>
+                                                        <h6 className="mb-2 fw-normal">
+                                                            Last time restocked: 24th June, 2023
+                                                        </h6>
+                                                        <h6 className="mb-0 fw-normal">
+                                                            Total stock over lifetime: 2430
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                                {/* Shipping Tab */}
+                                                <div className="tab-pane fade" id="shipping" role="tabpanel">
+                                                    <h6 className="mb-3 text-body">Shipping Type</h6>
+                                                    <div>
+                                                        <div className="form-check mb-4">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="radio"
+                                                                name="shippingType"
+                                                                id="seller"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="seller">
+                                                                <span className="h6">Fulfilled by Seller</span>
+                                                                <br />
+                                                                <small>
+                                                                    You'll be responsible for product delivery.
+                                                                    <br />
+                                                                    Any damage or delay during shipping may cost you a
+                                                                    Damage fee.
+                                                                </small>
+                                                            </label>
+                                                        </div>
+                                                        <div className="form-check mb-6">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="radio"
+                                                                name="shippingType"
+                                                                id="companyName"
+                                                                defaultChecked=""
+                                                            />
+                                                            <label className="form-check-label" htmlFor="companyName">
+                                                                <span className="h6">
+                                                                    Fulfilled by Company name &nbsp;
+                                                                    <span className="badge rounded-pill badge-warning bg-label-warning fs-tiny py-1">
+                                                                        RECOMMENDED
+                                                                    </span>
+                                                                </span>
+                                                                <br />
+                                                                <small>
+                                                                    Your product, Our responsibility.
+                                                                    <br />
+                                                                    For a measly fee, we will handle the delivery
+                                                                    process for you.
+                                                                </small>
+                                                            </label>
+                                                        </div>
+                                                        <p className="mb-0">
+                                                            See our{' '}
+                                                            <a href="javascript:void(0);">
+                                                                Delivery terms and conditions
+                                                            </a>{' '}
+                                                            for details
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {/* Global Delivery Tab */}
+                                                <div className="tab-pane fade" id="global-delivery" role="tabpanel">
+                                                    <h6 className="mb-3 text-body">Global Delivery</h6>
+                                                    {/* Worldwide delivery */}
+                                                    <div className="form-check mb-4">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="radio"
+                                                            name="globalDel"
+                                                            id="worldwide"
+                                                        />
+                                                        <label className="form-check-label" htmlFor="worldwide">
+                                                            <span className="h6">Worldwide delivery</span>
+                                                            <br />
+                                                            <small>
+                                                                Only available with Shipping method:
+                                                                <a href="javascript:void(0);">
+                                                                    Fulfilled by Company name
+                                                                </a>
+                                                            </small>
+                                                        </label>
+                                                    </div>
+                                                    {/* Global delivery */}
+                                                    <div className="form-check mb-4">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="radio"
+                                                            name="globalDel"
+                                                            defaultChecked=""
+                                                        />
+                                                        <label
+                                                            className="form-check-label w-75 pe-12 mb-2"
+                                                            htmlFor="country-selected"
+                                                        >
+                                                            <span className="h6">Selected Countries</span>
+                                                        </label>
+                                                        <div>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control form-control-sm"
+                                                                placeholder="Countries"
+                                                                id="country-selected"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    {/* Local delivery */}
+                                                    <div className="form-check">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="radio"
+                                                            name="globalDel"
+                                                            id="local"
+                                                        />
+                                                        <label className="form-check-label" htmlFor="local">
+                                                            <span className="h6">Local delivery</span>
+                                                            <br />
+                                                            <small>
+                                                                Deliver to your country of residence :
+                                                                <a href="javascript:void(0);">Change profile address</a>
+                                                            </small>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                {/* Attributes Tab */}
+                                                <div className="tab-pane fade" id="attributes" role="tabpanel">
+                                                    <h6 className="mb-2 text-body">Attributes</h6>
+                                                    <div>
+                                                        {/* Fragile Product */}
+                                                        <div className="form-check mb-4">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                defaultValue="fragile"
+                                                                id="fragile"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="fragile">
+                                                                <span className="h6 fw-normal">Fragile Product</span>
+                                                            </label>
+                                                        </div>
+                                                        {/* Biodegradable */}
+                                                        <div className="form-check mb-4">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                defaultValue="biodegradable"
+                                                                id="biodegradable"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="biodegradable">
+                                                                <span className="h6 fw-normal">Biodegradable</span>
+                                                            </label>
+                                                        </div>
+                                                        {/* Frozen Product */}
+                                                        <div className="form-check mb-4">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                id="frozen"
+                                                                defaultValue="frozen"
+                                                                defaultChecked=""
+                                                            />
+                                                            <label
+                                                                className="form-check-label w-75 pe-12 mb-2"
+                                                                htmlFor="frozen"
+                                                            >
+                                                                <span className="h6 fw-normal mb-1">
+                                                                    Frozen Product
+                                                                </span>
+                                                            </label>
+                                                            <div>
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control form-control-sm"
+                                                                    placeholder="Max. allowed Temperature"
+                                                                    id="temp"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        {/* Exp Date */}
+                                                        <div className="form-check">
+                                                            <input
+                                                                className="form-check-input"
+                                                                type="checkbox"
+                                                                defaultValue="expDate"
+                                                                id="expDate"
+                                                                defaultChecked=""
+                                                            />
+                                                            <label
+                                                                className="form-check-label w-75 pe-12 mb-2"
+                                                                htmlFor="expDate"
+                                                            >
+                                                                <span className="h6 fw-normal mb-1">
+                                                                    Expiry Date of Product
+                                                                </span>
+                                                            </label>
+                                                            <div>
+                                                                <input
+                                                                    type="text"
+                                                                    className="product-date form-control form-control-sm flatpickr-input"
+                                                                    id="flatpickr-date"
+                                                                    readOnly="readonly"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* /Attributes Tab */}
+                                                {/* Advanced Tab */}
+                                                <div className="tab-pane fade" id="advanced" role="tabpanel">
+                                                    <h6 className="mb-3 text-body">Advanced</h6>
+                                                    <div className="row">
+                                                        {/* Product Id Type */}
+                                                        <div className="col">
+                                                            <h6 className="mb-2">Product ID Type</h6>
+                                                            <div>
+                                                                <select
+                                                                    id="product-id"
+                                                                    className="form-select form-select-sm"
+                                                                    data-placeholder="ISBN"
+                                                                    data-allow-clear="true"
+                                                                >
+                                                                    <option value="ISBN">ISBN</option>
+                                                                    <option value="UPC">UPC</option>
+                                                                    <option value="EAN">EAN</option>
+                                                                    <option value="JAN">JAN</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        {/* Product Id */}
+                                                        <div className="col">
+                                                            <h6 className="mb-2">Product ID</h6>
+                                                            <div>
+                                                                <input
+                                                                    type="number"
+                                                                    id="product-id-1"
+                                                                    className="form-control form-control-sm"
+                                                                    placeholder="ISBN Number"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* /Advanced Tab */}
+                                            </div>
+                                        </div>
+                                        {/* /Options*/}
+                                    </div>
+                                </div>
+                            </div>
+                            {/* /Inventory */}
+                        </div>
+                        {/* /Second column */}
+                        {/* Second column */}
+                        <div className="col-12 col-lg-4">
+                            {/* Pricing Card */}
+                            <div className="card mb-6">
+                                <div className="card-header">
+                                    <h5 className="card-title mb-0">Pricing</h5>
+                                </div>
+                                <div className="card-body">
+                                    {/* Base Price */}
+                                    <div className="form-floating form-floating-outline mb-5">
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="ecommerce-product-price"
+                                            placeholder="Price"
+                                            name="productPrice"
+                                            aria-label="Product price"
+                                        />
+                                        <label htmlFor="ecommerce-product-price">Best Price</label>
+                                    </div>
+                                    {/* Discounted Price */}
+                                    <div className="form-floating form-floating-outline mb-5">
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="ecommerce-product-discount-price"
+                                            placeholder="Discounted Price"
+                                            name="productDiscountedPrice"
+                                            aria-label="Product discounted price"
+                                        />
+                                        <label htmlFor="ecommerce-product-discount-price">Discounted Price</label>
+                                    </div>
+                                    {/* Charge tax check box */}
+                                    <div className="form-check my-2">
+                                        <input
+                                            className="form-check-input"
+                                            type="checkbox"
+                                            defaultValue=""
+                                            id="price-charge-tax"
+                                            defaultChecked=""
+                                        />
+                                        <label className="mb-2 text-heading" htmlFor="price-charge-tax">
+                                            Charge tax on this product
+                                        </label>
+                                    </div>
+                                    {/* Instock switch */}
+                                    <div className="d-flex justify-content-between align-items-center border-top pt-4 pb-2">
+                                        <p className="mb-0">In stock</p>
+                                        <div className="w-25 d-flex justify-content-end">
+                                            <div className="form-check form-switch me-n3">
+                                                <input type="checkbox" className="form-check-input" defaultChecked="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* /Pricing Card */}
+                            {/* Organize Card */}
+                            <div className="card mb-6">
+                                <div className="card-header">
+                                    <h5 className="card-title mb-0">Organize</h5>
+                                </div>
+                                <div className="card-body">
+                                    {/* Vendor */}
+                                    <div className="mb-5 col ecommerce-select2-dropdown">
+                                        <select
+                                            id="vendor"
+                                            className="form-select form-select-sm"
+                                            data-placeholder="Select Vendor"
+                                        >
+                                            <option value="">Select Vendor</option>
+                                            <option value="men-clothing">Men's Clothing</option>
+                                            <option value="women-clothing">Women's-clothing</option>
+                                            <option value="kid-clothing">Kid's-clothing</option>
+                                        </select>
+                                    </div>
+                                    {/* Category */}
+                                    <div className="mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
+                                        <div className="w-100 me-4">
+                                            <select
+                                                id="category-org"
+                                                className="form-select form-select-sm"
+                                                data-placeholder="Select Category"
+                                            >
+                                                <option value="">Select Category</option>
+                                                <option value="Household">Household</option>
+                                                <option value="Management">Management</option>
+                                                <option value="Electronics">Electronics</option>
+                                                <option value="Office">Office</option>
+                                                <option value="Automotive">Automotive</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <button className="btn btn-outline-primary btn-icon waves-effect">
+                                                <i className="ri-add-line" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {/* Collection */}
+                                    <div className="mb-5 col ecommerce-select2-dropdown">
+                                        <select
+                                            id="collection"
+                                            className="form-select form-select-sm"
+                                            data-placeholder="Collection"
+                                        >
+                                            <option value="">Collection</option>
+                                            <option value="men-clothing">Men's Clothing</option>
+                                            <option value="women-clothing">Women's-clothing</option>
+                                            <option value="kid-clothing">Kid's-clothing</option>
+                                        </select>
+                                    </div>
+                                    {/* Status */}
+                                    <div className="mb-5 col ecommerce-select2-dropdown">
+                                        <select
+                                            id="status-org"
+                                            className="form-select form-select-sm"
+                                            data-placeholder="Select Status"
+                                        >
+                                            <option value="">Select Status</option>
+                                            <option value="Published">Published</option>
+                                            <option value="Scheduled">Scheduled</option>
+                                            <option value="Inactive">Inactive</option>
+                                        </select>
+                                    </div>
+                                    {/* Tags */}
+                                    <div className="mb-4">
+                                        <div className="form-floating form-floating-outline">
+                                            <tags className="tagify  form-control h-auto" tabIndex={-1}>
+                                                <tag
+                                                    title="Normal"
+                                                    contentEditable="false"
+                                                    spellCheck="false"
+                                                    tabIndex={-1}
+                                                    className="tagify__tag tagify--noAnim"
+                                                    value="Normal"
+                                                >
+                                                    <x
+                                                        title=""
+                                                        className="tagify__tag__removeBtn"
+                                                        role="button"
+                                                        aria-label="remove tag"
+                                                    />
+                                                    <div>
+                                                        <span className="tagify__tag-text">Normal</span>
+                                                    </div>
+                                                </tag>
+                                                <tag
+                                                    title="Standard"
+                                                    contentEditable="false"
+                                                    spellCheck="false"
+                                                    tabIndex={-1}
+                                                    className="tagify__tag tagify--noAnim"
+                                                    value="Standard"
+                                                >
+                                                    <x
+                                                        title=""
+                                                        className="tagify__tag__removeBtn"
+                                                        role="button"
+                                                        aria-label="remove tag"
+                                                    />
+                                                    <div>
+                                                        <span className="tagify__tag-text">Standard</span>
+                                                    </div>
+                                                </tag>
+                                                <tag
+                                                    title="Premium"
+                                                    contentEditable="false"
+                                                    spellCheck="false"
+                                                    tabIndex={-1}
+                                                    className="tagify__tag tagify--noAnim"
+                                                    value="Premium"
+                                                >
+                                                    <x
+                                                        title=""
+                                                        className="tagify__tag__removeBtn"
+                                                        role="button"
+                                                        aria-label="remove tag"
+                                                    />
+                                                    <div>
+                                                        <span className="tagify__tag-text">Premium</span>
+                                                    </div>
+                                                </tag>
+                                                <span
+                                                    contentEditable=""
+                                                    tabIndex={0}
+                                                    data-placeholder="​"
+                                                    aria-placeholder=""
+                                                    className="tagify__input"
+                                                    role="textbox"
+                                                    aria-autocomplete="both"
+                                                    aria-multiline="false"
+                                                />
+                                            </tags>
+                                            <input
+                                                id="ecommerce-product-tags"
+                                                className="form-control h-auto"
+                                                name="ecommerce-product-tags"
+                                                defaultValue="Normal,Standard,Premium"
+                                                aria-label="Product Tags"
+                                                tabIndex={-1}
+                                            />
+                                            <label htmlFor="ecommerce-product-tags">Tags</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* /Organize Card */}
+                        </div>
+                        {/* /Second column */}
+                    </div>
+                </div>
+            </div>
+            {/* / Content */}
+            {/* Footer */}
+            <footer className="content-footer footer bg-footer-theme">
+                <div className="container-xxl">
+                    <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                        <div className="text-body mb-2 mb-md-0">
+                            © 2024, made with{' '}
+                            <span className="text-danger">
+                                <i className="tf-icons ri-heart-fill" />
+                            </span>{' '}
+                            by{' '}
+                            <a href="https://themeselection.com" target="_blank" className="footer-link">
+                                ThemeSelection
+                            </a>
+                        </div>
+                        <div className="d-none d-lg-inline-block">
+                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
+                                License
+                            </a>
+                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
+                                More Themes
+                            </a>
+                            <a
+                                href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/net-core-mvc-introduction.html"
+                                target="_blank"
+                                className="footer-link me-4"
+                            >
+                                Documentation
+                            </a>
+                            <a
+                                href="https://themeselection.com/support/"
+                                target="_blank"
+                                className="footer-link d-none d-sm-inline-block"
+                            >
+                                Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            {/* / Footer */}
+            <div className="content-backdrop fade" />
+        </div>
+    );
+}
+export default AddProducts;

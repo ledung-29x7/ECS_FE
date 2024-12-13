@@ -17,6 +17,8 @@ import Product from '~/pages/Product';
 import ProductCategory from '~/pages/Product/ProductCategory';
 import Customer from '~/pages/Customer';
 import CallHistory from '~/pages/Call/callHistory';
+import AddProducts from '~/pages/Product/addProduct';
+
 
 // Public routes
 export const publicRoutes = [
@@ -30,6 +32,7 @@ export const publicRoutes = [
     { path: config.routes.order, component: Order},
     { path: config.routes.orderDetail, component: OrderDetail},
     { path: config.routes.product, component: Product},
+    { path: config.routes.addProduct, component: AddProducts},
     { path: config.routes.productCategory, component: ProductCategory},
     { path: config.routes.customer, component: Customer},
     { path: config.routes.callhistory, component: CallHistory}

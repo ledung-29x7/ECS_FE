@@ -1,5 +1,5 @@
 const routes = {
-    home: '/',
+    home: '/admin',
     following: '/following',
     profile: '/:nickname',
     upload: '/upload',
@@ -14,6 +14,7 @@ const routes = {
     order: '/order',
     orderDetail: '/order/:id',
     product: '/product',
+    addProduct: '/addProduct',
     productCategory: '/category',
     customer: "/customer",
     callhistory: "/callhistory"
