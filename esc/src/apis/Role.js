@@ -1,22 +1,21 @@
 import axios from "../axios";
-export const GetAllService=()=>new Promise(async(resolve,reject)=>{
+export const GetAllRole =()=> new Promise(async(resolve,reject)=>{
     try {
         const response=await axios({
-            url:"/service",
+            url:"/Role",
             method:"get"
         })
-        resolve(response);
+        resolve(response)
     } catch (error) {
         reject(error);
     }
 })
-export const AddService=(name)=>new Promise(async(resolve,reject)=>{
+export const AddRole=(name)=>new Promise(async(resolve,reject)=>{
     try {
         const response=await axios({
-            url:"/service",
+            url:"/Role",
             method:"post",
             data:name,
-            withCredentials:true,
             headers:{
                 Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
             }
@@ -26,41 +25,37 @@ export const AddService=(name)=>new Promise(async(resolve,reject)=>{
         reject(error)
     }
 })
-export const DeleteService=(id)=>new Promise(async(resolve,reject)=>{
+export const GetRoleById=(id)=>new Promise(async(resolve,reject)=>{
     try {
         const response=await axios({
-            url:`/service/${id}`,
-            method:"delete",
-            headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
-            }
+            url:`/Role/${id}`,
+            method:"get"
         })
         resolve(response)
     } catch (error) {
         reject(error)
     }
 })
-export const PutService=(id,name)=>new Promise(async(resolve,reject)=>{
+export const PutRole=(id,name)=>new Promise(async(resolve,reject)=>{
     try {
-        const response=await axios({
-            url:`/service/${id}`,
+        const response= await axios({
+            url:`/Role/${id}`,
             method:"put",
             data:name,
-            // headers:{
-            //     Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
-            // }
+            headers:{
+                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+            }
         })
         resolve(response)
-
     } catch (error) {
         reject(error)
     }
 })
-export const GetServiceById=(id)=>new Promise(async(resolve,reject)=>{
+export const DeleteRole= (id)=>new Promise(async(resolve,reject)=>{
     try {
-        const response=await axios({
-            url:`/service/${id}`,
-            method:"get",
+        const response = await axios({
+            url:`/Role/${id}`,
+            method:"delete",
             headers:{
                 Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
             }
