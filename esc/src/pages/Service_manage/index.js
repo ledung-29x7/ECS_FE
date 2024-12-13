@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function ServiceManage() {
     const [service, setService] = useState([]);
+    const [serviceId, setServiceId] = useState({});
     const [valueAdd, setValueAdd] = useState({
         serviceName: '',
         costPerDay: 0,
@@ -35,6 +36,7 @@ function ServiceManage() {
             toast.error('get error');
         }
     };
+
     useEffect(() => {
         FetchApi();
     }, []);
@@ -83,22 +85,33 @@ function ServiceManage() {
                         FetchApi();
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
-                          closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                            closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
                         }
                     }
                 });
             } catch (error) {
-                toast.error("edit error")
+                toast.error('edit error');
             }
         };
         FetchData();
     };
-    async function GetServiceById(id) {
+    async function GetServiceByIdEdit(id) {
         try {
             const res = await apis.GetServiceById(id);
             console.log(res);
             if (res.status === 200) {
                 setValueEdit(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async function GetServiceById(id) {
+        try {
+            const res = await apis.GetServiceById(id);
+            console.log(res);
+            if (res.status === 200) {
+                setServiceId(res.data);
             }
         } catch (error) {
             console.log(error);
@@ -386,10 +399,13 @@ function ServiceManage() {
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
                                                     <a
-                                                        href="app-user-view-account.html"
-                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect"
-                                                        data-bs-toggle="tooltip"
+                                                        href="javascript:;"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record"
+                                                        data-bs-target="#viewUser"
                                                         title="Preview"
+                                                        data-bs-toggle="modal"
+                                                        onClick={() => GetServiceById(res.serviceId)}
+
                                                     >
                                                         <i className="ri-eye-line ri-22px" />
                                                     </a>
@@ -400,35 +416,35 @@ function ServiceManage() {
                                                         <i className="ri-more-2-line ri-22px" />
                                                     </button>
                                                     <div className="dropdown-menu dropdown-menu-end m-0">
-                                                        <a href="app-user-view-account.html" className="dropdown-item">
-                                                            <i className="ri-eye-line me-2" />
-                                                            <span>View</span>
+                                                        <a
+                                                            href="javascript:;"
+                                                            className="dropdown-item view-record"
+                                                            data-bs-target="#viewUser"
+                                                            data-bs-toggle="modal"
+                                                            onClick={() => GetServiceById(res?.serviceId)}
+                                                        >
+                                                            <i className="ri-edit-box-line me-2" />
+                                                            <span>view</span>
                                                         </a>
                                                         <a
                                                             href="javascript:;"
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
-                                                            onClick={() => GetServiceById(res?.serviceId)}
+                                                            onClick={() => GetServiceByIdEdit(res?.serviceId)}
                                                         >
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>Edit</span>
                                                         </a>
-                                                        <button
-                                                            type="button"
-                                                            class="btn btn-primary"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#staticBackdrop"
-                                                        >
+
                                                             <a
                                                                 href="javascript:;"
                                                                 onClick={() => handleDelete(res?.serviceId)}
                                                                 className="dropdown-item delete-record"
                                                             >
-                                                                <i className="ri-delete-bin-7-line me-2" />
+                                                                <i className="ri-edit-box-line me-2" />
                                                                 <span>Delete</span>
                                                             </a>
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </td>
@@ -689,6 +705,88 @@ function ServiceManage() {
                     </div>
                 </div>
             </div>
+            {/* getbyid */}
+            <div className="modal fade" id="viewUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-view-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">details despartment</h4>
+                            </div>
+                            <form
+                                id="viewUserForm"
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
+                            >
+                                <table
+                                    className="datatables-users table dataTable no-footer dtr-column"
+                                    id="DataTables_Table_0"
+                                    aria-describedby="DataTables_Table_0_info"
+                                    style={{ width: 1394 }}
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                className="sorting sorting_desc"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 272 }}
+                                                aria-label="User: activate to sort column ascending"
+                                                aria-sort="descending"
+                                            >
+                                                serviceName
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 315 }}
+                                                aria-label="Email: activate to sort column ascending"
+                                            >
+                                                costPerDay
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="odd">
+                                            <td>
+                                                <span className="text-truncate d-flex align-items-center text-heading">
+                                                    <i className="ri-pie-chart-line ri-22px text-success me-2" />
+                                                    {serviceId?.serviceName}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className="text-truncate d-flex align-items-center text-heading">
+                                                    {serviceId?.costPerDay}$
+                                                </span>
+                                            </td>
+                                           
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className="col-12 text-center">
+                                    <button
+                                        type="reset"
+                                        className="btn btn-outline-secondary waves-effect"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* getbyid */}
+
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">
