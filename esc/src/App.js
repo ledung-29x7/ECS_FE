@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { ToastContainer } from 'react-toastify';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { publicRoutes } from '~/routes';
 import DefaultLayout from '~/layouts';
@@ -22,17 +22,20 @@ function App() {
                         }
 
                         return (
-                            <Route
-                                key={index}
-                                path={route.path}
-                                element={
-                                    <Layout>
-                                        <Page />
-                                    </Layout>
-                                }
-                            />
+                            <>
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <Layout>
+                                            <Page />
+                                        </Layout>
+                                    }
+                                />
+                            </>
                         );
                     })}
+                    <Route path='*' element ={<Navigate to={"/client"} />} />
                 </Routes>
             </div>
             <ToastContainer

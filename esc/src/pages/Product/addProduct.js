@@ -1,37 +1,97 @@
-import { useState } from "react";
-import * as apis from "../../apis"
-function AddProducts() {
+import { useState, useEffect } from 'react';
+import * as apis from '../../apis';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+function AddProducts() {
+    const navigate = useNavigate();
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [readerImg, setReaderImg] = useState([]);
+    const [category, setCategory] = useState([]);
     const [valueAdd, setValueAdd] = useState({
-        ClientId: "",
+        clientId: window.sessionStorage.getItem('idClient'),
         categoryId: 0,
-        productName: "",
+        productName: '',
         price: 0,
         initialQuantity: 0,
-        description: "",
-        imageFiles: []
+        description: '',
     });
 
-    function handleChange(e) {
-        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
-    }
-
-    const handleSumbit = (e) => {
-        e.preventDefault();
-        const FetchData = async () => {
+    // Fetch danh mục sản phẩm
+    useEffect(() => {
+        const fetchCategories = async () => {
             try {
-                await apis.AddProduct(valueAdd).then((res) => {
-                    console.log(res);
-                    if (res.status === 200) {
-                        window.location.reload();
-                    }
-                });
+                const res = await apis.GetAllProductCategory();
+                if (res.status === 200) {
+                    setCategory(res.data);
+                }
             } catch (error) {
-                console.log(error);
+                console.error('Lỗi khi lấy danh mục:', error);
             }
         };
-        FetchData();
+        fetchCategories();
+    }, []);
+
+    // Lấy danh sách file từ input
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+            setSelectedImage(files); // Lưu file vào state
+            const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
+            setReaderImg(imgUpload); // Tạo URL preview ảnh
+        } else {
+            console.error('No files selected.');
+        }
     };
+
+    // Cập nhật giá trị trong form
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setValueAdd((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    // Gửi dữ liệu
+    const handleSumbit = () => {
+        const formData = new FormData();
+
+        // Thêm các trường dữ liệu khác vào FormData
+        formData.append('ClientId', valueAdd.clientId);
+        formData.append('CategoryId', valueAdd.categoryId);
+        formData.append('ProductName', valueAdd.productName);
+        formData.append('Price', valueAdd.price);
+        formData.append('InitialQuantity', valueAdd.initialQuantity);
+        formData.append('Description', valueAdd.description);
+        // Thêm file vào FormData
+        if (selectedImage && selectedImage.length > 0) {
+            for (let i = 0; i < selectedImage.length; i++) {
+                formData.append('ImageFiles', selectedImage[i]);
+            }
+        } else {
+            console.error('No files to upload.');
+            return;
+        }
+
+        // Gửi FormData qua Axios
+        const fetchData = async () => {
+            try {
+                const res = await apis.AddProduct(formData);
+                if (res.status === 200) {
+                    console.log('Upload thành công:', res.data);
+                    navigate("/product")
+                }
+            } catch (error) {
+                console.error('Lỗi khi gửi API:', error.response?.data || error.message);
+            }
+        };
+
+        fetchData();
+    };
+
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -46,7 +106,7 @@ function AddProducts() {
                         <div className="d-flex align-content-center flex-wrap gap-4">
                             <button className="btn btn-outline-secondary waves-effect">Discard</button>
                             <button className="btn btn-outline-primary waves-effect">Save draft</button>
-                            <button type="submit" className="btn btn-primary waves-effect waves-light">
+                            <button onClick={handleSumbit} className="btn btn-primary waves-effect waves-light">
                                 Publish product
                             </button>
                         </div>
@@ -79,29 +139,21 @@ function AddProducts() {
                                                     <div className="position-relative">
                                                         <select
                                                             id="select2Basic"
-                                                            className="select2 form-select select2-hidden-accessible "
-                                                            data-placeholder="Option"
-                                                            data-allow-clear="true"
-                                                            data-select2-id="select2Basic"
+                                                            className=" form-select"
                                                             name="categoryId"
-                                                            onChange={handleChange}
+                                                            value={valueAdd.categoryId} // Gắn giá trị hiện tại
+                                                            onChange={handleChange} // Gọi hàm xử lý sự kiện
                                                             aria-hidden="true"
                                                         >
                                                             <option value="" data-select2-id={2}>
                                                                 Option
                                                             </option>
-                                                            <option value="size">Size</option>
-                                                            <option value="color">Color</option>
-                                                            <option value="weight">Weight</option>
-                                                            <option value="smell">Smell</option>
+                                                            {category?.map((res, key) => (
+                                                                <option key={key} value={res.categoryId}>
+                                                                    {res.categoryName}
+                                                                </option>
+                                                            ))}
                                                         </select>
-                                                        <span
-                                                            className="select2 select2-container select2-container--default"
-                                                            dir="ltr"
-                                                            data-select2-id={1}
-                                                        >
-
-                                                        </span>
                                                     </div>
                                                     <label htmlFor="select2Basic">Option</label>
                                                 </div>
@@ -114,7 +166,6 @@ function AddProducts() {
                                                         id="ecommerce-product-barcode"
                                                         placeholder="0123-4567"
                                                         name="price"
-                                                        min={1}
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
                                                     />
@@ -129,50 +180,35 @@ function AddProducts() {
                                                         id="ecommerce-product-barcode"
                                                         placeholder="0123-4567"
                                                         name="initialQuantity"
-                                                        min={1}
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
                                                     />
                                                     <label htmlFor="ecommerce-product-name">Quantity</label>
                                                 </div>
                                             </div>
-
                                         </div>
                                         {/* Comment */}
                                         <div>
                                             <label className="mb-1">Description (Optional)</label>
                                             <div className="form-control p-0 pt-1">
-                                                
                                                 <div
                                                     className="comment-editor border-0 pb-1 ql-container ql-snow"
                                                     id="ecommerce-category-description"
                                                 >
+                                                    <input
+                                                        type="text"
+                                                        className=" border-none "
+                                                        name="description"
+                                                        onChange={handleChange}
+                                                        data-formula="e=mc^2"
+                                                        data-link="https://quilljs.com"
+                                                        data-video="Embed URL"
+                                                    />
                                                     <div
                                                         className="ql-editor ql-blank"
                                                         data-gramm="false"
                                                         contentEditable="true"
-                                                        data-placeholder="Product Description"
-                                                    >
-                                                        
-                                                    </div>
-                                                    <div className="ql-clipboard" contentEditable="true" tabIndex={-1} />
-                                                    <div className="ql-tooltip ql-hidden">
-                                                        <a
-                                                            className="ql-preview"
-                                                            rel="noopener noreferrer"
-                                                            target="_blank"
-                                                            href="about:blank"
-                                                        />
-                                                        <input
-                                                            type="text"
-                                                            className=""
-                                                            data-formula="e=mc^2"
-                                                            data-link="https://quilljs.com"
-                                                            data-video="Embed URL"
-                                                        />
-                                                        <a className="ql-action" />
-                                                        <a className="ql-remove" />
-                                                    </div>
+                                                    ></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -211,6 +247,58 @@ function AddProducts() {
                                                 Browse image
                                             </span>
                                         </div>
+                                        <input
+                                            type="file"
+                                            multiple
+                                            class="dz-hidden-input "
+                                            onChange={handleFileChange}
+                                            accept=".jpg,.jpeg,.png,.gif"
+                                        />
+                                        {readerImg.map((img, key) => (
+                                            <div
+                                                key={key}
+                                                className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
+                                            >
+                                                <div className="dz-details">
+                                                    {' '}
+                                                    <div className="dz-thumbnail">
+                                                        {' '}
+                                                        <img
+                                                            data-dz-thumbnail=""
+                                                            className="w-12 h-7"
+                                                            alt=""
+                                                            src={img}
+                                                        />{' '}
+                                                        <span className="dz-nopreview">No preview</span>{' '}
+                                                        <div className="dz-success-mark" />{' '}
+                                                        <div className="dz-error-mark" />{' '}
+                                                        <div className="dz-error-message">
+                                                            <span data-dz-errormessage="" />
+                                                        </div>{' '}
+                                                        <div className="progress">
+                                                            {' '}
+                                                            <div
+                                                                className="progress-bar progress-bar-primary"
+                                                                role="progressbar"
+                                                                aria-valuemin={0}
+                                                                aria-valuemax={100}
+                                                                data-dz-uploadprogress=""
+                                                                style={{ width: '100%' }}
+                                                            />{' '}
+                                                        </div>
+                                                    </div>{' '}
+                                                    <div className="dz-filename" data-dz-name="">
+                                                        Screenshot (8).png
+                                                    </div>{' '}
+                                                    <div className="dz-size" data-dz-size="">
+                                                        <strong>1.6</strong> MB
+                                                    </div>
+                                                </div>
+                                                <a className="dz-remove" href="javascript:undefined;" data-dz-remove="">
+                                                    Remove file
+                                                </a>
+                                            </div>
+                                        ))}
                                     </form>
                                 </div>
                             </div>
@@ -222,7 +310,6 @@ function AddProducts() {
                                 </div>
                                 <div className="card-body">
                                     <form className="form-repeater">
-                                        
                                         <div>
                                             <button
                                                 className="btn btn-primary waves-effect waves-light"

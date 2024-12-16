@@ -20,11 +20,14 @@ import CallHistory from '~/pages/Call/callHistory';
 import AddProducts from '~/pages/Product/addProduct';
 
 import Role from '~/pages/Role';
+import Client from '~/pages/Client';
+import LoginClient from '~/pages/Athor/loginClient';
 
 // Public routes
 export const publicRoutes = [
     { path: config.routes.home, component: Home },
     { path: config.routes.login, component: Login, layout: null },
+    { path: config.routes.loginClient, component: LoginClient, layout: null },
     { path: config.routes.register, component: Register, layout: null },
     { path: config.routes.employee, component:Employee},
     { path: config.routes.service, component: ServiceManage},
@@ -37,7 +40,8 @@ export const publicRoutes = [
     { path: config.routes.productCategory, component: ProductCategory},
     { path: config.routes.customer, component: Customer},
     { path: config.routes.callhistory, component: CallHistory},
-    { path: config.routes.role, component: Role}
+    { path: config.routes.role, component: Role},
+    { path: config.routes.client,component: Client,layout: null},
 ];
 
 // Private routes

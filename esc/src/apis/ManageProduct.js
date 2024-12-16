@@ -14,12 +14,12 @@ export const GetAllProductByClient =  (idClient) => new Promise(async (resolve, 
 
 export const AddProduct = (prop) => new Promise(async (resolve,reject) => {
     try {
-        const response = await axios({
-            url: "/Product",
-            method: "post",
-            data: prop,
-
-        })
+        const response = await axios.post("/Product",prop, {
+            withCredentials:true,
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        })  
         resolve(response)
     } catch (error) {
         reject(error)
