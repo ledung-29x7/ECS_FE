@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import * as apis from '../../apis';
-function Employee() {
-    const[valueAdd,setValueAdd]=useState({
+function RegisterClient(){
+const[valueAdd,setValueAdd]=useState({
         clientName:"",
         contactPerson:"",
         email:"",
@@ -944,4 +944,4 @@ function Employee() {
         </div>
     );
 }
-export default Employee;
+export default RegisterClient;

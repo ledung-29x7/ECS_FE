@@ -19,6 +19,7 @@ const routes = {
     customer: "/customer",
     callhistory: "/callhistory",
     role:"/role"
+    
 };
 
 export default routes;
