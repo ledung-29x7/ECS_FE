@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
-import classNames from 'classnames/bind';
-import styles from './Sidebar.module.scss';
-import * as userService from '~/services/userService';
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
-const Sidebar = (props) => {
+const SidebarEmployee = (props) => {
     useEffect(() => {
         try {
             // Kiểm tra sự tồn tại của window.Menu
@@ -47,10 +44,11 @@ const Sidebar = (props) => {
         console.log(routes,profession)
         return routes.map((prop, key) => {
             console.log(prop.profession,profession)
-            if (prop.role === 'admin' && prop?.profession === profession) {
+            if (prop.role === 'employee' && prop?.profession === profession) {
                 return (
-                    <li className={`menu-item `} key={key}>
-                        <NavLink to={prop.path} onClick={closeCollapse} className="menu-link">
+                    <li className="menu-item">
+                        <NavLink to={prop.path} className="menu-link">
+                            <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
                             <div data-i18n={prop.name}>{prop.name}</div>
                         </NavLink>
                     </li>
@@ -186,48 +184,11 @@ const Sidebar = (props) => {
                 </li>
 
                 {/* e-commerce-app menu start */}
-                <li className="menu-item">
-                    <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
-                        <div data-i18n="Manage Service">Manage Service</div>
-                    </a>
-                    <ul className="menu-sub">
-                        {createLinks(routes,"manageService")}
-                    </ul>
-                </li>
-                <li className="menu-item">
-                    <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
-                        <div data-i18n="Manage Employee">Manage Employee</div>
-                    </a>
-                    <ul className="menu-sub">
-                        {createLinks(routes,"manageEmployee")}
-                    </ul>
-                </li>
-                <li className="menu-item">
-                    <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
-                        <div data-i18n="Manage Client">Manage Client</div>
-                    </a>
-                    <ul className="menu-sub">
-                        {createLinks(routes,"manageClient")}
-                        
-                    </ul>
-                </li>
-                <li className="menu-item">
-                    <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
-                        <div data-i18n="User">User</div>
-                    </a>
-                    <ul className="menu-sub">
-                        {createLinks(routes,"User")}
-                    </ul>
-                </li>
-
+                    {createLinks(routes,"User")}
                 {/* e-commerce-app menu end */}
             </ul>
         </aside>
     );
 };
 
-export default Sidebar;
+export default SidebarEmployee;
