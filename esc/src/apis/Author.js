@@ -13,6 +13,19 @@ export const login = (param) => new Promise(async (resolve, reject) => {
         reject(error)
     }
 })
+export const loginClient = (param) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await axios({
+            url: "/Client/login",
+            method: "post",
+            data: param,
+            withCredentials: true
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
 
 export const register = (param) => new Promise(async (resolve, reject) => {
     try {

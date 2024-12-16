@@ -5,8 +5,8 @@ import { useSelector,useDispatch } from "react-redux";
 import { useState,useEffect } from "react";
 import { Link,useNavigate,useLocation } from 'react-router-dom';
 
-function Login() {
-   const {} =useSelector(state=>state.app)
+function LoginClient(){
+    const {} =useSelector(state=>state.app)
    const dispatch = useDispatch();
    const navigate = useNavigate();
    const [formData,setFormData]=useState({
@@ -21,24 +21,14 @@ function Login() {
         e.preventDefault();
         const Login = async() =>{
             try {
-                await apis.login(formData)
+                await apis.loginClient(formData)
             .then(res =>{
                 if(res.status === 200){
                     console.log(res)
-                    window.sessionStorage.setItem("token",res.data.token);
-                    window.sessionStorage.getItem("name",res.data?.userName)
-                    window.sessionStorage.setItem('idClient',res.data.employeeID)
+                    
+                    window.sessionStorage.setItem('idClient',res.data.userId)
                     dispatch(actions.checkLogin(true))
-                    switch (res.data.role) {
-                        
-                        case "Admin":
-                            console.log(res.data.role)
-                            return(navigate("/admin"))
-                        case "Employee":
-                            return(navigate("/employee"))
-                        default:
-                            return(navigate("/client"))
-                    }
+                    navigate("/product")
                 }
             })
             } catch (error) {
@@ -278,4 +268,4 @@ function Login() {
 
     )
 }
-export default Login
+export default LoginClient

@@ -1,78 +1,122 @@
-import { useNavigate } from "react-router-dom";
-import { useState,useEffect } from "react";
-import * as apis from "../../apis"
-function Product() {
-    const navigate = useNavigate()
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import * as apis from '../../apis';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-      const [product, setProduct] = useState([]);
-        const idClient = window.sessionStorage.getItem("idClient")
-        const [valueEdit, setValueEdit] = useState({
-            productId: "",
-            clientId: "",
-            categoryId: 0,
-            productName: "",
-            price: 0,
-            initialQuantity: 0,
-            description: "",
-            isActive: true,
-            status: 0,
-            createdAt: ""   
-        });
-    
-        const FetchApi = async () => {
+function Product() {
+    const navigate = useNavigate();
+
+    const [product, setProduct] = useState([]);
+    const [image, setImage] = useState([]);
+    const idClient = window.sessionStorage.getItem('idClient');
+    const [valueEdit, setValueEdit] = useState({
+        productId: '',
+        clientId: '',
+        categoryId: 0,
+        productName: '',
+        price: 0,
+        initialQuantity: 0,
+        description: '',
+        isActive: true,
+        status: 0,
+        createdAt: '',
+    });
+    const [productService, setProductService] = useState({
+        productServiceId: 0,
+        serviceId: 0,
+        productId: '',
+        clientId: '',
+        startDate: '',
+        endDate: '',
+        requiredEmployees: 0,
+    });
+
+    const FetchApi = async () => {
+        try {
+            await apis
+                .GetAllProductByClient(idClient)
+                .then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setProduct(res.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        // Hàm để hiển thị ảnh từ JSON
+        const images = [];
+        function displayImages(imageDTOs) {
+            imageDTOs?.forEach((imageDTO) => {
+                images.push({
+                    id: imageDTO?.id,
+                    image: `data:${imageDTO?.type};base64,${imageDTO?.image}`,
+                });
+            });
+        }
+        // Gọi hàm hiển thị ảnh
+        displayImages(product?.imageFiles);
+        setImage(images);
+    }, [product]);
+
+    const FetchService = async () => {
+        try {
+            await apis.GetAllService.then((res) => {
+                console.log(res);
+                if (res.status === 200) {
+                    setProductService(res.data);
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        FetchApi();
+    }, []);
+
+    function handleChangeEdit(e) {
+        setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            console.log('try');
+            const res = await apis.DeleteDepartment(id);
+            console.log(res);
+            if (res.status === 204) {
+                console.log('delete success');
+                FetchApi();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const handleSumbitEdit = async (e) => {
+        e.preventDefault();
+        const FetchData = async () => {
             try {
-                await apis
-                    .GetAllProductByClient(idClient)
-                    .then((res) => {
-                        console.log(res);
-                        if (res.status === 200) {
-                            setProduct(res.data);
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+                await apis.UpdateProduct(valueEdit).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        window.location.reload();
+                    }
+                });
             } catch (error) {
                 console.log(error);
             }
         };
-        useEffect(() => {
-            FetchApi();
-        }, []);
-        
-        function handleChangeEdit(e) {
-            setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
-        }
-        
-        const handleDelete = async (id) => {
-            try {
-                console.log('try');
-                const res = await apis.DeleteDepartment(id);
-                console.log(res);
-                if (res.status === 204) {
-                    console.log('delete success');
-                    FetchApi();
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        const handleSumbitEdit = async (e) => {
-            e.preventDefault();
-            const FetchData = async () => {
-                try {
-                    await apis.UpdateProduct(valueEdit).then((res) => {
-                        console.log(res);
-                        if (res.status === 200) {
-                            window.location.reload();
-                        }
-                    });
-                } catch (error) {
-                    console.log(error);
-                }
-            };
-            FetchData();
-        };
+        FetchData();
+    };
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -89,9 +133,7 @@ function Product() {
                                             <h4 className="mb-1">$5,345.43</h4>
                                             <p className="mb-0">
                                                 <span className="me-2">5k orders</span>
-                                                <span className="badge rounded-pill bg-label-success">
-                                                    +5.7%
-                                                </span>
+                                                <span className="badge rounded-pill bg-label-success">+5.7%</span>
                                             </p>
                                         </div>
                                         <div className="avatar me-sm-6">
@@ -109,9 +151,7 @@ function Product() {
                                             <h4 className="mb-1">$674,347.12</h4>
                                             <p className="mb-0">
                                                 <span className="me-2">21k orders</span>
-                                                <span className="badge rounded-pill bg-label-success">
-                                                    +12.4%
-                                                </span>
+                                                <span className="badge rounded-pill bg-label-success">+12.4%</span>
                                             </p>
                                         </div>
                                         <div className="avatar me-lg-6">
@@ -143,9 +183,7 @@ function Product() {
                                             <h4 className="mb-1">$8,345.23</h4>
                                             <p className="mb-0">
                                                 <span className="me-2">150 orders</span>
-                                                <span className="badge rounded-pill bg-label-danger">
-                                                    -3.5%
-                                                </span>
+                                                <span className="badge rounded-pill bg-label-danger">-3.5%</span>
                                             </p>
                                         </div>
                                         <div className="avatar">
@@ -173,10 +211,7 @@ function Product() {
                                 </select>
                             </div>
                             <div className="col-md-4 product_category">
-                                <select
-                                    id="ProductCategory"
-                                    className="form-select text-capitalize"
-                                >
+                                <select id="ProductCategory" className="form-select text-capitalize">
                                     <option value="">Category</option>
                                     <option value="Household">Household</option>
                                     <option value="Office">Office</option>
@@ -196,10 +231,7 @@ function Product() {
                         </div>
                     </div>
                     <div className="card-datatable table-responsive">
-                        <div
-                            id="DataTables_Table_0_wrapper"
-                            className="dataTables_wrapper dt-bootstrap5 no-footer"
-                        >
+                        <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                             <div className="card-header d-flex border-top rounded-0 flex-wrap py-0 pb-5 pb-md-0">
                                 <div className="me-5 ms-n2">
                                     <div id="DataTables_Table_0_filter" className="dataTables_filter">
@@ -215,10 +247,7 @@ function Product() {
                                 </div>
                                 <div className="d-flex justify-content-start justify-content-md-end align-items-baseline">
                                     <div className="dt-action-buttons d-flex align-items-start align-items-md-center justify-content-sm-center gap-4 pt-0">
-                                        <div
-                                            className="dataTables_length my-0"
-                                            id="DataTables_Table_0_length"
-                                        >
+                                        <div className="dataTables_length my-0" id="DataTables_Table_0_length">
                                             <label>
                                                 <select
                                                     name="DataTables_Table_0_length"
@@ -235,7 +264,7 @@ function Product() {
                                             </label>
                                         </div>
                                         <div className="dt-buttons btn-group flex-wrap d-flex">
-                                            {" "}
+                                            {' '}
                                             <div className="btn-group">
                                                 <button
                                                     className="btn btn-secondary buttons-collection dropdown-toggle btn-outline-secondary me-4 waves-effect waves-light"
@@ -247,26 +276,22 @@ function Product() {
                                                 >
                                                     <span>
                                                         <i className="ri-download-line ri-16px me-2" />
-                                                        <span className="d-none d-sm-inline-block">
-                                                            Export{" "}
-                                                        </span>
+                                                        <span className="d-none d-sm-inline-block">Export </span>
                                                     </span>
                                                 </button>
-                                            </div>{" "}
+                                            </div>{' '}
                                             <button
                                                 className="btn btn-secondary btn-primary waves-effect waves-light"
                                                 tabIndex={0}
-                                                onClick={()=> navigate("/addProduct")}
+                                                onClick={() => navigate('/addProduct')}
                                                 aria-controls="DataTables_Table_0"
                                                 type="button"
                                             >
                                                 <span>
                                                     <i className="ri-add-line ri-16px me-0 me-sm-1_5" />
-                                                    <span className="d-none d-sm-inline-block">
-                                                        Add Product
-                                                    </span>
+                                                    <span className="d-none d-sm-inline-block">Add Product</span>
                                                 </span>
-                                            </button>{" "}
+                                            </button>{' '}
                                         </div>
                                     </div>
                                 </div>
@@ -283,7 +308,7 @@ function Product() {
                                             className="control sorting_disabled dtr-hidden"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0, display: "none" }}
+                                            style={{ width: 0, display: 'none' }}
                                             aria-label=""
                                         />
                                         <th
@@ -384,104 +409,99 @@ function Product() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {product?.map((res,key)=>
-                                    <tr key={key} className="odd">
-                                    <td
-                                        className="  control"
-                                        tabIndex={0}
-                                        style={{ display: "none" }}
-                                    />
-                                    <td className="  dt-checkboxes-cell">
-                                        <input
-                                            type="checkbox"
-                                            className="dt-checkboxes form-check-input"
-                                        />
-                                    </td>
-                                    <td className="sorting_1">
-                                        <div className="d-flex justify-content-start align-items-center product-name">
-                                            <div className="avatar-wrapper me-4">
-                                                <div className="avatar rounded-2 bg-label-secondary">
-                                                    <img
-                                                        src="../../assets/img/ecommerce-images/product-9.png"
-                                                        alt="Product-9"
-                                                        className="rounded-2"
-                                                    />
+                                    {product?.map((res, key) => (
+                                        <tr key={key} className="odd">
+                                            <td className="  control" tabIndex={0} style={{ display: 'none' }} />
+                                            <td className="  dt-checkboxes-cell">
+                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center product-name">
+                                                    <div className="avatar-wrapper me-4">
+                                                        <div className="avatar rounded-2 bg-label-secondary">
+                                                                    <img src={`data:${res?.images[0]?.type};base64,${res?.images[0]?.imageBase64}`} alt=''
+                                                                    className='' />
+                                                        </div>
+                                                    </div>
+                                                    <div className="d-flex flex-column">
+                                                        <span className="text-nowrap text-heading fw-medium">
+                                                            {res?.productName}
+                                                        </span>
+                                                        <small className="text-truncate d-none d-sm-block">
+                                                            {res?.description}
+                                                        </small>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="d-flex flex-column">
-                                                <span className="text-nowrap text-heading fw-medium">
-                                                    {res?.productName}
+                                            </td>
+                                            <td>
+                                                <h6 className="text-truncate d-flex align-items-center mb-0 fw-normal">
+                                                    <span className="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-info me-4">
+                                                        <i className="ri-home-6-line" />
+                                                    </span>
+                                                    {res?.categoryId}
+                                                </h6>
+                                            </td>
+                                            <td>
+                                                <span className="text-truncate">
+                                                    <label className="switch switch-primary switch-sm">
+                                                        <input type="checkbox" className="switch-input" id="switch" />
+                                                        <span className="switch-toggle-slider">
+                                                            <span className="switch-off" />
+                                                        </span>
+                                                    </label>
+                                                    <span className="d-none">Out_of_Stock</span>
                                                 </span>
-                                                <small className="text-truncate d-none d-sm-block">
-                                                    {res?.description}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h6 className="text-truncate d-flex align-items-center mb-0 fw-normal">
-                                            <span className="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-info me-4">
-                                                <i className="ri-home-6-line" />
-                                            </span>
-                                            {res?.categoryId}
-                                        </h6>
-                                    </td>
-                                    <td>
-                                        <span className="text-truncate">
-                                            <label className="switch switch-primary switch-sm">
-                                                <input
-                                                    type="checkbox"
-                                                    className="switch-input"
-                                                    id="switch"
-                                                />
-                                                <span className="switch-toggle-slider">
-                                                    <span className="switch-off" />
+                                            </td>
+                                            <td>
+                                                <span>31063</span>
+                                            </td>
+                                            <td>
+                                                <span>${res.price}</span>
+                                            </td>
+                                            <td>
+                                                <span>942</span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    className="badge rounded-pill bg-label-danger"
+                                                    text-capitalized=""
+                                                >
+                                                    {res?.status}
                                                 </span>
-                                            </label>
-                                            <span className="d-none">Out_of_Stock</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span>31063</span>
-                                    </td>
-                                    <td>
-                                        <span>${res.price}</span>
-                                    </td>
-                                    <td>
-                                        <span>942</span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            className="badge rounded-pill bg-label-danger"
-                                            text-capitalized=""
-                                        >
-                                            {res?.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div className="d-inline-block text-nowrap">
-                                            <button className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
-                                                <i className="ri-edit-box-line ri-22px" />
-                                            </button>
-                                            <button
-                                                className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body dropdown-toggle hide-arrow"
-                                                data-bs-toggle="dropdown"
-                                            >
-                                                <i className="ri-more-2-line ri-22px" />
-                                            </button>
-                                            <div className="dropdown-menu dropdown-menu-end m-0">
-                                                <a href="javascript:0;" className="dropdown-item">
-                                                    View
-                                                </a>
-                                                <a href="javascript:0;" className="dropdown-item">
-                                                    Suspend
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                    )}
-                                    
+                                            </td>
+                                            <td>
+                                                <div className="d-inline-block text-nowrap">
+                                                    <button className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
+                                                        <i className="ri-edit-box-line ri-22px" />
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body dropdown-toggle hide-arrow"
+                                                        data-bs-toggle="dropdown"
+                                                    >
+                                                        <i className="ri-more-2-line ri-22px" />
+                                                    </button>
+                                                    <div className="dropdown-menu dropdown-menu-end m-0">
+                                                        <div className="add-new">
+                                                            <button
+                                                                onClick={() => FetchService}
+                                                                className=" waves-effect waves-light"
+                                                                data-bs-toggle="offcanvas"
+                                                                data-bs-target="#offcanvasAddUser"
+                                                            >
+                                                                <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
+                                                                <span className="d-none d-sm-inline-block">
+                                                                    Choose Service
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                        <a href="javascript:0;" className="dropdown-item">
+                                                            Suspend
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -604,10 +624,7 @@ function Product() {
                                                     15
                                                 </a>
                                             </li>
-                                            <li
-                                                className="paginate_button page-item next"
-                                                id="DataTables_Table_0_next"
-                                            >
+                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
                                                 <a
                                                     href="#"
                                                     aria-controls="DataTables_Table_0"
@@ -623,7 +640,7 @@ function Product() {
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ width: "1%" }} />
+                            <div style={{ width: '1%' }} />
                         </div>
                     </div>
                 </div>
@@ -634,32 +651,20 @@ function Product() {
                 <div className="container-xxl">
                     <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
                         <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{" "}
+                            © 2024, made with{' '}
                             <span className="text-danger">
                                 <i className="tf-icons ri-heart-fill" />
-                            </span>{" "}
-                            by{" "}
-                            <a
-                                href="https://themeselection.com"
-                                target="_blank"
-                                className="footer-link"
-                            >
+                            </span>{' '}
+                            by{' '}
+                            <a href="https://themeselection.com" target="_blank" className="footer-link">
                                 ThemeSelection
                             </a>
                         </div>
                         <div className="d-none d-lg-inline-block">
-                            <a
-                                href="https://themeselection.com/license/"
-                                className="footer-link me-4"
-                                target="_blank"
-                            >
+                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
                                 License
                             </a>
-                            <a
-                                href="https://themeselection.com/"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
+                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
                                 More Themes
                             </a>
                             <a
@@ -678,12 +683,78 @@ function Product() {
                             </a>
                         </div>
                     </div>
+                    {/* Offcanvas to add new user */}
+                    <div
+                        className="offcanvas offcanvas-end"
+                        tabIndex={-1}
+                        id="offcanvasAddUser"
+                        aria-labelledby="offcanvasAddUserLabel"
+                    >
+                        <div className="offcanvas-header border-bottom">
+                            <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
+                                Choose Service
+                            </h5>
+                            <button
+                                type="button"
+                                className="btn-close text-reset"
+                                data-bs-dismiss="offcanvas"
+                                aria-label="Close"
+                            />
+                        </div>
+                        <div className="offcanvas-body mx-0 flex-grow-0 h-100">
+                            <form className=" pt-0 fv-plugins-bootstrap5 fv-plugins-framework" noValidate="novalidate">
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="serviceId"
+                                        aria-label="John Doe"
+                                    />
+                                    <label htmlFor="add-user-fullname">Service</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="productId"
+                                        aria-label="John Doe"
+                                    />
+                                    <label htmlFor="add-user-fullname">Product</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="requiredEmployees"
+                                        aria-label="John Doe"
+                                    />
+                                    <label htmlFor="add-user-fullname">Required Employees</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
+                                    Submit
+                                </button>
+                                <button
+                                    type="reset"
+                                    className="btn btn-outline-danger waves-effect"
+                                    data-bs-dismiss="offcanvas"
+                                >
+                                    Cancel
+                                </button>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </footer>
             {/* / Footer */}
             <div className="content-backdrop fade" />
         </div>
-
-    )
+    );
 }
 export default Product;
