@@ -16,7 +16,7 @@ const[valueAdd,setValueAdd]=useState({
         e.preventDefault();
         const FetchData=async()=>{
             try {
-                await apis.AddEmployee(valueAdd).then((res)=>{
+                await apis.addClient(valueAdd).then((res)=>{
                     if(res.status === 200){
                         window.location.reload();
                     }
@@ -198,7 +198,7 @@ const[valueAdd,setValueAdd]=useState({
                                                 data-bs-toggle="modal"
                                             >
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                <span className="d-none d-sm-inline-block"> Add Employee </span>
+                                                <span className="d-none d-sm-inline-block"> Add Client </span>
                                             </button>
                                         </div>
                                     </div>
@@ -792,14 +792,14 @@ const[valueAdd,setValueAdd]=useState({
                     </div>
                 </div>
             </div>
-            {/* add Employee */}
+            {/* add Client */}
             <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
                 <div className="modal-dialog modal-lg modal-simple modal-edit-user">
                     <div className="modal-content">
                         <div className="modal-body p-0">
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                             <div className="text-center mb-6">
-                                <h4 className="mb-2">Add Employee</h4>
+                                <h4 className="mb-2">Add Client</h4>
                             </div>
                             <form
                                 onSubmit={handleSumbit}
@@ -898,7 +898,7 @@ const[valueAdd,setValueAdd]=useState({
                     </div>
                 </div>
             </div>
-             {/* add Employee */}
+             {/* add Client */}
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">

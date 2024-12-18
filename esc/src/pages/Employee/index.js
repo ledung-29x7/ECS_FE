@@ -1,32 +1,70 @@
 import { useState } from 'react';
 import * as apis from '../../apis';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function Employee() {
-    const[valueAdd,setValueAdd]=useState({
-        clientName:"",
-        contactPerson:"",
-        email:"",
-        phoneNumber:"",
-        address:"",
-        password:""
-    })
-    function handleChange(e){
-        setValueAdd({...valueAdd,[e.target.name]:e.target.value})
-    }
-    const handleSumbit=(e)=>{
-        e.preventDefault();
-        const FetchData=async()=>{
-            try {
-                await apis.AddEmployee(valueAdd).then((res)=>{
-                    if(res.status === 200){
-                        window.location.reload();
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-            }
+    const navigate=useNavigate();
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [readerImg, setReaderImg] = useState([]);
+    const [valueAdd, setValueAdd] = useState({
+        FirstName: '',
+        LastName: '',
+        Email: '',
+        Password: '',
+        PhoneNumber: '',
+    });
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+            setSelectedImage(files);
+            const imgUpload = Array.from(files).map((files) => URL.createObjectURL(files));
+            setReaderImg(imgUpload);
+        } else {
+            console.error('No files selected.');
         }
-        FetchData();
-    }
+    };
+    const handleChange = (event) => {
+        const { value, name } = event.target;
+        setValueAdd((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const handleSumbit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('FirstName', valueAdd.FirstName);
+        formData.append('LastName', valueAdd.LastName);
+        formData.append('Email', valueAdd.Email);
+        formData.append('Password', valueAdd.Password);
+        formData.append('PhoneNUmber', valueAdd.PhoneNumber);
+        if (selectedImage && selectedImage.length > 0) {
+            for (let i = 0; i < selectedImage.length; i++) {
+                formData.append('ImageFiles', selectedImage[i]);
+            }
+        } else {
+            console.error('No files to upload.');
+            return;
+        }
+        const fetchData = async () => {
+            try {
+                const res = await apis.AddEmployee(formData);
+                if (res.status === 200) {
+                    console.log('Upload thành công:', res.data);
+                    const closeButton = document.querySelector('#editUser .btn-close');
+                    if (closeButton) {
+                        closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                    }
+
+                }
+            } catch (error) {
+                console.error('Lỗi khi gửi API:', error.response?.data || error.message);
+            }
+        };
+        fetchData();
+    };
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -194,7 +232,7 @@ function Employee() {
                                         <div className="add-new">
                                             <button
                                                 className="btn btn-primary waves-effect waves-light"
-                                                 data-bs-target="#editUser"
+                                                data-bs-target="#editUser"
                                                 data-bs-toggle="modal"
                                             >
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
@@ -809,75 +847,115 @@ function Employee() {
                             >
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                     type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
-                                        name="clientName"
+                                        name="FirstName"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">clientName</label>
+                                    <label htmlFor="add-user-fullname">FirstName</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
-                                        name="contactPerson"
+                                        name="LastName"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">contactPerson</label>
+                                    <label htmlFor="add-user-fullname">LastName</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
-                                        name="email"
+                                        name="Email"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">email</label>
+                                    <label htmlFor="add-user-fullname">Email</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="Password"
                                         className="form-control"
                                         placeholder=""
-                                        name="phoneNumber"
+                                        name="Password"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">phoneNumber</label>
+                                    <label htmlFor="add-user-fullname">Password</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
-                                        name="address"
+                                        name="PhoneNumber"
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">address</label>
+                                    <label htmlFor="add-user-fullname">PhoneNumber</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="password"
-                                        className="form-control"
-                                        placeholder=""
-                                        name="password"
-                                        aria-label=""
-                                        onChange={handleChange}
+                                        type="file"
+                                        multiple
+                                        class="dz-hidden-input "
+                                        onChange={handleFileChange}
+                                        accept=".jpg,.jpeg,.png,.gif"
                                     />
-                                    <label htmlFor="add-user-fullname">password</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                    {readerImg.map((img,key)=>(
+                                        <div  key={key} 
+                                                className="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                            <div className="dz-details">
+                                                    {' '}
+                                                    <div className="dz-thumbnail">
+                                                        {' '}
+                                                        <img
+                                                            data-dz-thumbnail=""
+                                                            className="w-12 h-7"
+                                                            alt=""
+                                                            src={img}
+                                                        />{' '}
+                                                        <span className="dz-nopreview">No preview</span>{' '}
+                                                        <div className="dz-success-mark" />{' '}
+                                                        <div className="dz-error-mark" />{' '}
+                                                        <div className="dz-error-message">
+                                                            <span data-dz-errormessage="" />
+                                                        </div>{' '}
+                                                        <div className="progress">
+                                                            {' '}
+                                                            <div
+                                                                className="progress-bar progress-bar-primary"
+                                                                role="progressbar"
+                                                                aria-valuemin={0}
+                                                                aria-valuemax={100}
+                                                                data-dz-uploadprogress=""
+                                                                style={{ width: '100%' }}
+                                                            />{' '}
+                                                        </div>
+                                                    </div>{' '}
+                                                    <div className="dz-filename" data-dz-name="">
+                                                        Screenshot (8).png
+                                                    </div>{' '}
+                                                    <div className="dz-size" data-dz-size="">
+                                                        <strong>1.6</strong> MB
+                                                    </div>
+                                                    <a className="dz-remove" href="javascript:undefined;" data-dz-remove="">
+                                                    Remove file
+                                                </a>
+                                                </div>      
+                                        </div>
+                                    ))}
                                 </div>
                                 <div className="col-12 text-center">
                                     <button type="submit" className="btn btn-primary me-3 waves-effect waves-light">
@@ -898,7 +976,7 @@ function Employee() {
                     </div>
                 </div>
             </div>
-             {/* add Employee */}
+            {/* add Employee */}
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">

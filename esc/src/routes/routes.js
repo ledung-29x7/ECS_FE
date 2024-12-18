@@ -15,13 +15,13 @@ import Order from '~/pages/Order';
 import OrderDetail from '~/pages/Order/detail';
 import Product from '~/pages/Product';
 import ProductCategory from '~/pages/Product/ProductCategory';
-import Customer from '~/pages/Customer';
 import CallHistory from '~/pages/Call/callHistory';
 import AddProducts from '~/pages/Product/addProduct';
 
 import Role from '~/pages/Role';
 import Client from '~/pages/Client';
 import LoginClient from '~/pages/Athor/loginClient';
+import RegisterClient from '~/pages/Admin/registerClient';
 
 // Public routes
 export const publicRoutes = [
@@ -38,10 +38,10 @@ export const publicRoutes = [
     { path: config.routes.product, component: Product},
     { path: config.routes.addProduct, component: AddProducts},
     { path: config.routes.productCategory, component: ProductCategory},
-    { path: config.routes.customer, component: Customer},
     { path: config.routes.callhistory, component: CallHistory},
     { path: config.routes.role, component: Role},
     { path: config.routes.client,component: Client,layout: null},
+    { path: config.routes.registerClient,component:RegisterClient }
 ];
 
 // Private routes

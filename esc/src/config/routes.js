@@ -1,3 +1,6 @@
+import { register } from "~/apis";
+import RegisterClient from "~/pages/Admin/registerClient";
+
 const routes = {
     home: '/admin',
     following: '/following',
@@ -20,7 +23,8 @@ const routes = {
     callhistory: "/callhistory",
     role:"/role",
     client: "/client",
-    loginClient: "/loginClient"
+    loginClient: "/loginClient",
+    registerClient:"/registerClient"
 };
 
 export default routes;
