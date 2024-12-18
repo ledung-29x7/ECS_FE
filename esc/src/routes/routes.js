@@ -103,7 +103,7 @@ export const publicRoutes = [
         component: ProductCategory,
         role: "client",
         layout: ClientLayout,
-        name: "Product Catagory"
+        name: "Product Service"
     },
     { path: config.routes.customer, component: Customer },
     { 

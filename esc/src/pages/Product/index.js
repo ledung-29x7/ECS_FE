@@ -23,15 +23,6 @@ function Product() {
         status: 0,
         createdAt: '',
     });
-    const [productService, setProductService] = useState({
-        productServiceId: 0,
-        serviceId: 0,
-        productId: '',
-        clientId: '',
-        startDate: '',
-        endDate: '',
-        requiredEmployees: 0,
-    });
 
     const FetchApi = async () => {
         try {
@@ -66,23 +57,6 @@ function Product() {
         setImage(images);
     }, [product]);
 
-    const FetchService = async () => {
-        try {
-            await apis.GetAllService.then((res) => {
-                console.log(res);
-                if (res.status === 200) {
-                    setProductService(res.data);
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    useEffect(() => {
-        FetchApi();
-    }, []);
 
     function handleChangeEdit(e) {
         setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
@@ -117,6 +91,9 @@ function Product() {
         };
         FetchData();
     };
+    useEffect(()=>{
+        FetchApi()
+    },[])
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -483,7 +460,7 @@ function Product() {
                                                     <div className="dropdown-menu dropdown-menu-end m-0">
                                                         <div className="add-new">
                                                             <button
-                                                                onClick={() => FetchService}
+                                                                
                                                                 className=" waves-effect waves-light"
                                                                 data-bs-toggle="offcanvas"
                                                                 data-bs-target="#offcanvasAddUser"

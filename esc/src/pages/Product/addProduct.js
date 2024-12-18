@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -7,9 +7,19 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function AddProducts() {
     const navigate = useNavigate();
+    const idClient = window.sessionStorage.getItem('idClient');
     const [selectedImage, setSelectedImage] = useState(null);
     const [readerImg, setReaderImg] = useState([]);
+    const [service, setService] = useState([]);
     const [category, setCategory] = useState([]);
+    const [addService, setAddService] = useState({
+        serviceId: 0,
+        clientId: idClient,
+        startDate: '',
+        endDate: '',
+        requiredEmployees: 0,
+    });
+
     const [valueAdd, setValueAdd] = useState({
         clientId: window.sessionStorage.getItem('idClient'),
         categoryId: 0,
@@ -17,7 +27,40 @@ function AddProducts() {
         price: 0,
         initialQuantity: 0,
         description: '',
+        productServiceJson: [],
     });
+    const datePickerRef = useRef(null);
+    useEffect(() => {
+        if (window.flatpickr && datePickerRef.current) {
+            window.flatpickr(datePickerRef.current, {
+                dateFormat: 'Y-m-d', // Định dạng ngày
+                defaultDate: new Date(), // Ngày mặc định
+                enableTime: false, // Nếu không cần thời gian
+            });
+        }
+    }, []);
+
+    const handleAddService = () => {
+        if (!addService.serviceId) {
+            alert('Please select a service!');
+            return;
+        }
+
+        // Thêm dịch vụ mới vào danh sách
+        setValueAdd((prev) => ({
+            ...prev,
+            productServiceJson: [
+                ...prev.productServiceJson,
+                { ...addService }, // Copy dữ liệu từ addService
+            ],
+        }));
+
+        // Reset serviceId trong addService (nếu cần)
+        setAddService((prev) => ({
+            ...prev,
+            serviceId: 0,
+        }));
+    };
 
     // Fetch danh mục sản phẩm
     useEffect(() => {
@@ -55,6 +98,38 @@ function AddProducts() {
         }));
     };
 
+    //
+    const handleChangeProductService = (event) => {
+        const { name, value } = event.target;
+
+        setAddService((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    // get service
+    const FetchService = async () => {
+        try {
+            await apis
+                .GetAllService()
+                .then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setService(res.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        FetchService();
+    }, []);
     // Gửi dữ liệu
     const handleSumbit = () => {
         const formData = new FormData();
@@ -82,7 +157,7 @@ function AddProducts() {
                 const res = await apis.AddProduct(formData);
                 if (res.status === 200) {
                     console.log('Upload thành công:', res.data);
-                    navigate("/product")
+                    navigate('/product');
                 }
             } catch (error) {
                 console.error('Lỗi khi gửi API:', error.response?.data || error.message);
@@ -689,208 +764,104 @@ function AddProducts() {
                         {/* /Second column */}
                         {/* Second column */}
                         <div className="col-12 col-lg-4">
-                            {/* Pricing Card */}
-                            <div className="card mb-6">
-                                <div className="card-header">
-                                    <h5 className="card-title mb-0">Pricing</h5>
+                            {/* Service Card */}
+                            
+                            {/* Service Card */}
+                            {/* Organize Card */}
+                            <div>
+                                <div className="card mb-6">
+                                    {/* Form chung */}
+                                <div className="card mb-6">
+                                    <h5 className="card-header">Form Label Alignment</h5>
+                                    <form className="card-body">
+                                        <div className="me-4 d-flex flex-column">
+                                            <label className="text-sm-start" htmlFor="alignment-birthdate">
+                                                Start Date
+                                            </label>
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    id="alignment-birthdate"
+                                                    name="startDate"
+                                                    value={addService.startDate}
+                                                    onChange={handleChangeProductService}
+                                                    className="form-control dob-picker flatpickr-input"
+                                                    placeholder="YYYY-MM-DD"
+                                                    readOnly
+                                                    ref={datePickerRef}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="me-4 d-flex flex-column">
+                                            <label className="text-sm-start" htmlFor="alignment-birthdate">
+                                                End Date
+                                            </label>
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    id="alignment-birthdate"
+                                                    name="endDate"
+                                                    value={addService.endDate}
+                                                    onChange={handleChangeProductService}
+                                                    className="form-control dob-picker flatpickr-input"
+                                                    placeholder="YYYY-MM-DD"
+                                                    readOnly
+                                                    ref={datePickerRef}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="d-flex flex-column">
+                                            <label className="text-sm-start" htmlFor="alignment-phone">
+                                                Number Employee
+                                            </label>
+                                            <div>
+                                                <input
+                                                    type="number"
+                                                    id="alignment-phone"
+                                                    className="form-control phone-mask"
+                                                    name="requiredEmployees"
+                                                    value={addService.requiredEmployees}
+                                                    min={1}
+                                                    onChange={handleChangeProductService}
+                                                    placeholder="Number Employee"
+                                                    aria-label="658 799 8941"
+                                                />
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div className="card-body">
-                                    {/* Base Price */}
-                                    <div className="form-floating form-floating-outline mb-5">
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            id="ecommerce-product-price"
-                                            placeholder="Price"
-                                            name="productPrice"
-                                            aria-label="Product price"
-                                        />
-                                        <label htmlFor="ecommerce-product-price">Best Price</label>
+                                    <div className="card-header">
+                                        <h5 className="card-title mb-0">Pricing</h5>
                                     </div>
-                                    {/* Discounted Price */}
-                                    <div className="form-floating form-floating-outline mb-5">
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            id="ecommerce-product-discount-price"
-                                            placeholder="Discounted Price"
-                                            name="productDiscountedPrice"
-                                            aria-label="Product discounted price"
-                                        />
-                                        <label htmlFor="ecommerce-product-discount-price">Discounted Price</label>
-                                    </div>
-                                    {/* Charge tax check box */}
-                                    <div className="form-check my-2">
-                                        <input
-                                            className="form-check-input"
-                                            type="checkbox"
-                                            defaultValue=""
-                                            id="price-charge-tax"
-                                            defaultChecked=""
-                                        />
-                                        <label className="mb-2 text-heading" htmlFor="price-charge-tax">
-                                            Charge tax on this product
-                                        </label>
-                                    </div>
-                                    {/* Instock switch */}
-                                    <div className="d-flex justify-content-between align-items-center border-top pt-4 pb-2">
-                                        <p className="mb-0">In stock</p>
-                                        <div className="w-25 d-flex justify-content-end">
-                                            <div className="form-check form-switch me-n3">
-                                                <input type="checkbox" className="form-check-input" defaultChecked="" />
+                                    <div className="card-body">
+                                        <div className="position-relative mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
+                                            <div className="w-100 me-4">
+                                                <select
+                                                    id="alignment-country"
+                                                    className="select2 form-select form-select-sm"
+                                                    name="serviceId"
+                                                    value={addService.serviceId}
+                                                    onChange={handleChangeProductService}
+                                                >
+                                                    <option value="">Select Service</option>
+                                                    {service?.map((res) => (
+                                                        <option key={res.serviceId} value={res.serviceId}>
+                                                            {res.serviceName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <button
+                                                    className="btn btn-outline-primary btn-icon waves-effect"
+                                                    onClick={handleAddService}
+                                                >
+                                                    <i className="ri-add-line" />
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            {/* /Pricing Card */}
-                            {/* Organize Card */}
-                            <div className="card mb-6">
-                                <div className="card-header">
-                                    <h5 className="card-title mb-0">Organize</h5>
-                                </div>
-                                <div className="card-body">
-                                    {/* Vendor */}
-                                    <div className="mb-5 col ecommerce-select2-dropdown">
-                                        <select
-                                            id="vendor"
-                                            className="form-select form-select-sm"
-                                            data-placeholder="Select Vendor"
-                                        >
-                                            <option value="">Select Vendor</option>
-                                            <option value="men-clothing">Men's Clothing</option>
-                                            <option value="women-clothing">Women's-clothing</option>
-                                            <option value="kid-clothing">Kid's-clothing</option>
-                                        </select>
-                                    </div>
-                                    {/* Category */}
-                                    <div className="mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
-                                        <div className="w-100 me-4">
-                                            <select
-                                                id="category-org"
-                                                className="form-select form-select-sm"
-                                                data-placeholder="Select Category"
-                                            >
-                                                <option value="">Select Category</option>
-                                                <option value="Household">Household</option>
-                                                <option value="Management">Management</option>
-                                                <option value="Electronics">Electronics</option>
-                                                <option value="Office">Office</option>
-                                                <option value="Automotive">Automotive</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <button className="btn btn-outline-primary btn-icon waves-effect">
-                                                <i className="ri-add-line" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {/* Collection */}
-                                    <div className="mb-5 col ecommerce-select2-dropdown">
-                                        <select
-                                            id="collection"
-                                            className="form-select form-select-sm"
-                                            data-placeholder="Collection"
-                                        >
-                                            <option value="">Collection</option>
-                                            <option value="men-clothing">Men's Clothing</option>
-                                            <option value="women-clothing">Women's-clothing</option>
-                                            <option value="kid-clothing">Kid's-clothing</option>
-                                        </select>
-                                    </div>
-                                    {/* Status */}
-                                    <div className="mb-5 col ecommerce-select2-dropdown">
-                                        <select
-                                            id="status-org"
-                                            className="form-select form-select-sm"
-                                            data-placeholder="Select Status"
-                                        >
-                                            <option value="">Select Status</option>
-                                            <option value="Published">Published</option>
-                                            <option value="Scheduled">Scheduled</option>
-                                            <option value="Inactive">Inactive</option>
-                                        </select>
-                                    </div>
-                                    {/* Tags */}
-                                    <div className="mb-4">
-                                        <div className="form-floating form-floating-outline">
-                                            <tags className="tagify  form-control h-auto" tabIndex={-1}>
-                                                <tag
-                                                    title="Normal"
-                                                    contentEditable="false"
-                                                    spellCheck="false"
-                                                    tabIndex={-1}
-                                                    className="tagify__tag tagify--noAnim"
-                                                    value="Normal"
-                                                >
-                                                    <x
-                                                        title=""
-                                                        className="tagify__tag__removeBtn"
-                                                        role="button"
-                                                        aria-label="remove tag"
-                                                    />
-                                                    <div>
-                                                        <span className="tagify__tag-text">Normal</span>
-                                                    </div>
-                                                </tag>
-                                                <tag
-                                                    title="Standard"
-                                                    contentEditable="false"
-                                                    spellCheck="false"
-                                                    tabIndex={-1}
-                                                    className="tagify__tag tagify--noAnim"
-                                                    value="Standard"
-                                                >
-                                                    <x
-                                                        title=""
-                                                        className="tagify__tag__removeBtn"
-                                                        role="button"
-                                                        aria-label="remove tag"
-                                                    />
-                                                    <div>
-                                                        <span className="tagify__tag-text">Standard</span>
-                                                    </div>
-                                                </tag>
-                                                <tag
-                                                    title="Premium"
-                                                    contentEditable="false"
-                                                    spellCheck="false"
-                                                    tabIndex={-1}
-                                                    className="tagify__tag tagify--noAnim"
-                                                    value="Premium"
-                                                >
-                                                    <x
-                                                        title=""
-                                                        className="tagify__tag__removeBtn"
-                                                        role="button"
-                                                        aria-label="remove tag"
-                                                    />
-                                                    <div>
-                                                        <span className="tagify__tag-text">Premium</span>
-                                                    </div>
-                                                </tag>
-                                                <span
-                                                    contentEditable=""
-                                                    tabIndex={0}
-                                                    data-placeholder="​"
-                                                    aria-placeholder=""
-                                                    className="tagify__input"
-                                                    role="textbox"
-                                                    aria-autocomplete="both"
-                                                    aria-multiline="false"
-                                                />
-                                            </tags>
-                                            <input
-                                                id="ecommerce-product-tags"
-                                                className="form-control h-auto"
-                                                name="ecommerce-product-tags"
-                                                defaultValue="Normal,Standard,Premium"
-                                                aria-label="Product Tags"
-                                                tabIndex={-1}
-                                            />
-                                            <label htmlFor="ecommerce-product-tags">Tags</label>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             {/* /Organize Card */}
