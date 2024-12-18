@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import Header from '~/layouts/components/Header';
 import Sidebar from '~/layouts/components/Sidebar';
 import styles from './DefaultLayout.module.scss';
+import { publicRoutes } from '~/routes';
 
 const cx = classNames.bind(styles);
 
@@ -10,7 +11,7 @@ function DefaultLayout({ children }) {
     return (
         <div className="layout-wrapper layout-content-navbar">
             <div className="layout-container">
-                <Sidebar />
+                <Sidebar routes={publicRoutes} />
                 <div class="layout-page">
                     <Header />
                     <div className="">
