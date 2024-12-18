@@ -864,6 +864,16 @@ function AddProducts() {
                                     
                                 </div>
                             </div>
+                            <ul className="list-group list-group-flush">
+                                        {valueAdd.productServiceJson.map((service, index) => (
+                                            <li key={index} className="list-group-item">
+                                                <strong>Service ID:</strong> {service.serviceId},
+                                                <strong> Start Date:</strong> {service.startDate},
+                                                <strong> End Date:</strong> {service.endDate},
+                                                <strong> Employees:</strong> {service.requiredEmployees}
+                                            </li>
+                                        ))}
+                                    </ul>
                             {/* /Organize Card */}
                         </div>
                         {/* /Second column */}
