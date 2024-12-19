@@ -40,13 +40,11 @@ const SidebarEmployee = (props) => {
         setCollapseOpen(false);
     };
     // creates the links that appear in the left menu / Sidebar
-    const createLinks = (routes,profession) => {
-        console.log(routes,profession)
+    const createLinks = (routes) => {
         return routes.map((prop, key) => {
-            console.log(prop.profession,profession)
-            if (prop.role === 'employee' && prop?.profession === profession) {
+            if (prop.role === 'employee') {
                 return (
-                    <li className="menu-item">
+                    <li key={key} className="menu-item">
                         <NavLink to={prop.path} className="menu-link">
                             <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
                             <div data-i18n={prop.name}>{prop.name}</div>
@@ -170,7 +168,7 @@ const SidebarEmployee = (props) => {
                     </a>
                     <ul className="menu-sub">
                         <li className="menu-item ">
-                            <NavLink href="/admin" className="menu-link">
+                            <NavLink href="/employee" className="menu-link">
                                 <div data-i18n="Analytics">Home</div>
                             </NavLink>
                         </li>
@@ -184,7 +182,7 @@ const SidebarEmployee = (props) => {
                 </li>
 
                 {/* e-commerce-app menu start */}
-                    {createLinks(routes,"User")}
+                    {createLinks(routes)}
                 {/* e-commerce-app menu end */}
             </ul>
         </aside>

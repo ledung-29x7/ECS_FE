@@ -13,21 +13,21 @@ function AddProducts() {
     const [service, setService] = useState([]);
     const [category, setCategory] = useState([]);
     const [addService, setAddService] = useState({
-        serviceId: 0,
-        clientId: idClient,
-        startDate: '',
-        endDate: '',
-        requiredEmployees: 0,
+        ServiceId: 0,
+        ClientId: idClient,
+        StartDate: '',
+        EndDate: '',
+        RequiredEmployees: 1,
     });
 
     const [valueAdd, setValueAdd] = useState({
         clientId: window.sessionStorage.getItem('idClient'),
-        categoryId: 0,
-        productName: '',
-        price: 0,
-        initialQuantity: 0,
-        description: '',
-        productServiceJson: [],
+        CategoryId: 0,
+        ProductName: '',
+        Price: 0,
+        InitialQuantity: 0,
+        Description: '',
+        productServicesJson: [],
     });
     const datePickerRef = useRef(null);
     useEffect(() => {
@@ -41,7 +41,7 @@ function AddProducts() {
     }, []);
 
     const handleAddService = () => {
-        if (!addService.serviceId) {
+        if (!addService.ServiceId) {
             alert('Please select a service!');
             return;
         }
@@ -49,8 +49,8 @@ function AddProducts() {
         // Thêm dịch vụ mới vào danh sách
         setValueAdd((prev) => ({
             ...prev,
-            productServiceJson: [
-                ...prev.productServiceJson,
+            productServicesJson: [
+                ...prev.productServicesJson,
                 { ...addService }, // Copy dữ liệu từ addService
             ],
         }));
@@ -58,7 +58,7 @@ function AddProducts() {
         // Reset serviceId trong addService (nếu cần)
         setAddService((prev) => ({
             ...prev,
-            serviceId: 0,
+            ServiceId: 0,
         }));
     };
 
@@ -94,18 +94,19 @@ function AddProducts() {
         const { name, value } = event.target;
         setValueAdd((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: ["CategoryId", "Price", "InitialQuantity"].includes(name) ? Number(value) : value,
         }));
     };
 
     //
     const handleChangeProductService = (event) => {
         const { name, value } = event.target;
-
+        console.log(value)
         setAddService((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: name === "ServiceId"  || name === "RequiredEmployees"  ? Number(value) : value,
         }));
+        
     };
 
     // get service
@@ -136,11 +137,11 @@ function AddProducts() {
 
         // Thêm các trường dữ liệu khác vào FormData
         formData.append('ClientId', valueAdd.clientId);
-        formData.append('CategoryId', valueAdd.categoryId);
-        formData.append('ProductName', valueAdd.productName);
-        formData.append('Price', valueAdd.price);
-        formData.append('InitialQuantity', valueAdd.initialQuantity);
-        formData.append('Description', valueAdd.description);
+        formData.append('CategoryId', valueAdd.CategoryId);
+        formData.append('ProductName', valueAdd.ProductName);
+        formData.append('Price', valueAdd.Price);
+        formData.append('InitialQuantity', valueAdd.InitialQuantity);
+        formData.append('Description', valueAdd.Description);
         // Thêm file vào FormData
         if (selectedImage && selectedImage.length > 0) {
             for (let i = 0; i < selectedImage.length; i++) {
@@ -150,6 +151,14 @@ function AddProducts() {
             console.error('No files to upload.');
             return;
         }
+        valueAdd.productServicesJson.forEach((service) => {
+            service.RequiredEmployees = Number(service.RequiredEmployees);
+          });
+        formData.append(
+            "productServicesJson",
+            JSON.stringify(valueAdd.productServicesJson)
+          );
+           
 
         // Gửi FormData qua Axios
         const fetchData = async () => {
@@ -202,7 +211,7 @@ function AddProducts() {
                                                 className="form-control"
                                                 id="ecommerce-product-name"
                                                 placeholder="Product title"
-                                                name="productName"
+                                                name="ProductName"
                                                 onChange={handleChange}
                                                 aria-label="Product title"
                                             />
@@ -215,12 +224,12 @@ function AddProducts() {
                                                         <select
                                                             id="select2Basic"
                                                             className=" form-select"
-                                                            name="categoryId"
-                                                            value={valueAdd.categoryId} // Gắn giá trị hiện tại
+                                                            name="CategoryId"
+                                                            value={valueAdd.CategoryId} // Gắn giá trị hiện tại
                                                             onChange={handleChange} // Gọi hàm xử lý sự kiện
                                                             aria-hidden="true"
                                                         >
-                                                            <option value="" data-select2-id={2}>
+                                                            <option value="" >
                                                                 Option
                                                             </option>
                                                             {category?.map((res, key) => (
@@ -240,7 +249,7 @@ function AddProducts() {
                                                         className="form-control"
                                                         id="ecommerce-product-barcode"
                                                         placeholder="0123-4567"
-                                                        name="price"
+                                                        name="Price"
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
                                                     />
@@ -254,7 +263,7 @@ function AddProducts() {
                                                         className="form-control"
                                                         id="ecommerce-product-barcode"
                                                         placeholder="0123-4567"
-                                                        name="initialQuantity"
+                                                        name="InitialQuantity"
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
                                                     />
@@ -273,7 +282,7 @@ function AddProducts() {
                                                     <input
                                                         type="text"
                                                         className=" border-none "
-                                                        name="description"
+                                                        name="Description"
                                                         onChange={handleChange}
                                                         data-formula="e=mc^2"
                                                         data-link="https://quilljs.com"
@@ -780,15 +789,13 @@ function AddProducts() {
                                             </label>
                                             <div>
                                                 <input
-                                                    type="text"
+                                                    type="date"
                                                     id="alignment-birthdate"
-                                                    name="startDate"
-                                                    value={addService.startDate}
+                                                    name="StartDate"
+                                                    value={addService.StartDate}
                                                     onChange={handleChangeProductService}
                                                     className="form-control dob-picker flatpickr-input"
                                                     placeholder="YYYY-MM-DD"
-                                                    readOnly
-                                                    ref={datePickerRef}
                                                 />
                                             </div>
                                         </div>
@@ -798,15 +805,14 @@ function AddProducts() {
                                             </label>
                                             <div>
                                                 <input
-                                                    type="text"
+                                                    type="date"
                                                     id="alignment-birthdate"
-                                                    name="endDate"
-                                                    value={addService.endDate}
+                                                    name="EndDate"
+                                                    value={addService.EndDate}
                                                     onChange={handleChangeProductService}
                                                     className="form-control dob-picker flatpickr-input"
                                                     placeholder="YYYY-MM-DD"
-                                                    readOnly
-                                                    ref={datePickerRef}
+                                                    
                                                 />
                                             </div>
                                         </div>
@@ -819,8 +825,8 @@ function AddProducts() {
                                                     type="number"
                                                     id="alignment-phone"
                                                     className="form-control phone-mask"
-                                                    name="requiredEmployees"
-                                                    value={addService.requiredEmployees}
+                                                    name="RequiredEmployees"
+                                                    value={addService.RequiredEmployees}
                                                     min={1}
                                                     onChange={handleChangeProductService}
                                                     placeholder="Number Employee"
@@ -838,9 +844,10 @@ function AddProducts() {
                                             <div className="w-100 me-4">
                                                 <select
                                                     id="alignment-country"
+                                                    typeof='number'
                                                     className="select2 form-select form-select-sm"
-                                                    name="serviceId"
-                                                    value={addService.serviceId}
+                                                    name="ServiceId"
+                                                    value={addService.ServiceId}
                                                     onChange={handleChangeProductService}
                                                 >
                                                     <option value="">Select Service</option>
@@ -865,15 +872,16 @@ function AddProducts() {
                                 </div>
                             </div>
                             <ul className="list-group list-group-flush">
-                                        {valueAdd.productServiceJson.map((service, index) => (
-                                            <li key={index} className="list-group-item">
-                                                <strong>Service ID:</strong> {service.serviceId},
-                                                <strong> Start Date:</strong> {service.startDate},
-                                                <strong> End Date:</strong> {service.endDate},
-                                                <strong> Employees:</strong> {service.requiredEmployees}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                {valueAdd.productServicesJson.map((service, index) => (
+                                    <li key={index} className="list-group-item">
+                                        <strong>Service ID:</strong> {service.ServiceId},
+                                        <strong>Client ID:</strong> {service.ClientId},
+                                        <strong> Start Date:</strong> {service.StartDate},
+                                        <strong> End Date:</strong> {service.EndDate},
+                                        <strong> Employees:</strong> {service.RequiredEmployees}
+                                    </li>
+                                ))}
+                            </ul>
                             {/* /Organize Card */}
                         </div>
                         {/* /Second column */}
