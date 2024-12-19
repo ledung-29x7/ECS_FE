@@ -1,30 +1,22 @@
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link,useNavigate,useLocation } from 'react-router-dom';
+
 function CallHistory() {
+    const employeeID = window.sessionStorage.getItem('employeeID');
     const [callHistory, setCallHistory] = useState([]);
     const [employee, setEmployee] = useState([]);
-    const [callStatus,setCallStatus]=useState([])
+    const [callStatus, setCallStatus] = useState([]);
+    const navigate = useNavigate();
+
     // const [callHistoryId, setCallHistoryId] = ({});
     const [valueAdd, setValueAdd] = useState({
-        callId: 0,
-        employeeId: "",
-        callDatetime:"",
+        employeeId: employeeID,
         phoneNumber: '',
         status: 0,
         notes: '',
     });
-    const datePickerRef = useRef(null); 
-    useEffect(() => {
-        if (window.flatpickr && datePickerRef.current) {
-            window.flatpickr(datePickerRef.current, {
-                dateFormat: 'Y-m-d', // Định dạng ngày
-                defaultDate: new Date(), // Ngày mặc định
-                enableTime: false, // Nếu không cần thời gian
-            });
-        }
-    }, []);
-
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
@@ -38,20 +30,19 @@ function CallHistory() {
         };
         fetchEmployee();
     }, []);
-    useEffect(()=>{
-        const fetchCallStatus = async ()=>{
+    useEffect(() => {
+        const fetchCallStatus = async () => {
             try {
                 const res = await apis.GetAllCallStatus();
-                if(res.status === 200){
+                if (res.status === 200) {
                     setCallStatus(res.data);
                 }
             } catch (error) {
                 console.log(error);
-
             }
-        }
+        };
         fetchCallStatus();
-    },[])
+    }, []);
     const FetchApi = async () => {
         try {
             await apis
@@ -72,24 +63,48 @@ function CallHistory() {
         FetchApi();
     }, []);
     function handleChange(e) {
-        console.log(e.target.value)
-        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        setValueAdd({
+            ...valueAdd,
+            [name]: name === 'status' ? Number(value) : value, // Chuyển statusId sang số
+        });
     }
+
     const handleSumbit = (e) => {
         e.preventDefault();
+
+        // const sanitizedData = {
+        //     ...valueAdd,
+        //     statusId: parseInt(valueAdd.statusId, 10), // Chuyển statusId thành số nếu cần
+        // };
+
+        console.log(valueAdd);
+
         const FetchData = async () => {
             try {
-                await apis.AddCallHistory(valueAdd).then((res) => {
-                    if (res.status === 200) {
-                        window.location.reload();
+                const res = await apis.AddCallHistory(valueAdd);
+                if (res.status === 200) {
+                    console.log('Submission Successful');
+                    if (valueAdd.status === 1) {
+                        // console.log('1');
+                        // const closeButton = document.querySelector('#order #order-open');
+                        // console.log(closeButton);
+                        // if (closeButton) {
+                        //     closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                        // }
+                        navigate("/order")
                     }
-                });
+                    // window.location.reload();
+                }
             } catch (error) {
-                console.log(error);
+                console.error('Error Submitting Data:', error);
             }
         };
+
         FetchData();
     };
+
     // async function GetAllCallHistoryById(id) {
     //     try {
     //         const res = await apis.GetCallHistoryById(id);
@@ -269,7 +284,7 @@ function CallHistory() {
                                         >
                                             <input type="checkbox" className="form-check-input" />
                                         </th>
-                                        <th
+                                        {/* <th
                                             className="sorting"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
@@ -279,7 +294,7 @@ function CallHistory() {
                                             aria-label="Plan: activate to sort column ascending"
                                         >
                                             callId
-                                        </th>
+                                        </th> */}
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -289,7 +304,7 @@ function CallHistory() {
                                             style={{ width: 99 }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
-                                            employeeId
+                                            Employee
                                         </th>
                                         <th
                                             className="sorting"
@@ -354,7 +369,7 @@ function CallHistory() {
                                             <td className="  dt-checkboxes-cell">
                                                 <input type="checkbox" className="dt-checkboxes form-check-input" />
                                             </td>
-                                            <td className="sorting_1">
+                                            {/* <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center user-name">
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
@@ -362,12 +377,23 @@ function CallHistory() {
                                                         </a>
                                                     </div>
                                                 </div>
-                                            </td>
+                                            </td> */}
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center user-name">
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">{res?.employeeId}</span>
+                                                            <span className="fw-medium">
+                                                                {
+                                                                    employee.find(
+                                                                        (r) => r.employeeId === res?.employeeId,
+                                                                    )?.firstName
+                                                                }{' '}
+                                                                {
+                                                                    employee.find(
+                                                                        (r) => r.employeeId === res?.employeeId,
+                                                                    )?.lastName
+                                                                }
+                                                            </span>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -394,7 +420,12 @@ function CallHistory() {
                                                 <div className="d-flex justify-content-start align-items-center user-name">
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">{res?.status}</span>
+                                                            <span className="fw-medium">
+                                                                {
+                                                                    callStatus.find((r) => r.statusId === res?.status)
+                                                                        ?.statusName
+                                                                }
+                                                            </span>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -409,7 +440,7 @@ function CallHistory() {
                                                 </div>
                                             </td>
                                             <td className="" style={{}}>
-                                                <div className="d-flex align-items-center">
+                                                <div id="order" className="d-flex align-items-center">
                                                     <a
                                                         href="javascript:;"
                                                         className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
@@ -448,6 +479,7 @@ function CallHistory() {
                                                         </a>
                                                         <a
                                                             href="javascript:;"
+                                                            id="order-open"
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
@@ -636,7 +668,7 @@ function CallHistory() {
                                 onsubmit="return false"
                                 noValidate="novalidate"
                             >
-                            <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                {/* <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                 <div className="form-floating form-floating-outline form-floating-select2">
                                     <div className="position-relative">
                                         <select
@@ -659,8 +691,8 @@ function CallHistory() {
                                     </div>
                                     <label htmlFor="select2Basic">employeeId</label>
                                 </div>
-                            </div>
-                            <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                            </div> */}
+                                {/* <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                             <div className=" me-4 d-flex flex-column">
                                 <label className="text-sm-start" htmlFor="alignment-birthdate">
                                 callDatetime
@@ -678,7 +710,7 @@ function CallHistory() {
                                     />
                                 </div>
                             </div>
-                            </div>
+                            </div> */}
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
@@ -694,29 +726,27 @@ function CallHistory() {
                                 </div>
 
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                <div className="form-floating form-floating-outline form-floating-select2">
-                                    <div className="position-relative">
-                                        <select
-                                            id="select2Basic"
-                                            className=" form-select"
-                                            name="employeeId"
-                                            value={valueAdd.status} // Gắn giá trị hiện tại
-                                            onChange={handleChange} // Gọi hàm xử lý sự kiện
-                                            aria-hidden="true"
-                                        >
-                                            <option value="" data-select2-id={2}>
-                                            Status
-                                            </option>
-                                            {callStatus.map((res,key)=>
-                                                <option key={key} value={res.statusId}>
-                                                    {res.statusName}
-                                                </option>
-                                            )}
-                                        </select>
+                                    <div className="form-floating form-floating-outline form-floating-select2">
+                                        <div className="position-relative">
+                                            <select
+                                                id="select2Basic"
+                                                className="form-select"
+                                                name="status"
+                                                value={valueAdd.status}
+                                                onChange={handleChange}
+                                            >
+                                                <option value="">Select status</option>
+
+                                                {callStatus.map((res, key) => (
+                                                    <option key={key} value={res.statusId}>
+                                                        {res.statusName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <label htmlFor="select2Basic">status</label>
                                     </div>
-                                    <label htmlFor="select2Basic">Stautus</label>
                                 </div>
-                            </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
@@ -931,6 +961,92 @@ function CallHistory() {
                 </div>
             </div>
             {/* getbyid */}
+            {/* edit */}
+            <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-edit-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">Add order</h4>
+                            </div>
+                            <form
+                                // onSubmit={()=>handleSumbitEdit()}
+                                id="editUserForm"
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
+                            >
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="orderer"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.departmentName}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">orderer</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="recipientName"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.managerId}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">recipientName</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="recipientPhone"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.managerId}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">recipientPhone</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="recipientAddress"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.managerId}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">recipientAddress</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="col-12 text-center">
+                                    <button type="submit" className="btn btn-primary me-3 waves-effect waves-light">
+                                        Submit
+                                    </button>
+                                    <button
+                                        type="reset"
+                                        className="btn btn-outline-secondary waves-effect"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">

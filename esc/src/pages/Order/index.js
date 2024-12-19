@@ -192,18 +192,7 @@ function Order() {
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
-                                            totalAmount
-                                        </th>
-                                        <th
-                                            className="sorting"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 284 }}
-                                            aria-label="customers: activate to sort column ascending"
-                                        >
-                                            recipient Name
+                                            recipient_Name
                                         </th>
                                         <th
                                             className="sorting"
@@ -238,6 +227,17 @@ function Order() {
                                         >
                                             order Status
                                         </th>
+                                         <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 0 }}
+                                            aria-label="method: activate to sort column ascending"
+                                        >
+                                            orderDate
+                                        </th>
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -247,8 +247,9 @@ function Order() {
                                             style={{ width: 0 }}
                                             aria-label="method: activate to sort column ascending"
                                         >
-                                            order Date
+                                            totalAmount
                                         </th>
+                                       
                                         <th
                                             className="sorting_disabled"
                                             rowSpan={1}
@@ -272,13 +273,8 @@ function Order() {
                                                 <span>{res?.orderer}</span>
                                         </td>
                                         <td className="sorting_1">
-                                            <span className="text-nowrap">{res?.totalAmount}</span>
-                                        </td>
-                                        <td className="sorting_1">
                                             <span className="text-nowrap">{res?.recipient_Name}</span>
                                         </td>
-                                       
-        
                                         <td className="sorting_1">
                                             <span className="text-nowrap">{res?.recipient_Phone}</span>
                                         </td>
@@ -296,6 +292,9 @@ function Order() {
                                         </td>
                                         <td className="sorting_1">
                                             <span className="text-nowrap">{res?.orderDate}</span>
+                                        </td>
+                                        <td className="sorting_1">
+                                            <span className="text-nowrap">{res?.totalAmount}$</span>
                                         </td>
                                         <td className="" style={{}}>
                                             <div>
