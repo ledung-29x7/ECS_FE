@@ -52,12 +52,12 @@ function EmployeeLayout (){
                   width={780}
                 />
                 <div>
-                  <a
-                    href="index.html"
+                  <Link
+                    to="/login"
                     className="btn btn-primary text-center my-6 waves-effect waves-light"
                   >
-                    Back to home
-                  </a>
+                    Back to Login
+                  </Link>
                 </div>
               </div>
             </div>
