@@ -34,8 +34,8 @@ function Login() {
                         case "Admin":
                             console.log(res.data.role)
                             return(navigate("/admin"))
-                        case "Employee":
-                            return(navigate("/employee"))
+                        case "Service":
+                            return(navigate("/callhistory"))
                         default:
                             return(navigate("/client"))
                     }

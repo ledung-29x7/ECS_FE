@@ -1,6 +1,11 @@
 import SidebarEmployee from "../components/Sidebar/SiderbarEmployee"
-
-function EmployeeLayout (){
+import PropTypes from 'prop-types';
+import classNames from 'classnames/bind';
+import Header from '~/layouts/components/Header';
+import styles from './DefaultLayout.module.scss';
+import { publicRoutes } from '~/routes';
+import { Link } from "react-router-dom";
+function EmployeeLayout ({children}){
     const employee = window.sessionStorage.getItem("employeeID")
     return(
         <>

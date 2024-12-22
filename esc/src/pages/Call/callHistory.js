@@ -10,7 +10,7 @@ function CallHistory() {
     const [callStatus, setCallStatus] = useState([]);
     const navigate = useNavigate();
 
-    // const [callHistoryId, setCallHistoryId] = ({});
+    const [callHistoryId, setCallHistoryId] =useState ({});
     const [valueAdd, setValueAdd] = useState({
         employeeId: employeeID,
         phoneNumber: '',
@@ -105,16 +105,16 @@ function CallHistory() {
         FetchData();
     };
 
-    // async function GetAllCallHistoryById(id) {
-    //     try {
-    //         const res = await apis.GetCallHistoryById(id);
-    //         if (res.status === 200) {
-    //             setCallHistoryId(res.data);
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
+    async function GetAllCallHistoryById(id) {
+        try {
+            const res = await apis.GetCallHistoryById(id);
+            if (res.status === 200) {
+                setCallHistoryId(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const handleDelete = async (id) => {
         try {
             console.log('try');
@@ -456,7 +456,7 @@ function CallHistory() {
                                                         data-bs-target="#viewUser"
                                                         title="Preview"
                                                         data-bs-toggle="modal"
-                                                        // onClick={() => GetAllCallHistoryById(res.callId)}
+                                                        onClick={() => GetAllCallHistoryById(res.callId)}
                                                     >
                                                         <i className="ri-eye-line ri-22px" />
                                                     </a>
@@ -472,7 +472,7 @@ function CallHistory() {
                                                             className="dropdown-item view-record"
                                                             data-bs-target="#viewUser"
                                                             data-bs-toggle="modal"
-                                                            // onClick={() => GetAllCallHistoryById(res?.callId)}
+                                                            onClick={() => GetAllCallHistoryById(res?.callId)}
                                                         >
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>view</span>
@@ -779,7 +779,7 @@ function CallHistory() {
                 </div>
             </div>
             {/* getbyid */}
-            <div className="modal fade" id="viewUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+            <div className="modal fade" id="viewUser" tabIndex={-1} style={{ display: 'none'}} aria-hidden="true">
                 <div className="modal-dialog modal-lg modal-simple modal-view-user">
                     <div className="modal-content">
                         <div className="modal-body p-0">
@@ -866,16 +866,6 @@ function CallHistory() {
                                             >
                                                 notes
                                             </th>
-
-                                            <th
-                                                className="sorting_disabled"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Actions"
-                                            >
-                                                Actions
-                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -885,7 +875,7 @@ function CallHistory() {
                                                 <div className="d-flex justify-content-start align-items-center user-name">
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
-                                                            {/* <span className="fw-medium">{callHistoryId?.callId}</span> */}
+                                                            <span className="fw-medium">{callHistoryId?.callId}</span>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -895,7 +885,7 @@ function CallHistory() {
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
                                                             <span className="fw-medium">
-                                                                {/* {callHistoryId?.employeeId} */}
+                                                                {callHistoryId?.employeeId}
                                                             </span>
                                                         </a>
                                                     </div>
@@ -906,7 +896,7 @@ function CallHistory() {
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
                                                             <span className="fw-medium">
-                                                                {/* {callHistoryId?.callDatetime} */}
+                                                                {callHistoryId?.callDatetime}
                                                             </span>
                                                         </a>
                                                     </div>
@@ -917,7 +907,7 @@ function CallHistory() {
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
                                                             <span className="fw-medium">
-                                                                {/* {callHistoryId?.phoneNumber} */}
+                                                                {callHistoryId?.phoneNumber}
                                                             </span>
                                                         </a>
                                                     </div>
@@ -927,7 +917,7 @@ function CallHistory() {
                                                 <div className="d-flex justify-content-start align-items-center user-name">
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
-                                                            {/* <span className="fw-medium">{callHistoryId?.status}</span> */}
+                                                            <span className="fw-medium">{callHistoryId?.status}</span>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -936,7 +926,7 @@ function CallHistory() {
                                                 <div className="d-flex justify-content-start align-items-center user-name">
                                                     <div className="d-flex flex-column">
                                                         <a className="text-heading text-truncate">
-                                                            {/* <span className="fw-medium">{callHistoryId?.notes}</span> */}
+                                                            <span className="fw-medium">{callHistoryId?.notes}</span>
                                                         </a>
                                                     </div>
                                                 </div>

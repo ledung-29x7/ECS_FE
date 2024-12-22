@@ -1,20 +1,66 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as apis from '../../apis';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function Employee() {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+    const [employee, setEmployee] = useState([]);
+    const [role, setRole] = useState([]);
+    const [department, setDepartment] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [readerImg, setReaderImg] = useState([]);
     const [valueAdd, setValueAdd] = useState({
         FirstName: '',
         LastName: '',
         Email: '',
+        DepartmentID: 0,
+        RoleId: 0,
         Password: '',
         PhoneNumber: '',
     });
+    const FetchApi = async () => {
+        try {
+            await apis.GetAllEmployee().then((res) => {
+                if (res.status === 200) {
+                    setEmployee(res.data);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        const fetchRole = async () => {
+            try {
+                const res = await apis.GetAllRole();
+                if (res.status === 200) {
+                    setRole(res.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchRole();
+    }, []);
+    useEffect(() => {
+        const fetchDepartment = async () => {
+            try {
+                const res = await apis.GetAllDepartment();
+                if (res.status === 200) {
+                    setDepartment(res.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchDepartment();
+    }, []);
+
+    useEffect(() => {
+        FetchApi();
+    }, []);
     const handleFileChange = (event) => {
         const files = event.target.files;
         if (files.length > 0) {
@@ -26,18 +72,21 @@ function Employee() {
         }
     };
     const handleChange = (event) => {
-        const { value, name } = event.target;
+        const { name, value } = event.target;
         setValueAdd((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: ['DepartmentID', 'RoleId'].includes(name) ? Number(value) : value,
         }));
     };
+
     const handleSumbit = (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('FirstName', valueAdd.FirstName);
         formData.append('LastName', valueAdd.LastName);
         formData.append('Email', valueAdd.Email);
+        formData.append('DepartmentID', valueAdd.DepartmentID);
+        formData.append('RoleId', valueAdd.RoleId);
         formData.append('Password', valueAdd.Password);
         formData.append('PhoneNUmber', valueAdd.PhoneNumber);
         if (selectedImage && selectedImage.length > 0) {
@@ -48,6 +97,11 @@ function Employee() {
             console.error('No files to upload.');
             return;
         }
+        console.log('FormData content:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
         const fetchData = async () => {
             try {
                 const res = await apis.AddEmployee(formData);
@@ -57,7 +111,6 @@ function Employee() {
                     if (closeButton) {
                         closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
                     }
-
                 }
             } catch (error) {
                 console.error('Lỗi khi gửi API:', error.response?.data || error.message);
@@ -277,7 +330,7 @@ function Employee() {
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
-                                            Order
+                                            Name employee
                                         </th>
                                         <th
                                             className="sorting sorting_asc"
@@ -289,7 +342,7 @@ function Employee() {
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
-                                            product
+                                            email
                                         </th>
                                         <th
                                             className="sorting"
@@ -300,7 +353,7 @@ function Employee() {
                                             style={{ width: 88 }}
                                             aria-label="price: activate to sort column ascending"
                                         >
-                                            price
+                                            phoneNumber
                                         </th>
                                         <th
                                             className="sorting"
@@ -311,7 +364,18 @@ function Employee() {
                                             style={{ width: 88 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
-                                            qty
+                                            role
+                                        </th>
+                                        <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 88 }}
+                                            aria-label="qty: activate to sort column ascending"
+                                        >
+                                            department
                                         </th>
                                         <th
                                             className="sorting"
@@ -327,366 +391,65 @@ function Employee() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
+                                    {employee?.map((res) => (
+                                        <tr className="odd">
+                                            <td className="control" tabIndex={0} style={{}} />
+                                            <td className="  dt-checkboxes-cell">
+                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center product-name">
+                                                    <div className="avatar-wrapper me-4">
+                                                        <div className="avatar rounded-2 bg-label-secondary">
+                                                            <img
+                                                                src={`data:${res?.images[0]?.type};base64,${res?.images[0]?.imageBase64}`}
+                                                                alt=""
+                                                                className=""
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="d-flex flex-column">
+                                                        <span className="text-nowrap text-heading fw-medium">
+                                                            {res?.firstName}
+                                                            {res.lastName}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span>{res?.email}</span>
+                                            </td>
+                                            <td>
+                                                <span>{res?.phoneNumber}</span>
+                                            </td>
+                                            <td>
+                                                <span> {role.find((r) => r.roleId === res?.roleId)?.roleName}</span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {' '}
+                                                    {
+                                                        department.find((r) => r.departmentID === res?.departmentId)
+                                                            ?.departmentName
+                                                    }
+                                                </span>
+                                            </td>
 
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-9.png"
-                                                            alt="Product-9"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
+                                            <td className="" style={{}}>
+                                                <div className="d-flex align-items-center">
+                                                    <a
+                                                        href="javascript:;"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Delete Invoice"
+                                                        // onClick={() => handleDelete(res?.roleId)}
+                                                    >
+                                                        <i className="ri-delete-bin-7-line ri-22px" />
+                                                    </a>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Air Jordan
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Air Jordan is a line of basketball shoes produced by Nike
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$125</span>
-                                        </td>
-                                        <td>
-                                            <span>942</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-13.png"
-                                                            alt="Product-13"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Amazon Fire TV
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        4K UHD smart TV, stream live TV without cable
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td>
-                                            <span>$263.49</span>
-                                        </td>
-                                        <td>
-                                            <span>587</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-15.png"
-                                                            alt="Product-15"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Apple iPad
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        10.2-inch Retina Display, 64GB
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$248.39</span>
-                                        </td>
-                                        <td>
-                                            <span>468</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-5.png"
-                                                            alt="Product-5"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Apple Watch Series 7
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Starlight Aluminum Case with Starlight Sport Band.
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$799</span>
-                                        </td>
-                                        <td>
-                                            <span>851</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-16.png"
-                                                            alt="Product-16"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        BANGE Anti Theft Backpack
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Smart Business Laptop Fits 15.6 Inch Notebook
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$79.99</span>
-                                        </td>
-                                        <td>
-                                            <span>519</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-18.png"
-                                                            alt="Product-18"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Canon EOS Rebel T7
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        18-55mm Lens | Built-in Wi-Fi | 24.1 MP CMOS Sensor
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td>
-                                            <span>$399</span>
-                                        </td>
-                                        <td>
-                                            <span>810</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-3.png"
-                                                            alt="Product-3"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Dohioue Wall Clock
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Modern 10 Inch Battery Operated Wall Clocks
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$16.34</span>
-                                        </td>
-                                        <td>
-                                            <span>804</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -882,6 +645,51 @@ function Employee() {
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <div className="form-floating form-floating-outline form-floating-select2">
+                                        <div className="position-relative">
+                                            <select
+                                                id="select2Basic"
+                                                className="form-select"
+                                                name="DepartmentID"
+                                                value={valueAdd.DepartmentID}
+                                                onChange={handleChange}
+                                            >
+                                                <option value="">Select status</option>
+
+                                                {department.map((res, key) => (
+                                                    <option key={key} value={res.departmentID}>
+                                                        {res.departmentName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <label htmlFor="select2Basic">Department</label>
+                                    </div>
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <div className="form-floating form-floating-outline form-floating-select2">
+                                        <div className="position-relative">
+                                            <select
+                                                id="select2Basic"
+                                                className="form-select"
+                                                name="RoleId"
+                                                value={valueAdd.RoleId}
+                                                onChange={handleChange}
+                                            >
+                                                <option value="">Select status</option>
+
+                                                {role.map((res, key) => (
+                                                    <option key={key} value={res.roleId}>
+                                                        {res.roleName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <label htmlFor="select2Basic">Role</label>
+                                    </div>
+                                </div>
+
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="Password"
                                         className="form-control"
@@ -913,47 +721,49 @@ function Employee() {
                                         onChange={handleFileChange}
                                         accept=".jpg,.jpeg,.png,.gif"
                                     />
-                                    {readerImg.map((img,key)=>(
-                                        <div  key={key} 
-                                                className="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                    {readerImg.map((img, key) => (
+                                        <div
+                                            key={key}
+                                            className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
+                                        >
                                             <div className="dz-details">
+                                                {' '}
+                                                <div className="dz-thumbnail">
                                                     {' '}
-                                                    <div className="dz-thumbnail">
+                                                    <img
+                                                        data-dz-thumbnail=""
+                                                        className="w-12 h-7"
+                                                        alt=""
+                                                        src={img}
+                                                    />{' '}
+                                                    <span className="dz-nopreview">No preview</span>{' '}
+                                                    <div className="dz-success-mark" />{' '}
+                                                    <div className="dz-error-mark" />{' '}
+                                                    <div className="dz-error-message">
+                                                        <span data-dz-errormessage="" />
+                                                    </div>{' '}
+                                                    <div className="progress">
                                                         {' '}
-                                                        <img
-                                                            data-dz-thumbnail=""
-                                                            className="w-12 h-7"
-                                                            alt=""
-                                                            src={img}
+                                                        <div
+                                                            className="progress-bar progress-bar-primary"
+                                                            role="progressbar"
+                                                            aria-valuemin={0}
+                                                            aria-valuemax={100}
+                                                            data-dz-uploadprogress=""
+                                                            style={{ width: '100%' }}
                                                         />{' '}
-                                                        <span className="dz-nopreview">No preview</span>{' '}
-                                                        <div className="dz-success-mark" />{' '}
-                                                        <div className="dz-error-mark" />{' '}
-                                                        <div className="dz-error-message">
-                                                            <span data-dz-errormessage="" />
-                                                        </div>{' '}
-                                                        <div className="progress">
-                                                            {' '}
-                                                            <div
-                                                                className="progress-bar progress-bar-primary"
-                                                                role="progressbar"
-                                                                aria-valuemin={0}
-                                                                aria-valuemax={100}
-                                                                data-dz-uploadprogress=""
-                                                                style={{ width: '100%' }}
-                                                            />{' '}
-                                                        </div>
-                                                    </div>{' '}
-                                                    <div className="dz-filename" data-dz-name="">
-                                                        Screenshot (8).png
-                                                    </div>{' '}
-                                                    <div className="dz-size" data-dz-size="">
-                                                        <strong>1.6</strong> MB
                                                     </div>
-                                                    <a className="dz-remove" href="javascript:undefined;" data-dz-remove="">
+                                                </div>{' '}
+                                                <div className="dz-filename" data-dz-name="">
+                                                    Screenshot (8).png
+                                                </div>{' '}
+                                                <div className="dz-size" data-dz-size="">
+                                                    <strong>1.6</strong> MB
+                                                </div>
+                                                <a className="dz-remove" href="javascript:undefined;" data-dz-remove="">
                                                     Remove file
                                                 </a>
-                                                </div>      
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

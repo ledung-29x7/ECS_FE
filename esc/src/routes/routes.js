@@ -21,8 +21,9 @@ import AddProducts from '~/pages/Product/addProduct';
 import Role from '~/pages/Role';
 import Client from '~/pages/Client';
 import LoginClient from '~/pages/Athor/loginClient';
-import RegisterClient from '~/pages/Admin/registerClient';
 import ClientLayout from '~/layouts/DefaultLayout/ClientLayout';
+import EmployeeLayout from '~/layouts/DefaultLayout/EmployeeLayout';
+import RegisterClient from '~/pages/Admin/registerClient';
 
 // Public routes
 export const publicRoutes = [
@@ -35,100 +36,102 @@ export const publicRoutes = [
         component: Login,
         layout: null,
     },
-    {
-        path: config.routes.loginClient,
-        component: LoginClient,
-        layout: null,
+    { 
+        path: config.routes.loginClient, 
+        component: LoginClient, 
+        layout: null 
     },
-    {
-        path: config.routes.register,
-        component: Register,
-        layout: null,
+    { 
+        path: config.routes.register, 
+        component: Register, 
+        layout: null 
     },
-    {
-        path: config.routes.employee,
-        component: Employee,
-        role: 'admin',
-        profession: 'manageEmployee',
-        name: 'Employee',
+    { 
+        path: config.routes.employee, 
+        component: Employee ,
+        role: "admin",
+        profession: "manageEmployee",
+        name: "Employee"
     },
-    {
-        path: config.routes.service,
+    { 
+        path: config.routes.service, 
         component: ServiceManage,
-        role: 'admin',
-        profession: 'manageService',
-        name: 'Service',
+        role: "admin",
+        profession: "manageService",
+        name: "Service"
     },
-    {
-        path: config.routes.detailEmployee,
+    { 
+        path: config.routes.registerClient, 
+        component: RegisterClient,
+        role: "admin",
+        profession: "manageClient",
+        name: "Client"
+    },
+    { 
+        path: config.routes.detailEmployee, 
         component: DetailEmployee,
         role: 'admin',
-        profession: 'manageEmployee',
-        name: 'Detail Employee',
+        profession: "manageEmployee",
+        name: "Detail Employee"
     },
-    {
-        path: config.routes.department,
-        component: Department,
-        role: 'admin',
-        profession: 'manageEmployee',
-        name: 'Department',
+    { 
+        path: config.routes.department, 
+        component: Department, 
+        role: 'admin', 
+        profession: "manageEmployee",
+        name: "Department"
     },
-    {
-        path: config.routes.order,
+    { 
+        path: config.routes.order, 
         component: Order,
-        role: 'admin',
-        profession: 'manageEmployee',
-        name: 'Order',
+        role: "admin",
+        profession: "manageEmployee",
+        name: "Order"
     },
-    {
-        path: config.routes.orderDetail,
+    { 
+        path: config.routes.orderDetail, 
         component: OrderDetail,
+        
     },
-    {
-        path: config.routes.product,
-        component: Product,
-        role: 'client',
+    { 
+        path: config.routes.product, 
+        component: Product ,
+        role: "client",
         layout: ClientLayout,
         profession: null,
-        name: 'Products',
+        name: "Products"
     },
-    {
-        path: config.routes.addProduct,
+    { 
+        path: config.routes.addProduct, 
         component: AddProducts,
         layout: ClientLayout,
     },
-    {
-        path: config.routes.productCategory,
+    { 
+        path: config.routes.productCategory, 
         component: ProductCategory,
-        role: 'client',
+        role: "client",
         layout: ClientLayout,
-        name: 'Product Service',
-    },
-    {
-        path: config.routes.callhistory,
-        component: CallHistory,
-        role: 'admin',
-        profession: 'manageEmployee',
-        name: 'History Call',
-    },
-    {
-        path: config.routes.role,
-        component: Role,
-        role: 'admin',
-        profession: 'User',
-        name: 'Role',
-    },
-    {
-        path: config.routes.client,
-        component: Client,
-        layout: null,
+        name: "Product Service"
     },
     { 
-        path: config.routes.registerClient,
-        component: RegisterClient ,
-        role:"admin",
-        profession:"manageClient",
-        name:'Register Client'
+        path: config.routes.callhistory, 
+        component: CallHistory,
+        role: "employee",
+        profession: "manageEmployee",
+        name: "History Call",
+        layout: EmployeeLayout
+    },
+    { 
+        path: config.routes.role, 
+        component: Role,
+        role: "admin",
+        profession: "User",
+        name: "Role"
+    },
+    { 
+        path: config.routes.client, 
+        component: Client, 
+        layout: null,
     },
 ];
 

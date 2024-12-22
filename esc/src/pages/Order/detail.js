@@ -1,14 +1,54 @@
 import { useParams } from "react-router-dom"
-import { useEffect } from "react";
-
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import * as apis from '../../apis';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function OrderDetail() {
 
-    const { id } = useParams();
+    // const { id } = useParams();
 
-    useEffect(() => {
-    console.log('Order ID:', id);
+    // useEffect(() => {
+    // console.log('Order ID:', id);
     
-    }, [id]);
+    // }, [id]);
+        const [product, setProduct] = useState([]);
+        const [image, setImage] = useState([]);
+        const idClient = window.sessionStorage.getItem('idClient');
+const FetchApi = async () => {
+        try {
+            await apis
+                .GetAllProductByClient(idClient)
+                .then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setProduct(res.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        // Hàm để hiển thị ảnh từ JSON
+        const images = [];
+        function displayImages(imageDTOs) {
+            imageDTOs?.forEach((imageDTO) => {
+                images.push({
+                    id: imageDTO?.id,
+                    image: `data:${imageDTO?.type};base64,${imageDTO?.image}`,
+                });
+            });
+        }
+        // Gọi hàm hiển thị ảnh
+        displayImages(product?.imageFiles);
+        setImage(images);
+    }, [product]);
+
 
     return (
         <div className="content-wrapper">
@@ -113,6 +153,8 @@ function OrderDetail() {
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        {product?.map((res, key) => (
+
                                             <tr className="odd">
                                                 <td
                                                     className="  control"
@@ -126,26 +168,26 @@ function OrderDetail() {
                                                     />
                                                 </td>
                                                 <td className="sorting_1">
-                                                    <div className="d-flex justify-content-start align-items-center product-name">
-                                                        <div className="avatar-wrapper me-3">
-                                                            <div className="avatar avatar-sm rounded-2 bg-label-secondary">
-                                                                <img
-                                                                    src="../../assets/img/products/woodenchair.png"
-                                                                    alt="product-Wooden Chair"
-                                                                    className="rounded-2"
-                                                                />
+                                                        <div className="d-flex justify-content-start align-items-center product-name">
+                                                            <div className="avatar-wrapper me-4">
+                                                                <div className="avatar rounded-2 bg-label-secondary">
+                                                                    <img
+                                                                        src={`data:${res?.images[0]?.type};base64,${res?.images[0]?.imageBase64}`}
+                                                                        alt=""
+                                                                        className=""
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                            <div className="d-flex flex-column">
+                                                                <span className="text-nowrap text-heading fw-medium">
+                                                                    {res?.productName}
+                                                                </span>
+                                                                <small className="text-truncate d-none d-sm-block">
+                                                                    {res?.description}
+                                                                </small>
                                                             </div>
                                                         </div>
-                                                        <div className="d-flex flex-column">
-                                                            <span className="text-nowrap text-heading fw-medium">
-                                                                Wooden Chair
-                                                            </span>
-                                                            <small className="text-truncate d-none d-sm-block">
-                                                                Material: Wooden
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
                                                 <td>
                                                     <span>$841</span>
                                                 </td>
@@ -156,135 +198,7 @@ function OrderDetail() {
                                                     <span>$1682</span>
                                                 </td>
                                             </tr>
-                                            <tr className="even">
-                                                <td
-                                                    className="  control"
-                                                    tabIndex={0}
-                                                    style={{ display: "none" }}
-                                                />
-                                                <td className="  dt-checkboxes-cell">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="dt-checkboxes form-check-input"
-                                                    />
-                                                </td>
-                                                <td className="sorting_1">
-                                                    <div className="d-flex justify-content-start align-items-center product-name">
-                                                        <div className="avatar-wrapper me-3">
-                                                            <div className="avatar avatar-sm rounded-2 bg-label-secondary">
-                                                                <img
-                                                                    src="../../assets/img/products/oneplus.png"
-                                                                    alt="product-Oneplus 10"
-                                                                    className="rounded-2"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="d-flex flex-column">
-                                                            <span className="text-nowrap text-heading fw-medium">
-                                                                Oneplus 10
-                                                            </span>
-                                                            <small className="text-truncate d-none d-sm-block">
-                                                                Storage:128gb
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span>$896</span>
-                                                </td>
-                                                <td>
-                                                    <span>3</span>
-                                                </td>
-                                                <td>
-                                                    <span>$2688</span>
-                                                </td>
-                                            </tr>
-                                            <tr className="odd">
-                                                <td
-                                                    className="  control"
-                                                    tabIndex={0}
-                                                    style={{ display: "none" }}
-                                                />
-                                                <td className="  dt-checkboxes-cell">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="dt-checkboxes form-check-input"
-                                                    />
-                                                </td>
-                                                <td className="sorting_1">
-                                                    <div className="d-flex justify-content-start align-items-center product-name">
-                                                        <div className="avatar-wrapper me-3">
-                                                            <div className="avatar avatar-sm rounded-2 bg-label-secondary">
-                                                                <img
-                                                                    src="../../assets/img/products/nikejordan.png"
-                                                                    alt="product-Nike Jordan"
-                                                                    className="rounded-2"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="d-flex flex-column">
-                                                            <span className="text-nowrap text-heading fw-medium">
-                                                                Nike Jordan
-                                                            </span>
-                                                            <small className="text-truncate d-none d-sm-block">
-                                                                Size:8UK
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span>$392</span>
-                                                </td>
-                                                <td>
-                                                    <span>1</span>
-                                                </td>
-                                                <td>
-                                                    <span>$392</span>
-                                                </td>
-                                            </tr>
-                                            <tr className="even">
-                                                <td
-                                                    className="  control"
-                                                    tabIndex={0}
-                                                    style={{ display: "none" }}
-                                                />
-                                                <td className="  dt-checkboxes-cell">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="dt-checkboxes form-check-input"
-                                                    />
-                                                </td>
-                                                <td className="sorting_1">
-                                                    <div className="d-flex justify-content-start align-items-center product-name">
-                                                        <div className="avatar-wrapper me-3">
-                                                            <div className="avatar avatar-sm rounded-2 bg-label-secondary">
-                                                                <img
-                                                                    src="../../assets/img/products/facecream.png"
-                                                                    alt="product-Face cream"
-                                                                    className="rounded-2"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="d-flex flex-column">
-                                                            <span className="text-nowrap text-heading fw-medium">
-                                                                Face cream
-                                                            </span>
-                                                            <small className="text-truncate d-none d-sm-block">
-                                                                Gender:Women
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span>$813</span>
-                                                </td>
-                                                <td>
-                                                    <span>2</span>
-                                                </td>
-                                                <td>
-                                                    <span>$1626</span>
-                                                </td>
-                                            </tr>
+                                        ))}
                                         </tbody>
                                     </table>
                                     <div style={{ width: "1%" }} />
