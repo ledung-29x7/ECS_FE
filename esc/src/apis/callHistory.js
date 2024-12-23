@@ -27,7 +27,7 @@ export const GetAllCallStatus = ()=>new Promise(async(resolve,reject)=>{
 export const GetAllEmployee=()=>new Promise(async(resolve,reject)=>{
     try {
        const responsive =await axios({
-        url:"/Authentication",
+        url:"/Employee/GetAll",
         method:"get"
        })
        resolve(responsive)

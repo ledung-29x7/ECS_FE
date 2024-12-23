@@ -22,7 +22,7 @@ function CallHistory() {
             try {
                 const res = await apis.GetAllEmployee();
                 if (res.status === 200) {
-                    setEmployee(res.data);
+                    setEmployee(res.data.employees);
                 }
             } catch (error) {
                 console.log(error);
