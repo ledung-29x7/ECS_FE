@@ -304,23 +304,6 @@ function Employee() {
                                 <thead>
                                     <tr>
                                         <th
-                                            className="control sorting_disabled"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 0 }}
-                                            aria-label=""
-                                        />
-                                        <th
-                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 18 }}
-                                            data-col={1}
-                                            aria-label=""
-                                        >
-                                            <input type="checkbox" className="form-check-input" />
-                                        </th>
-                                        <th
                                             className="sorting sorting_asc"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
@@ -393,10 +376,6 @@ function Employee() {
                                 <tbody>
                                     {employee?.map((res) => (
                                         <tr className="odd">
-                                            <td className="control" tabIndex={0} style={{}} />
-                                            <td className="  dt-checkboxes-cell">
-                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                            </td>
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center product-name">
                                                     <div className="avatar-wrapper me-4">
