@@ -11,18 +11,19 @@ function ClientLayout({ children }) {
     const idClient = window.sessionStorage.getItem('idClient');
     return (
         <>
-            {idClient !== null ? (
-                <div className="layout-wrapper layout-content-navbar">
-                    <div className="layout-container">
-                        <SidebarClient routes={publicRoutes} />
-                        <div class="layout-page">
-                            <Header />
-                            <div className="">
-                                <div className="">{children}</div>
-                            </div>
+            <div className="layout-wrapper layout-content-navbar">
+                <div className="layout-container">
+                    <SidebarClient routes={publicRoutes} />
+                    <div class="layout-page">
+                        <Header />
+                        <div className="">
+                            <div className="">{children}</div>
                         </div>
                     </div>
                 </div>
+            </div>
+            {idClient !== null ? (
+              <div></div>
             ) : (
                 <div className="misc-wrapper">
                 <h1 className="mb-2 mx-2" style={{ fontSize: "6rem", lineHeight: "6rem" }}>

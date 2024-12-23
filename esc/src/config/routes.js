@@ -20,7 +20,8 @@ const routes = {
     callhistory: "/callhistory",
     role:"/role",
     client: "/client",
-    loginClient: "/loginClient"
+    loginClient: "/loginClient",
+    productAdmin: "/product-admin"
 };
 
 export default routes;

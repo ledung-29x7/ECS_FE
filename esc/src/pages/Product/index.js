@@ -16,7 +16,13 @@ function Product() {
     const [readerImg, setReaderImg] = useState([]);
     const [service, setService] = useState([]);
     const [category, setCategory] = useState([]);
-
+    const [productStatus, setProductStatus] = useState([]);
+    const [addImage, setAddImage] = useState({
+        productImageId: 0,
+        productId: '',
+        imageId: 0,
+        product: '',
+    });
     const [valueEdit, setValueEdit] = useState({
         productId: '',
         clientId: idClient,
@@ -28,6 +34,7 @@ function Product() {
         isActive: false,
         status: 0,
         createdAt: '',
+        productImages: [],
     });
 
     const FetchApi = async () => {
@@ -47,6 +54,17 @@ function Product() {
             console.log(error);
         }
     };
+    const FetApiProductStatus = async () => {
+        try {
+            await apis.GetProductStatus().then((res) => {
+                if (res.status === 200) {
+                    setProductStatus(res.data);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
     // Fetch danh mục sản phẩm
     useEffect(() => {
         const fetchCategories = async () => {
@@ -61,6 +79,7 @@ function Product() {
         };
         fetchCategories();
     }, []);
+
     useEffect(() => {
         // Hàm để hiển thị ảnh từ JSON
         const images = [];
@@ -87,9 +106,49 @@ function Product() {
             setSelectedImage(files); // Lưu file vào state
             const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
             setReaderImg(imgUpload); // Tạo URL preview ảnh
+            if (!addImage.productImageId) {
+                alert('Please select a service!');
+                return;
+            }
+    
+            // Thêm dịch vụ mới vào danh sách
+            setValueEdit((prev) => ({
+                ...prev,
+                productImages: [
+                    ...prev.productImages,
+                    { ...addImage }, // Copy dữ liệu từ addService
+                ],
+            }));
+    
+            // Reset serviceId trong addService (nếu cần)
+            setAddImage((prev) => ({
+                ...prev,
+                productImageId: 0,
+            }));
         } else {
             console.error('No files selected.');
         }
+    };
+
+    const handleAddService = () => {
+        
+    };
+
+    const handleShowEdit = (pram) => {
+        const FetchData = async () => {
+            try {
+                await apis.GetProductById(pram).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setIsShowEdit(true);
+                        setValueEdit(res.data);
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        FetchData();
     };
 
     const handleDelete = async (id) => {
@@ -105,6 +164,7 @@ function Product() {
             console.error(error);
         }
     };
+
     const handleSumbitEdit = async (e) => {
         e.preventDefault();
         const FetchData = async () => {
@@ -121,9 +181,12 @@ function Product() {
         };
         FetchData();
     };
+
     useEffect(() => {
         FetchApi();
+        FetApiProductStatus();
     }, []);
+
     return (
         <>
             {isShowEdit ? (
@@ -298,7 +361,7 @@ function Product() {
                                                     onChange={handleFileChange}
                                                     accept=".jpg,.jpeg,.png,.gif"
                                                 />
-                                                {readerImg.map((img, key) => (
+                                                {valueEdit.productImages.map((img, key) => (
                                                     <div
                                                         key={key}
                                                         className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
@@ -1129,7 +1192,10 @@ function Product() {
                                                             className="badge rounded-pill bg-label-danger"
                                                             text-capitalized=""
                                                         >
-                                                            {res?.status}
+                                                            {
+                                                            productStatus.find((r) => r.statusId === res?.status)
+                                                                ?.statusName
+                                                        }
                                                         </span>
                                                     </td>
                                                     <td>
@@ -1138,22 +1204,18 @@ function Product() {
                                                     <td>
                                                         <span>${res.price}</span>
                                                     </td>
-
                                                     <td>
-                                                        <span className="text-truncate">
-                                                            <label className="switch switch-primary switch-sm">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    value={res?.isActive}
-                                                                    className="switch-input"
-                                                                    id="switch"
-                                                                />
-                                                                <span className="switch-toggle-slider">
-                                                                    <span className="switch-off" />
-                                                                </span>
-                                                            </label>
-                                                        </span>
-                                                    </td>
+                                                    <div  class="form-check text-truncate form-switch">
+                                                        <input
+                                                            style={{width: "30px"}}
+                                                            class="form-check-input"
+                                                            checked={res?.isActive}
+                                                            type="checkbox"
+                                                            disabled
+                                                            id="flexSwitchCheckDefault"
+                                                        />
+                                                    </div>
+                                                </td>
                                                     <td>
                                                         <span>{res?.createdAt}</span>
                                                     </td>
@@ -1161,7 +1223,7 @@ function Product() {
                                                         <div className="d-inline-block text-nowrap">
                                                             <button
                                                                 className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1"
-                                                                onClick={() => setIsShowEdit(true)}
+                                                                onClick={() => handleShowEdit(res?.productId)}
                                                             >
                                                                 <i className="ri-edit-box-line ri-22px" />
                                                             </button>

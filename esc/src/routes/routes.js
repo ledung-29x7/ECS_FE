@@ -15,7 +15,6 @@ import Order from '~/pages/Order';
 import OrderDetail from '~/pages/Order/detail';
 import Product from '~/pages/Product';
 import ProductCategory from '~/pages/Product/ProductCategory';
-import Customer from '~/pages/Customer';
 import CallHistory from '~/pages/Call/callHistory';
 import AddProducts from '~/pages/Product/addProduct';
 
@@ -23,6 +22,7 @@ import Role from '~/pages/Role';
 import Client from '~/pages/Client';
 import LoginClient from '~/pages/Athor/loginClient';
 import ClientLayout from '~/layouts/DefaultLayout/ClientLayout';
+import ProductAdmin from '~/pages/Product/productAdmin';
 
 // Public routes
 export const publicRoutes = [
@@ -105,7 +105,6 @@ export const publicRoutes = [
         layout: ClientLayout,
         name: "Product Service"
     },
-    { path: config.routes.customer, component: Customer },
     { 
         path: config.routes.callhistory, 
         component: CallHistory,
@@ -125,6 +124,13 @@ export const publicRoutes = [
         component: Client, 
         layout: null,
     },
+    {
+        path: config.routes.productAdmin,
+        component: ProductAdmin,
+        role: 'admin',
+        profession: "manageClient",
+        name: "Product"
+    }
 ];
 
 // Private routes
