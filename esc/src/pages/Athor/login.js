@@ -27,7 +27,8 @@ function Login() {
                     console.log(res)
                     window.sessionStorage.setItem("token",res.data.token);
                     window.sessionStorage.getItem("name",res.data?.userName)
-                    window.sessionStorage.setItem('employeeID',res.data.employeeID)
+                    window.sessionStorage.setItem('employeeID',res.data.employeeID);
+                    window.sessionStorage.setItem('role',res.data.role)
                     dispatch(actions.checkLogin(true))
                     switch (res.data.role) {
                         

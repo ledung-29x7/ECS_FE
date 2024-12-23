@@ -12,6 +12,7 @@ function AddProducts() {
     const [readerImg, setReaderImg] = useState([]);
     const [service, setService] = useState([]);
     const [category, setCategory] = useState([]);
+    const [totalCost, setTotalCost] = useState(0);
     const [addService, setAddService] = useState({
         ServiceId: 0,
         ClientId: idClient,
@@ -21,7 +22,7 @@ function AddProducts() {
     });
 
     const [valueAdd, setValueAdd] = useState({
-        clientId: window.sessionStorage.getItem('idClient'),
+        clientId: idClient,
         CategoryId: 0,
         ProductName: '',
         Price: 0,
@@ -30,6 +31,11 @@ function AddProducts() {
         productServicesJson: [],
     });
     const datePickerRef = useRef(null);
+    const inputElement = useRef();
+    const focusInput = () => {
+        inputElement.current.click();
+    };
+
     useEffect(() => {
         if (window.flatpickr && datePickerRef.current) {
             window.flatpickr(datePickerRef.current, {
@@ -40,11 +46,23 @@ function AddProducts() {
         }
     }, []);
 
+    const caculation = () => {
+
+    }
+
     const handleAddService = () => {
         if (!addService.ServiceId) {
             alert('Please select a service!');
             return;
         }
+         // Tính số ngày
+        const startDate = new Date(addService.StartDate);
+        const endDate = new Date(addService.EndDate);
+        const days = Math.max(1, (endDate - startDate) / (1000 * 60 * 60 * 24)); 
+
+        // Lấy giá dịch vụ
+        const selectedService = service.find((s) => s.serviceId === addService.ServiceId);
+        const serviceCost = days * addService.RequiredEmployees * selectedService.costPerDay;
 
         // Thêm dịch vụ mới vào danh sách
         setValueAdd((prev) => ({
@@ -54,7 +72,7 @@ function AddProducts() {
                 { ...addService }, // Copy dữ liệu từ addService
             ],
         }));
-
+        setTotalCost((prev) => prev + serviceCost);
         // Reset serviceId trong addService (nếu cần)
         setAddService((prev) => ({
             ...prev,
@@ -83,7 +101,7 @@ function AddProducts() {
         if (files.length > 0) {
             setSelectedImage(files); // Lưu file vào state
             const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
-            setReaderImg(imgUpload); // Tạo URL preview ảnh
+            setReaderImg(prev => ({...prev, imgUpload})); // Tạo URL preview ảnh
         } else {
             console.error('No files selected.');
         }
@@ -94,19 +112,18 @@ function AddProducts() {
         const { name, value } = event.target;
         setValueAdd((prev) => ({
             ...prev,
-            [name]: ["CategoryId", "Price", "InitialQuantity"].includes(name) ? Number(value) : value,
+            [name]: ['CategoryId', 'Price', 'InitialQuantity'].includes(name) ? Number(value) : value,
         }));
     };
 
     //
     const handleChangeProductService = (event) => {
         const { name, value } = event.target;
-        console.log(value)
+        console.log(value);
         setAddService((prev) => ({
             ...prev,
-            [name]: name === "ServiceId"  || name === "RequiredEmployees"  ? Number(value) : value,
+            [name]: name === 'ServiceId' || name === 'RequiredEmployees' ? Number(value) : value,
         }));
-        
     };
 
     // get service
@@ -153,11 +170,8 @@ function AddProducts() {
         }
         valueAdd.productServicesJson.forEach((service) => {
             service.RequiredEmployees = Number(service.RequiredEmployees);
-          });
-        formData.append(
-            "productServicesJson",
-            JSON.stringify(valueAdd.productServicesJson)
-          );
+        });
+        formData.append('productServicesJson', JSON.stringify(valueAdd.productServicesJson));
 
         // Gửi FormData qua Axios
         const fetchData = async () => {
@@ -187,7 +201,7 @@ function AddProducts() {
                             <p className="mb-0">Orders placed across your store</p>
                         </div>
                         <div className="d-flex align-content-center flex-wrap gap-4">
-                            <button className="btn btn-outline-secondary waves-effect">Discard</button>
+                            <button onClick={()=>navigate("/product")} className="btn btn-outline-secondary waves-effect">Discard</button>
                             <button className="btn btn-outline-primary waves-effect">Save draft</button>
                             <button onClick={handleSumbit} className="btn btn-primary waves-effect waves-light">
                                 Publish product
@@ -228,9 +242,7 @@ function AddProducts() {
                                                             onChange={handleChange} // Gọi hàm xử lý sự kiện
                                                             aria-hidden="true"
                                                         >
-                                                            <option value="" >
-                                                                Option
-                                                            </option>
+                                                            <option value="">Option</option>
                                                             {category?.map((res, key) => (
                                                                 <option key={key} value={res.categoryId}>
                                                                     {res.categoryName}
@@ -261,7 +273,7 @@ function AddProducts() {
                                                         type="number"
                                                         className="form-control"
                                                         id="ecommerce-product-barcode"
-                                                        placeholder="0123-4567"
+                                                        placeholder=""
                                                         name="InitialQuantity"
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
@@ -273,25 +285,20 @@ function AddProducts() {
                                         {/* Comment */}
                                         <div>
                                             <label className="mb-1">Description (Optional)</label>
-                                            <div className="form-control p-0 pt-1">
+                                            <div className=" p-0 pt-1">
                                                 <div
                                                     className="comment-editor border-0 pb-1 ql-container ql-snow"
                                                     id="ecommerce-category-description"
                                                 >
-                                                    <input
+                                                      <textarea 
                                                         type="text"
-                                                        className=" border-none "
                                                         name="Description"
                                                         onChange={handleChange}
-                                                        data-formula="e=mc^2"
-                                                        data-link="https://quilljs.com"
-                                                        data-video="Embed URL"
-                                                    />
-                                                    <div
-                                                        className="ql-editor ql-blank"
-                                                        data-gramm="false"
-                                                        contentEditable="true"
-                                                    ></div>
+                                                        class="form-control" 
+                                                        id="exampleFormControlTextarea1" 
+                                                        rows="3">  
+
+                                                        </textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -326,40 +333,41 @@ function AddProducts() {
                                             <span
                                                 className="needsclick btn btn-sm btn-outline-primary waves-effect"
                                                 id="btnBrowse"
+                                                onClick={focusInput}
                                             >
                                                 Browse image
+                                                <input
+                                                    type="file"
+                                                    multiple
+                                                    hidden
+                                                    ref={inputElement}
+                                                    class="dz-hidden-input "
+                                                    onChange={handleFileChange}
+                                                    accept=".jpg,.jpeg,.png,.gif"
+                                                />
                                             </span>
                                         </div>
-                                        <input
-                                            type="file"
-                                            multiple
-                                            class="dz-hidden-input "
-                                            onChange={handleFileChange}
-                                            accept=".jpg,.jpeg,.png,.gif"
-                                        />
+
                                         {readerImg.map((img, key) => (
                                             <div
                                                 key={key}
                                                 className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
                                             >
                                                 <div className="dz-details">
-                                                    {' '}
                                                     <div className="dz-thumbnail">
-                                                        {' '}
                                                         <img
                                                             data-dz-thumbnail=""
                                                             className="w-12 h-7"
                                                             alt=""
                                                             src={img}
-                                                        />{' '}
-                                                        <span className="dz-nopreview">No preview</span>{' '}
-                                                        <div className="dz-success-mark" />{' '}
-                                                        <div className="dz-error-mark" />{' '}
+                                                        />
+                                                        <span className="dz-nopreview">No preview</span>
+                                                        <div className="dz-success-mark" />
+                                                        <div className="dz-error-mark" />
                                                         <div className="dz-error-message">
                                                             <span data-dz-errormessage="" />
-                                                        </div>{' '}
+                                                        </div>
                                                         <div className="progress">
-                                                            {' '}
                                                             <div
                                                                 className="progress-bar progress-bar-primary"
                                                                 role="progressbar"
@@ -367,474 +375,88 @@ function AddProducts() {
                                                                 aria-valuemax={100}
                                                                 data-dz-uploadprogress=""
                                                                 style={{ width: '100%' }}
-                                                            />{' '}
+                                                            />
                                                         </div>
-                                                    </div>{' '}
+                                                    </div>
                                                     <div className="dz-filename" data-dz-name="">
                                                         Screenshot (8).png
-                                                    </div>{' '}
+                                                    </div>
                                                     <div className="dz-size" data-dz-size="">
                                                         <strong>1.6</strong> MB
                                                     </div>
                                                 </div>
-                                                <a className="dz-remove" href="javascript:undefined;" data-dz-remove="">
+                                                <button className="dz-remove" onClick={()=>img} data-dz-remove="">
                                                     Remove file
-                                                </a>
+                                                </button>
                                             </div>
                                         ))}
                                     </form>
                                 </div>
                             </div>
                             {/* /Media */}
-                            {/* Variants */}
-                            <div className="card mb-6">
-                                <div className="card-header">
-                                    <h5 className="card-title mb-0">Variants</h5>
-                                </div>
-                                <div className="card-body">
-                                    <form className="form-repeater">
-                                        <div>
-                                            <button
-                                                className="btn btn-primary waves-effect waves-light"
-                                                data-repeater-create=""
-                                            >
-                                                <i className="ri-add-line ri-16px me-1_5" />
-                                                Add another option
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            {/* /Variants */}
-                            {/* Inventory */}
-                            <div className="card mb-6">
-                                <div className="card-header">
-                                    <h5 className="card-title mb-0">Inventory</h5>
-                                </div>
-                                <div className="card-body">
-                                    <div className="row">
-                                        {/* Navigation */}
-                                        <div className="col-12 col-md-4 col-xl-5 col-xxl-4 mx-auto card-separator">
-                                            <div className="d-flex justify-content-between flex-column mb-4 mb-md-0 pe-md-4">
-                                                <div className="nav-align-left">
-                                                    <ul className="nav nav-pills flex-column w-100" role="tablist">
-                                                        <li className="nav-item" role="presentation">
-                                                            <button
-                                                                className="nav-link active waves-effect waves-light"
-                                                                data-bs-toggle="tab"
-                                                                data-bs-target="#restock"
-                                                                aria-selected="true"
-                                                                role="tab"
-                                                            >
-                                                                <i className="ri-add-line me-1_5" />
-                                                                <span className="align-middle">Restock</span>
-                                                            </button>
-                                                        </li>
-                                                        <li className="nav-item" role="presentation">
-                                                            <button
-                                                                className="nav-link waves-effect waves-light"
-                                                                data-bs-toggle="tab"
-                                                                data-bs-target="#shipping"
-                                                                aria-selected="false"
-                                                                tabIndex={-1}
-                                                                role="tab"
-                                                            >
-                                                                <i className="ri-car-line me-1_5" />
-                                                                <span className="align-middle">Shipping</span>
-                                                            </button>
-                                                        </li>
-                                                        <li className="nav-item" role="presentation">
-                                                            <button
-                                                                className="nav-link waves-effect waves-light"
-                                                                data-bs-toggle="tab"
-                                                                data-bs-target="#global-delivery"
-                                                                aria-selected="false"
-                                                                tabIndex={-1}
-                                                                role="tab"
-                                                            >
-                                                                <i className="ri-global-line me-1_5" />
-                                                                <span className="align-middle">Global Delivery</span>
-                                                            </button>
-                                                        </li>
-                                                        <li className="nav-item" role="presentation">
-                                                            <button
-                                                                className="nav-link waves-effect waves-light"
-                                                                data-bs-toggle="tab"
-                                                                data-bs-target="#attributes"
-                                                                aria-selected="false"
-                                                                tabIndex={-1}
-                                                                role="tab"
-                                                            >
-                                                                <i className="ri-link-m me-1_5" />
-                                                                <span className="align-middle">Attributes</span>
-                                                            </button>
-                                                        </li>
-                                                        <li className="nav-item" role="presentation">
-                                                            <button
-                                                                className="nav-link waves-effect waves-light"
-                                                                data-bs-toggle="tab"
-                                                                data-bs-target="#advanced"
-                                                                aria-selected="false"
-                                                                tabIndex={-1}
-                                                                role="tab"
-                                                            >
-                                                                <i className="ri-lock-unlock-line me-1_5" />
-                                                                <span className="align-middle">Advanced</span>
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {/* /Navigation */}
-                                        {/* Options */}
-                                        <div className="col-12 col-md-8 col-xl-7 col-xxl-8 pt-6 pt-md-0">
-                                            <div className="tab-content p-0 pe-xl-0 ps-md-4">
-                                                {/* Restock Tab */}
-                                                <div className="tab-pane fade show active" id="restock" role="tabpanel">
-                                                    <h6 className="text-body">Options</h6>
-                                                    <div className="row mb-4 g-4">
-                                                        <div className="col-12 col-sm-8 col-lg-12 col-xxl-8">
-                                                            <div>
-                                                                <input
-                                                                    type="number"
-                                                                    className="form-control form-control-sm"
-                                                                    id="ecommerce-product-stock"
-                                                                    placeholder="Add to Stock"
-                                                                    name="Add to Stock"
-                                                                    aria-label="Add to Stock"
-                                                                />{' '}
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-6 col-sm-4 col-lg-6 col-xxl-4">
-                                                            <button className="btn btn-primary waves-effect waves-light">
-                                                                <i className="ri-check-line ri-16px me-1_5" />
-                                                                Confirm
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <h6 className="mb-2 fw-normal">Product in stock now: 54</h6>
-                                                        <h6 className="mb-2 fw-normal">Product in transit: 390</h6>
-                                                        <h6 className="mb-2 fw-normal">
-                                                            Last time restocked: 24th June, 2023
-                                                        </h6>
-                                                        <h6 className="mb-0 fw-normal">
-                                                            Total stock over lifetime: 2430
-                                                        </h6>
-                                                    </div>
-                                                </div>
-                                                {/* Shipping Tab */}
-                                                <div className="tab-pane fade" id="shipping" role="tabpanel">
-                                                    <h6 className="mb-3 text-body">Shipping Type</h6>
-                                                    <div>
-                                                        <div className="form-check mb-4">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="radio"
-                                                                name="shippingType"
-                                                                id="seller"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="seller">
-                                                                <span className="h6">Fulfilled by Seller</span>
-                                                                <br />
-                                                                <small>
-                                                                    You'll be responsible for product delivery.
-                                                                    <br />
-                                                                    Any damage or delay during shipping may cost you a
-                                                                    Damage fee.
-                                                                </small>
-                                                            </label>
-                                                        </div>
-                                                        <div className="form-check mb-6">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="radio"
-                                                                name="shippingType"
-                                                                id="companyName"
-                                                                defaultChecked=""
-                                                            />
-                                                            <label className="form-check-label" htmlFor="companyName">
-                                                                <span className="h6">
-                                                                    Fulfilled by Company name &nbsp;
-                                                                    <span className="badge rounded-pill badge-warning bg-label-warning fs-tiny py-1">
-                                                                        RECOMMENDED
-                                                                    </span>
-                                                                </span>
-                                                                <br />
-                                                                <small>
-                                                                    Your product, Our responsibility.
-                                                                    <br />
-                                                                    For a measly fee, we will handle the delivery
-                                                                    process for you.
-                                                                </small>
-                                                            </label>
-                                                        </div>
-                                                        <p className="mb-0">
-                                                            See our{' '}
-                                                            <a href="javascript:void(0);">
-                                                                Delivery terms and conditions
-                                                            </a>{' '}
-                                                            for details
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                {/* Global Delivery Tab */}
-                                                <div className="tab-pane fade" id="global-delivery" role="tabpanel">
-                                                    <h6 className="mb-3 text-body">Global Delivery</h6>
-                                                    {/* Worldwide delivery */}
-                                                    <div className="form-check mb-4">
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="radio"
-                                                            name="globalDel"
-                                                            id="worldwide"
-                                                        />
-                                                        <label className="form-check-label" htmlFor="worldwide">
-                                                            <span className="h6">Worldwide delivery</span>
-                                                            <br />
-                                                            <small>
-                                                                Only available with Shipping method:
-                                                                <a href="javascript:void(0);">
-                                                                    Fulfilled by Company name
-                                                                </a>
-                                                            </small>
-                                                        </label>
-                                                    </div>
-                                                    {/* Global delivery */}
-                                                    <div className="form-check mb-4">
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="radio"
-                                                            name="globalDel"
-                                                            defaultChecked=""
-                                                        />
-                                                        <label
-                                                            className="form-check-label w-75 pe-12 mb-2"
-                                                            htmlFor="country-selected"
-                                                        >
-                                                            <span className="h6">Selected Countries</span>
-                                                        </label>
-                                                        <div>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control form-control-sm"
-                                                                placeholder="Countries"
-                                                                id="country-selected"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    {/* Local delivery */}
-                                                    <div className="form-check">
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="radio"
-                                                            name="globalDel"
-                                                            id="local"
-                                                        />
-                                                        <label className="form-check-label" htmlFor="local">
-                                                            <span className="h6">Local delivery</span>
-                                                            <br />
-                                                            <small>
-                                                                Deliver to your country of residence :
-                                                                <a href="javascript:void(0);">Change profile address</a>
-                                                            </small>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                {/* Attributes Tab */}
-                                                <div className="tab-pane fade" id="attributes" role="tabpanel">
-                                                    <h6 className="mb-2 text-body">Attributes</h6>
-                                                    <div>
-                                                        {/* Fragile Product */}
-                                                        <div className="form-check mb-4">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                defaultValue="fragile"
-                                                                id="fragile"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="fragile">
-                                                                <span className="h6 fw-normal">Fragile Product</span>
-                                                            </label>
-                                                        </div>
-                                                        {/* Biodegradable */}
-                                                        <div className="form-check mb-4">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                defaultValue="biodegradable"
-                                                                id="biodegradable"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="biodegradable">
-                                                                <span className="h6 fw-normal">Biodegradable</span>
-                                                            </label>
-                                                        </div>
-                                                        {/* Frozen Product */}
-                                                        <div className="form-check mb-4">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                id="frozen"
-                                                                defaultValue="frozen"
-                                                                defaultChecked=""
-                                                            />
-                                                            <label
-                                                                className="form-check-label w-75 pe-12 mb-2"
-                                                                htmlFor="frozen"
-                                                            >
-                                                                <span className="h6 fw-normal mb-1">
-                                                                    Frozen Product
-                                                                </span>
-                                                            </label>
-                                                            <div>
-                                                                <input
-                                                                    type="number"
-                                                                    className="form-control form-control-sm"
-                                                                    placeholder="Max. allowed Temperature"
-                                                                    id="temp"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        {/* Exp Date */}
-                                                        <div className="form-check">
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                defaultValue="expDate"
-                                                                id="expDate"
-                                                                defaultChecked=""
-                                                            />
-                                                            <label
-                                                                className="form-check-label w-75 pe-12 mb-2"
-                                                                htmlFor="expDate"
-                                                            >
-                                                                <span className="h6 fw-normal mb-1">
-                                                                    Expiry Date of Product
-                                                                </span>
-                                                            </label>
-                                                            <div>
-                                                                <input
-                                                                    type="text"
-                                                                    className="product-date form-control form-control-sm flatpickr-input"
-                                                                    id="flatpickr-date"
-                                                                    readOnly="readonly"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* /Attributes Tab */}
-                                                {/* Advanced Tab */}
-                                                <div className="tab-pane fade" id="advanced" role="tabpanel">
-                                                    <h6 className="mb-3 text-body">Advanced</h6>
-                                                    <div className="row">
-                                                        {/* Product Id Type */}
-                                                        <div className="col">
-                                                            <h6 className="mb-2">Product ID Type</h6>
-                                                            <div>
-                                                                <select
-                                                                    id="product-id"
-                                                                    className="form-select form-select-sm"
-                                                                    data-placeholder="ISBN"
-                                                                    data-allow-clear="true"
-                                                                >
-                                                                    <option value="ISBN">ISBN</option>
-                                                                    <option value="UPC">UPC</option>
-                                                                    <option value="EAN">EAN</option>
-                                                                    <option value="JAN">JAN</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        {/* Product Id */}
-                                                        <div className="col">
-                                                            <h6 className="mb-2">Product ID</h6>
-                                                            <div>
-                                                                <input
-                                                                    type="number"
-                                                                    id="product-id-1"
-                                                                    className="form-control form-control-sm"
-                                                                    placeholder="ISBN Number"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* /Advanced Tab */}
-                                            </div>
-                                        </div>
-                                        {/* /Options*/}
-                                    </div>
-                                </div>
-                            </div>
-                            {/* /Inventory */}
                         </div>
                         {/* /Second column */}
                         {/* Second column */}
                         <div className="col-12 col-lg-4">
-                            {/* Service Card */}
-                            
-                            {/* Service Card */}
                             {/* Organize Card */}
                             <div>
                                 <div className="card mb-6">
                                     {/* Form chung */}
-                                <div className="card mb-6">
-                                    <h5 className="card-header">Form Label Alignment</h5>
-                                    <form className="card-body">
-                                        <div className="me-4 d-flex flex-column">
-                                            <label className="text-sm-start" htmlFor="alignment-birthdate">
-                                                Start Date
-                                            </label>
-                                            <div>
-                                                <input
-                                                    type="date"
-                                                    id="alignment-birthdate"
-                                                    name="StartDate"
-                                                    value={addService.StartDate}
-                                                    onChange={handleChangeProductService}
-                                                    className="form-control dob-picker flatpickr-input"
-                                                    placeholder="YYYY-MM-DD"
-                                                />
+                                    <div className="card mb-6">
+                                        <h5 className="card-header">Form Label Alignment</h5>
+                                        <form className="card-body">
+                                            <div className="me-4 d-flex flex-column">
+                                                <label className="text-sm-start" htmlFor="alignment-birthdate">
+                                                    Start Date
+                                                </label>
+                                                <div>
+                                                    <input
+                                                        type="date"
+                                                        id="alignment-birthdate"
+                                                        name="StartDate"
+                                                        value={addService.StartDate}
+                                                        onChange={handleChangeProductService}
+                                                        className="form-control dob-picker flatpickr-input"
+                                                        placeholder="YYYY-MM-DD"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="me-4 d-flex flex-column">
-                                            <label className="text-sm-start" htmlFor="alignment-birthdate">
-                                                End Date
-                                            </label>
-                                            <div>
-                                                <input
-                                                    type="date"
-                                                    id="alignment-birthdate"
-                                                    name="EndDate"
-                                                    value={addService.EndDate}
-                                                    onChange={handleChangeProductService}
-                                                    className="form-control dob-picker flatpickr-input"
-                                                    placeholder="YYYY-MM-DD"
-                                                    
-                                                />
+                                            <div className="me-4 d-flex flex-column">
+                                                <label className="text-sm-start" htmlFor="alignment-birthdate">
+                                                    End Date
+                                                </label>
+                                                <div>
+                                                    <input
+                                                        type="date"
+                                                        id="alignment-birthdate"
+                                                        name="EndDate"
+                                                        value={addService.EndDate}
+                                                        onChange={handleChangeProductService}
+                                                        className="form-control dob-picker flatpickr-input"
+                                                        placeholder="YYYY-MM-DD"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="d-flex flex-column">
-                                            <label className="text-sm-start" htmlFor="alignment-phone">
-                                                Number Employee
-                                            </label>
-                                            <div>
-                                                <input
-                                                    type="number"
-                                                    id="alignment-phone"
-                                                    className="form-control phone-mask"
-                                                    name="RequiredEmployees"
-                                                    value={addService.RequiredEmployees}
-                                                    min={1}
-                                                    onChange={handleChangeProductService}
-                                                    placeholder="Number Employee"
-                                                    aria-label="658 799 8941"
-                                                />
+                                            <div className="d-flex flex-column">
+                                                <label className="text-sm-start" htmlFor="alignment-phone">
+                                                    Number Employee
+                                                </label>
+                                                <div>
+                                                    <input
+                                                        type="number"
+                                                        id="alignment-phone"
+                                                        className="form-control phone-mask"
+                                                        name="RequiredEmployees"
+                                                        value={addService.RequiredEmployees}
+                                                        min={1}
+                                                        onChange={handleChangeProductService}
+                                                        placeholder="Number Employee"
+                                                        aria-label="658 799 8941"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                </div>
+                                        </form>
+                                    </div>
                                     <div className="card-header">
                                         <h5 className="card-title mb-0">Pricing</h5>
                                     </div>
@@ -843,7 +465,7 @@ function AddProducts() {
                                             <div className="w-100 me-4">
                                                 <select
                                                     id="alignment-country"
-                                                    typeof='number'
+                                                    typeof="number"
                                                     className="select2 form-select form-select-sm"
                                                     name="ServiceId"
                                                     value={addService.ServiceId}
@@ -867,67 +489,64 @@ function AddProducts() {
                                             </div>
                                         </div>
                                     </div>
-                                    
+                                    <div className="border rounded p-5 mb-4">
+                                            {/* Estimated Delivery */}
+                                            <h6>Estimated Delivery Date</h6>
+                                            <ul className="list-unstyled">
+                                                {valueAdd.productServicesJson.map((serv, key) => (
+                                                    <li key={key} className="d-flex gap-4 mb-4">
+                                                
+                                                        <div className="flex-shrink-0">
+                                                            {
+                                                                service.find((r) => r.serviceId === serv.ServiceId)
+                                                                    ?.serviceName
+                                                            }
+                                                        </div>
+                                                        <div className="flex-grow-1">
+                                                            <p className="mb-0">
+                                                                <a className="text-body" href="javascript:void(0)">
+                                                                    {serv.RequiredEmployees}
+                                                                </a>
+                                                            </p>
+                                                            <p className="fw-medium mb-3">{serv.StartDate}</p>
+                                                            <p className="fw-medium mb-3">{serv.EndDate}</p>
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <hr className="mx-n5 mt-2" />
+                                            {/* Price Details */}
+                                            <h6>Price Details</h6>
+                                            <dl className="row mb-0">
+                                                <dt className="col-6 fw-normal text-heading">Order Total</dt>
+                                                <dd className="col-6 text-end">${totalCost}</dd>
+                                                <dt className="col-6 fw-normal text-heading">Delivery Charges</dt>
+                                                <dd className="col-6 text-end">
+                                                    <s className="text-muted">$5.00</s>{' '}
+                                                    <span className="badge bg-label-success rounded-pill text-uppercase">
+                                                        Free
+                                                    </span>
+                                                </dd>
+                                            </dl>
+                                            <hr className="mx-n5 my-5" />
+                                            <dl className="row mb-0">
+                                                <dt className="col-6 text-heading">Total</dt>
+                                                <dd className="col-6 fw-medium text-heading text-end mb-0">${totalCost.toFixed(2)}</dd>
+                                            </dl>
+                                        </div>
+                                      
                                 </div>
                             </div>
-                            <ul className="list-group list-group-flush">
-                                {valueAdd.productServicesJson.map((service, index) => (
-                                    <li key={index} className="list-group-item">
-                                        <strong>Service ID:</strong> {service.ServiceId},
-                                        <strong>Client ID:</strong> {service.ClientId},
-                                        <strong> Start Date:</strong> {service.StartDate},
-                                        <strong> End Date:</strong> {service.EndDate},
-                                        <strong> Employees:</strong> {service.RequiredEmployees}
-                                    </li>
-                                ))}
-                            </ul>
                             {/* /Organize Card */}
                         </div>
+                                   
+                            
+                                   
                         {/* /Second column */}
                     </div>
                 </div>
             </div>
             {/* / Content */}
-            {/* Footer */}
-            <footer className="content-footer footer bg-footer-theme">
-                <div className="container-xxl">
-                    <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                        <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{' '}
-                            <span className="text-danger">
-                                <i className="tf-icons ri-heart-fill" />
-                            </span>{' '}
-                            by{' '}
-                            <a href="https://themeselection.com" target="_blank" className="footer-link">
-                                ThemeSelection
-                            </a>
-                        </div>
-                        <div className="d-none d-lg-inline-block">
-                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
-                                License
-                            </a>
-                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
-                                More Themes
-                            </a>
-                            <a
-                                href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/net-core-mvc-introduction.html"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
-                                Documentation
-                            </a>
-                            <a
-                                href="https://themeselection.com/support/"
-                                target="_blank"
-                                className="footer-link d-none d-sm-inline-block"
-                            >
-                                Support
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            {/* / Footer */}
             <div className="content-backdrop fade" />
         </div>
     );

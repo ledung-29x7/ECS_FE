@@ -11,6 +11,18 @@ function Product() {
     const [product, setProduct] = useState([]);
     const [image, setImage] = useState([]);
     const idClient = window.sessionStorage.getItem('idClient');
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [readerImg, setReaderImg] = useState([]);
+    const [service, setService] = useState([]);
+    const [category, setCategory] = useState([]);
+    const [productStatus, setProductStatus] = useState([]);
+    const [isShowEdit, setIsShowEdit] = useState(false);
+    const [addImage, setAddImage] = useState({
+        productImageId: 0,
+        productId: '',
+        imageId: 0,
+        product: '',
+    });
     const [valueEdit, setValueEdit] = useState({
         productId: '',
         clientId: '',
@@ -19,10 +31,17 @@ function Product() {
         price: 0,
         initialQuantity: 0,
         description: '',
-        isActive: true,
+        isActive: false,
         status: 0,
         createdAt: '',
+        images: [],
     });
+
+    useEffect(() => {
+        FetchApi();
+        FetApiProductStatus();
+
+    }, []);
 
     const FetchApi = async () => {
         try {
@@ -41,6 +60,32 @@ function Product() {
             console.log(error);
         }
     };
+    const FetApiProductStatus = async () => {
+        try {
+            await apis.GetProductStatus().then((res) => {
+                if (res.status === 200) {
+                    setProductStatus(res.data);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    // Fetch danh mục sản phẩm
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await apis.GetAllProductCategory();
+                if (res.status === 200) {
+                    setCategory(res.data);
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy danh mục:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
+
     useEffect(() => {
         // Hàm để hiển thị ảnh từ JSON
         const images = [];
@@ -62,6 +107,57 @@ function Product() {
         setValueEdit({ ...valueEdit, [e.target.name]: e.target.value });
     }
 
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+            setSelectedImage(files); // Lưu file vào state
+            const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
+            setReaderImg(imgUpload); // Tạo URL preview ảnh
+            if (!addImage.productImageId) {
+                alert('Please select a service!');
+                return;
+            }
+    
+            // Thêm dịch vụ mới vào danh sách
+            setValueEdit((prev) => ({
+                ...prev,
+                productImages: [
+                    ...prev.productImages,
+                    { ...addImage }, // Copy dữ liệu từ addService
+                ],
+            }));
+    
+            // Reset serviceId trong addService (nếu cần)
+            setAddImage((prev) => ({
+                ...prev,
+                productImageId: 0,
+            }));
+        } else {
+            console.error('No files selected.');
+        }
+    };
+
+    const handleAddService = () => {
+        
+    };
+
+    const handleShowEdit = (pram) => {
+        const FetchData = async () => {
+            try {
+                await apis.GetProductById(pram).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setIsShowEdit(true)
+                        setValueEdit(res.data);
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        FetchData();
+    };
+
     const handleDelete = async (id) => {
         try {
             console.log('try');
@@ -75,14 +171,17 @@ function Product() {
             console.error(error);
         }
     };
-    const handleSumbitEdit = async (e) => {
-        e.preventDefault();
+
+    const handleSumbitEdit = async () => {
+       
         const FetchData = async () => {
             try {
                 await apis.UpdateProduct(valueEdit).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
-                        window.location.reload();
+                        setIsShowEdit(false)
+                        FetchApi()
+                        FetApiProductStatus();
                     }
                 });
             } catch (error) {
@@ -91,13 +190,211 @@ function Product() {
         };
         FetchData();
     };
-    useEffect(()=>{
-        FetchApi()
-    },[])
+
     return (
         <div className="content-wrapper">
             {/* Content */}
-            <div className="container-xxl flex-grow-1 container-p-y">
+            {isShowEdit ?(
+                <div className="row">
+                {/* First column*/}
+                <div className="col-12 col-lg-8">
+                    {/* Product Information */}
+                    <div className="card mb-6">
+                        <div className="card-header d-flex justify-content-between">
+                            <h5 className="card-tile mb-0">Product information</h5>
+                            <button className='btn btn-primary waves-effect waves-light'
+                                onClick={handleSumbitEdit}
+                            >Save</button>
+                        </div>
+                        <div className="card-body">
+                            <form className="form-repeater">
+                                <div className="form-floating form-floating-outline mb-5">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        id="ecommerce-product-name"
+                                        placeholder="Product title"
+                                        name="productName"
+                                        value={valueEdit?.productName}
+                                        onChange={handleChangeEdit}
+                                        aria-label="Product title"
+                                    />
+                                    <label htmlFor="ecommerce-product-name">Name</label>
+                                </div>
+                                <div className="row gx-5 mb-5">
+                                    <div className="col">
+                                        <div className="form-floating form-floating-outline form-floating-select2">
+                                            <div className="position-relative">
+                                                <select
+                                                    id="select2Basic"
+                                                    className=" form-select"
+                                                    name="categoryId"
+                                                    value={valueEdit?.categoryId} // Gắn giá trị hiện tại
+                                                    onChange={handleChangeEdit} // Gọi hàm xử lý sự kiện
+                                                    aria-hidden="true"
+                                                >
+                                                    <option value="">Option</option>
+                                                    {category?.map((res, key) => (
+                                                        <option key={key} value={res?.categoryId}>
+                                                            {res?.categoryName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <label htmlFor="select2Basic">Option</label>
+                                        </div>
+                                    </div>
+                                    <div className="col">
+                                        <div className="form-floating form-floating-outline">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                id="ecommerce-product-barcode"
+                                                placeholder="0123-4567"
+                                                name="price"
+                                                value={valueEdit?.price}
+                                                onChange={handleChangeEdit}
+                                                aria-label="Product barcode"
+                                            />
+                                            <label htmlFor="ecommerce-product-name">Price</label>
+                                        </div>
+                                    </div>
+                                    <div className="col">
+                                        <div className="form-floating form-floating-outline">
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                id="ecommerce-product-barcode"
+                                                placeholder="0123-4567"
+                                                name="initialQuantity"
+                                                value={valueEdit.initialQuantity}
+                                                onChange={handleChangeEdit}
+                                                aria-label="Product barcode"
+                                            />
+                                            <label htmlFor="ecommerce-product-name">Quantity</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Comment */}
+                                <div>
+                                            <label className="mb-1">Description (Optional)</label>
+                                            <div className=" p-0 pt-1">
+                                                <div
+                                                    className="comment-editor border-0 pb-1 ql-container ql-snow"
+                                                    id="ecommerce-category-description"
+                                                >
+                                                      <textarea 
+                                                        type="text"
+                                                        name="description"
+                                                        value={valueEdit?.description}
+                                                        onChange={handleChangeEdit}
+                                                        class="form-control" 
+                                                        id="exampleFormControlTextarea1" 
+                                                        rows="3">  
+
+                                                        </textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                            </form>
+                        </div>
+                    </div>
+                    {/* /Product Information */}
+                    {/* Media */}
+                    <div className="card mb-6">
+                        <div className="card-header d-flex justify-content-between align-items-center">
+                            <h5 className="mb-0 card-title">Product Image</h5>
+                            <a href="javascript:void(0);" className="fw-medium">
+                                Add media from URL
+                            </a>
+                        </div>
+                        <div className="card-body">
+                            <form
+                                action="/upload"
+                                className="dropzone needsclick dz-clickable"
+                                id="dropzone-basic"
+                            >
+                                <div className="dz-message needsclick">
+                                    <div className="d-flex justify-content-center">
+                                        <div className="avatar avatar-md">
+                                            <span className="avatar-initial rounded bg-label-secondary">
+                                                <i className="ri-upload-2-line ri-24px" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p className="h4 needsclick my-2">Drag and drop your image here</p>
+                                    <small className="text-muted d-block fs-6 my-2">or</small>
+                                    <span
+                                        className="needsclick btn btn-sm btn-outline-primary waves-effect"
+                                        id="btnBrowse"
+                                    >
+                                        Browse image
+                                    </span>
+                                </div>
+                                <input
+                                    type="file"
+                                    multiple
+                                    class="dz-hidden-input "
+                                    onChange={handleFileChange}
+                                    accept=".jpg,.jpeg,.png,.gif"
+                                />
+                                {valueEdit.images.map((img, key) => (
+                                    <div
+                                        key={key}
+                                        className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
+                                    >
+                                        <div className="dz-details">
+                                            {' '}
+                                            <div className="dz-thumbnail">
+                                                {' '}
+                                                <img
+                                                    data-dz-thumbnail=""
+                                                    className="w-12 h-7"
+                                                    alt=""
+                                                    src={img}
+                                                />{' '}
+                                                <span className="dz-nopreview">No preview</span>{' '}
+                                                <div className="dz-success-mark" />{' '}
+                                                <div className="dz-error-mark" />{' '}
+                                                <div className="dz-error-message">
+                                                    <span data-dz-errormessage="" />
+                                                </div>{' '}
+                                                <div className="progress">
+                                                    {' '}
+                                                    <div
+                                                        className="progress-bar progress-bar-primary"
+                                                        role="progressbar"
+                                                        aria-valuemin={0}
+                                                        aria-valuemax={100}
+                                                        data-dz-uploadprogress=""
+                                                        style={{ width: '100%' }}
+                                                    />{' '}
+                                                </div>
+                                            </div>{' '}
+                                            <div className="dz-filename" data-dz-name="">
+                                                Screenshot (8).png
+                                            </div>{' '}
+                                            <div className="dz-size" data-dz-size="">
+                                                <strong>1.6</strong> MB
+                                            </div>
+                                        </div>
+                                        <a
+                                            className="dz-remove"
+                                            href="javascript:undefined;"
+                                            data-dz-remove=""
+                                        >
+                                            Remove file
+                                        </a>
+                                    </div>
+                                ))}
+                            </form>
+                        </div>
+                    </div>
+               
+                </div>
+            </div>
+            ):(
+                <div className="container-xxl flex-grow-1 container-p-y">
                 {/* Product List Widget */}
                 <div className="card mb-6">
                     <div className="card-widget-separator-wrapper">
@@ -171,40 +468,7 @@ function Product() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                {/* Product List Table */}
-                <div className="card">
-                    <div className="card-header">
-                        <h5 className="mb-0">Filter</h5>
-                        <div className="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0">
-                            <div className="col-md-4 product_status">
-                                <select id="ProductStatus" className="form-select text-capitalize">
-                                    <option value="">Select Status</option>
-                                    <option value="Scheduled">Scheduled</option>
-                                    <option value="Publish">Publish</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
-                            <div className="col-md-4 product_category">
-                                <select id="ProductCategory" className="form-select text-capitalize">
-                                    <option value="">Category</option>
-                                    <option value="Household">Household</option>
-                                    <option value="Office">Office</option>
-                                    <option value="Electronics">Electronics</option>
-                                    <option value="Shoes">Shoes</option>
-                                    <option value="Accessories">Accessories</option>
-                                    <option value="Game">Game</option>
-                                </select>
-                            </div>
-                            <div className="col-md-4 product_stock">
-                                <select id="ProductStock" className="form-select text-capitalize">
-                                    <option value=""> Stock </option>
-                                    <option value="Out_of_Stock">Out of Stock</option>
-                                    <option value="In_Stock">In Stock</option>
-                                </select>
-                            </div>
+                        
                         </div>
                     </div>
                     <div className="card-datatable table-responsive">
@@ -281,23 +545,7 @@ function Product() {
                             >
                                 <thead>
                                     <tr>
-                                        <th
-                                            className="control sorting_disabled dtr-hidden"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 0, display: 'none' }}
-                                            aria-label=""
-                                        />
-                                        <th
-                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 18 }}
-                                            data-col={1}
-                                            aria-label=""
-                                        >
-                                            <input type="checkbox" className="form-check-input" />
-                                        </th>
+                                
                                         <th
                                             className="sorting sorting_asc"
                                             tabIndex={0}
@@ -328,19 +576,9 @@ function Product() {
                                             style={{ width: 55 }}
                                             aria-label="stock"
                                         >
-                                            stock
+                                            active
                                         </th>
-                                        <th
-                                            className="sorting"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 46 }}
-                                            aria-label="sku: activate to sort column ascending"
-                                        >
-                                            sku
-                                        </th>
+                                   
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -352,17 +590,7 @@ function Product() {
                                         >
                                             price
                                         </th>
-                                        <th
-                                            className="sorting"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 36 }}
-                                            aria-label="qty: activate to sort column ascending"
-                                        >
-                                            qty
-                                        </th>
+                                  
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -388,10 +616,7 @@ function Product() {
                                 <tbody>
                                     {product?.map((res, key) => (
                                         <tr key={key} className="odd">
-                                            <td className="  control" tabIndex={0} style={{ display: 'none' }} />
-                                            <td className="  dt-checkboxes-cell">
-                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                            </td>
+                                          
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center product-name">
                                                     <div className="avatar-wrapper me-4">
@@ -412,43 +637,44 @@ function Product() {
                                             </td>
                                             <td>
                                                 <h6 className="text-truncate d-flex align-items-center mb-0 fw-normal">
-                                                    <span className="avatar-sm rounded-circle d-flex justify-content-center align-items-center bg-label-info me-4">
-                                                        <i className="ri-home-6-line" />
-                                                    </span>
-                                                    {res?.categoryId}
+                                                   
+                                                    {
+                                                            category.find((r) => r.categoryId === res?.categoryId)
+                                                                ?.categoryName
+                                                        }
                                                 </h6>
                                             </td>
                                             <td>
-                                                <span className="text-truncate">
-                                                    <label className="switch switch-primary switch-sm">
-                                                        <input type="checkbox" className="switch-input" id="switch" />
-                                                        <span className="switch-toggle-slider">
-                                                            <span className="switch-off" />
-                                                        </span>
-                                                    </label>
-                                                    <span className="d-none">Out_of_Stock</span>
-                                                </span>
+                                                    <div  class="form-check text-truncate form-switch">
+                                                        <input
+                                                            style={{width: "30px"}}
+                                                            class="form-check-input"
+                                                            checked={res?.isActive}
+                                                            type="checkbox"
+                                                            id="flexSwitchCheckDefault"
+                                                        />
+                                                    </div>
                                             </td>
+                                            
+                    
                                             <td>
-                                                <span>31063</span>
+                                                <span>${res?.price}</span>
                                             </td>
-                                            <td>
-                                                <span>${res.price}</span>
-                                            </td>
-                                            <td>
-                                                <span>942</span>
-                                            </td>
+
                                             <td>
                                                 <span
                                                     className="badge rounded-pill bg-label-danger"
                                                     text-capitalized=""
                                                 >
-                                                    {res?.status}
+                                                                                             {
+                                                            productStatus.find((r) => r.statusId === res?.status)
+                                                                ?.statusName
+                                                        }
                                                 </span>
                                             </td>
                                             <td>
                                                 <div className="d-inline-block text-nowrap">
-                                                    <button className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
+                                                    <button onClick={()=>handleShowEdit(res?.productId)} className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
                                                         <i className="ri-edit-box-line ri-22px" />
                                                     </button>
                                                     <button
@@ -481,255 +707,14 @@ function Product() {
                                     ))}
                                 </tbody>
                             </table>
-                            <div className="row mx-1">
-                                <div className="col-sm-12 col-md-6">
-                                    <div
-                                        className="dataTables_info"
-                                        id="DataTables_Table_0_info"
-                                        role="status"
-                                        aria-live="polite"
-                                    >
-                                        Displaying 1 to 7 of 100 entries
-                                    </div>
-                                </div>
-                                <div className="col-sm-12 col-md-6">
-                                    <div
-                                        className="dataTables_paginate paging_simple_numbers"
-                                        id="DataTables_Table_0_paginate"
-                                    >
-                                        <ul className="pagination">
-                                            <li
-                                                className="paginate_button page-item previous disabled"
-                                                id="DataTables_Table_0_previous"
-                                            >
-                                                <a
-                                                    aria-controls="DataTables_Table_0"
-                                                    aria-disabled="true"
-                                                    role="link"
-                                                    data-dt-idx="previous"
-                                                    tabIndex={-1}
-                                                    className="page-link"
-                                                >
-                                                    <i className="ri-arrow-left-s-line" />
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item active">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    aria-current="page"
-                                                    data-dt-idx={0}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    1
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={1}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    2
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={2}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    3
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={3}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    4
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={4}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    5
-                                                </a>
-                                            </li>
-                                            <li
-                                                className="paginate_button page-item disabled"
-                                                id="DataTables_Table_0_ellipsis"
-                                            >
-                                                <a
-                                                    aria-controls="DataTables_Table_0"
-                                                    aria-disabled="true"
-                                                    role="link"
-                                                    data-dt-idx="ellipsis"
-                                                    tabIndex={-1}
-                                                    className="page-link"
-                                                >
-                                                    …
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={14}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    15
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx="next"
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    <i className="ri-arrow-right-s-line" />
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style={{ width: '1%' }} />
+                            
                         </div>
                     </div>
                 </div>
             </div>
+            )}
             {/* / Content */}
-            {/* Footer */}
-            <footer className="content-footer footer bg-footer-theme">
-                <div className="container-xxl">
-                    <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                        <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{' '}
-                            <span className="text-danger">
-                                <i className="tf-icons ri-heart-fill" />
-                            </span>{' '}
-                            by{' '}
-                            <a href="https://themeselection.com" target="_blank" className="footer-link">
-                                ThemeSelection
-                            </a>
-                        </div>
-                        <div className="d-none d-lg-inline-block">
-                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
-                                License
-                            </a>
-                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
-                                More Themes
-                            </a>
-                            <a
-                                href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/net-core-mvc-introduction.html"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
-                                Documentation
-                            </a>
-                            <a
-                                href="https://themeselection.com/support/"
-                                target="_blank"
-                                className="footer-link d-none d-sm-inline-block"
-                            >
-                                Support
-                            </a>
-                        </div>
-                    </div>
-                    {/* Offcanvas to add new user */}
-                    <div
-                        className="offcanvas offcanvas-end"
-                        tabIndex={-1}
-                        id="offcanvasAddUser"
-                        aria-labelledby="offcanvasAddUserLabel"
-                    >
-                        <div className="offcanvas-header border-bottom">
-                            <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
-                                Choose Service
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close text-reset"
-                                data-bs-dismiss="offcanvas"
-                                aria-label="Close"
-                            />
-                        </div>
-                        <div className="offcanvas-body mx-0 flex-grow-0 h-100">
-                            <form className=" pt-0 fv-plugins-bootstrap5 fv-plugins-framework" noValidate="novalidate">
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        placeholder="John Doe"
-                                        name="serviceId"
-                                        aria-label="John Doe"
-                                    />
-                                    <label htmlFor="add-user-fullname">Service</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="John Doe"
-                                        name="productId"
-                                        aria-label="John Doe"
-                                    />
-                                    <label htmlFor="add-user-fullname">Product</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="John Doe"
-                                        name="requiredEmployees"
-                                        aria-label="John Doe"
-                                    />
-                                    <label htmlFor="add-user-fullname">Required Employees</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-                                <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
-                                    Submit
-                                </button>
-                                <button
-                                    type="reset"
-                                    className="btn btn-outline-danger waves-effect"
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    Cancel
-                                </button>
-                                <input type="hidden" />
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            {/* / Footer */}
+     
             <div className="content-backdrop fade" />
         </div>
     );

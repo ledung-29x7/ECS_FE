@@ -24,6 +24,7 @@ const routes = {
     role:"/role",
     client: "/client",
     loginClient: "/loginClient",
+    productAdmin: "/product-admin",
     registerClient:"/registerClient"
 };
 

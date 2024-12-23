@@ -22,6 +22,7 @@ import Role from '~/pages/Role';
 import Client from '~/pages/Client';
 import LoginClient from '~/pages/Athor/loginClient';
 import ClientLayout from '~/layouts/DefaultLayout/ClientLayout';
+import ProductAdmin from '~/pages/Product/productAdmin';
 import EmployeeLayout from '~/layouts/DefaultLayout/EmployeeLayout';
 import RegisterClient from '~/pages/Admin/registerClient';
 
@@ -133,6 +134,13 @@ export const publicRoutes = [
         component: Client, 
         layout: null,
     },
+    {
+        path: config.routes.productAdmin,
+        component: ProductAdmin,
+        role: 'admin',
+        profession: "manageClient",
+        name: "Product"
+    }
 ];
 
 // Private routes

@@ -79,34 +79,64 @@ function Header() {
     const {checklogin} = useSelector(state => state.app)
     const [isChecking, setIsChecking] = useState(false);
     const [search,setSearch] = useState("")
-    const username = window.sessionStorage.getItem("name")
+    const username = window.sessionStorage.getItem("userName")
     
-  useEffect(() => {
-    checkLoggedIn();
-  }, [checklogin]);
-// Hàm để lấy giá trị của một cookie
-function getCookie(name) {
-    const cookies = document.cookie.split("; ");
-    console.log(cookies)
-    for (let cookie of cookies) {
-        const [key, value] = cookie.split("=");
-        if (key === name) {
-            return decodeURIComponent(value);
+    useEffect(() => {
+        checkLoggedIn();
+      }, [checklogin]);
+    
+      // hủy Cookie
+      function deleteCookie(name) {
+        document.cookie =
+          name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      }
+      
+      // Hàm để lấy giá trị của một cookie
+      function getCookie(name) {
+        const cookies = document.cookie.split("; ");
+        console.log(cookies)
+        for (let cookie of cookies) {
+            const [key, value] = cookie.split("=");
+            if (key === name) {
+                return decodeURIComponent(value);
+            }
         }
+        return undefined;
     }
-    return undefined;
-}
-// check xem người dùng đã đăng nhập chưa
-function checkLoggedIn() {
-    var token = getCookie("token");
-    if (token) {
-      // Gọi các API hoặc thực hiện các hành động khác khi người dùng đã đăng nhập
-      setIsChecking(true);
-    } else {
-      // Hiển thị form đăng nhập hoặc các nút chức năng đăng nhập
-      setIsChecking(false);
-    }
-  }
+    
+      // check xem người dùng đã đăng nhập chưa
+      function checkLoggedIn() {
+        var token = getCookie("token");
+        if (token) {
+          // Gọi các API hoặc thực hiện các hành động khác khi người dùng đã đăng nhập
+          setIsChecking(true);
+        } else {
+          // Hiển thị form đăng nhập hoặc các nút chức năng đăng nhập
+          setIsChecking(false);
+        }
+      }
+
+    
+      // handle Logout
+      const handleLogout = (e) => {
+        e.preventDefault()
+        const FetchData = async () => {
+          try {
+            await apis.logout().then((res) => {
+              if (res.status === 200) {
+                deleteCookie("token");
+                checkLoggedIn();
+                dispatch(actions.checkLogin(false));
+                navigate("/login")
+              }
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        FetchData();
+      };
+    
   
 
     const userMenu = [
@@ -762,7 +792,7 @@ function checkLoggedIn() {
                                                 </div>
                                             </div>
                                             <div className="flex-grow-1">
-                                                <h6 className="mb-0 small">John Doe</h6>
+                                                <h6 className="mb-0 small">{username}</h6>
                                                 <small className="text-muted">Admin</small>
                                             </div>
                                         </div>
@@ -819,7 +849,8 @@ function checkLoggedIn() {
                                     <div className="d-grid px-4 pt-2 pb-1">
                                         <a
                                             className="btn btn-danger d-flex"
-                                            href="auth-login-cover.html"
+                                            href="#"
+                                            onClick={()=>handleLogout}
                                             target="_blank"
                                         >
                                             <small className="align-middle">Logout</small>

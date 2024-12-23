@@ -12,6 +12,41 @@ export const GetAllProductByClient =  (idClient) => new Promise(async (resolve, 
     }
 })
 
+export const GetAllProduct = () => new Promise(async (resolve, reject) =>{
+    try {
+        const response = await axios({
+            url:"/Product",
+            method: "get"
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+export const GetProductStatus = () => new Promise(async (resolve, reject) =>{
+    try {
+        const response = await axios({
+            url:"/ProductStatus",
+            method: "get"
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const ActiveProduct = (id) => new Promise(async (resolve, reject) =>{
+    try {
+        const response = await axios({
+            url:`/Product/active/${id}`,
+            method: "put"
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
 export const AddProduct = (prop) => new Promise(async (resolve,reject) => {
     try {
         const response = await axios.post("/Product",prop, {
@@ -131,6 +166,17 @@ export const GetProductServiceById = (id) =>new Promise(async (resolve,reject) =
     try {
         const response = await axios({
             url: `/ProductService/Client/${id}`,
+            method: "get",
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+export const GetProductServiceByIdProduct = (id) =>new Promise(async (resolve,reject) => {
+    try {
+        const response = await axios({
+            url: `/ProductService/Product/${id}`,
             method: "get",
         })
         resolve(response)

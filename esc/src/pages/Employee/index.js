@@ -303,6 +303,7 @@ function Employee() {
                             >
                                 <thead>
                                     <tr>
+                                       
                                         <th
                                             className="sorting sorting_asc"
                                             tabIndex={0}
@@ -376,6 +377,7 @@ function Employee() {
                                 <tbody>
                                     {employee?.map((res) => (
                                         <tr className="odd">
+                                            
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center product-name">
                                                     <div className="avatar-wrapper me-4">
