@@ -1,12 +1,10 @@
 import axios from "../axios";
-export const AddEmployee = (name)=>new Promise(async(resolve,reject)=>{
+export const AddEmployee=(prop)=> new Promise(async(resolve,reject)=>{
     try {
-        const response = await axios({
-            url:"/Client/register",
-            method:"post",
-            data:name,
-            headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+        const response = await axios.post("/Authentication/register",prop,{
+            withCredentials:true,
+            headers: {
+                "Content-Type": "multipart/form-data",
             }
         })
         resolve(response)

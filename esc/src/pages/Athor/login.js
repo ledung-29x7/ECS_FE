@@ -27,15 +27,16 @@ function Login() {
                     console.log(res)
                     window.sessionStorage.setItem("token",res.data.token);
                     window.sessionStorage.getItem("name",res.data?.userName)
-                    window.sessionStorage.setItem('idClient',res.data.employeeID)
+                    window.sessionStorage.setItem('employeeID',res.data.employeeID);
+                    window.sessionStorage.setItem('role',res.data.role)
                     dispatch(actions.checkLogin(true))
                     switch (res.data.role) {
                         
                         case "Admin":
                             console.log(res.data.role)
                             return(navigate("/admin"))
-                        case "Employee":
-                            return(navigate("/employee"))
+                        case "Service":
+                            return(navigate("/callhistory"))
                         default:
                             return(navigate("/client"))
                     }

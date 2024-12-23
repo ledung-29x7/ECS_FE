@@ -1,21 +1,133 @@
-import { useState } from "react";
-import * as apis from "../../apis"
+import { useState, useEffect, useRef } from 'react';
+import * as apis from '../../apis';
+import 'react-toastify/dist/ReactToastify.css';
+import { Link,useNavigate,useLocation } from 'react-router-dom';
 
 function CallHistory() {
-    
-    
-    
-    const handleChangeadd = () => {
-       
+    const employeeID = window.sessionStorage.getItem('employeeID');
+    const [callHistory, setCallHistory] = useState([]);
+    const [employee, setEmployee] = useState([]);
+    const [callStatus, setCallStatus] = useState([]);
+    const navigate = useNavigate();
+
+    const [callHistoryId, setCallHistoryId] =useState ({});
+    const [valueAdd, setValueAdd] = useState({
+        employeeId: employeeID,
+        phoneNumber: '',
+        status: 0,
+        notes: '',
+    });
+    useEffect(() => {
+        const fetchEmployee = async () => {
+            try {
+                const res = await apis.GetAllEmployee();
+                if (res.status === 200) {
+                    setEmployee(res.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchEmployee();
+    }, []);
+    useEffect(() => {
+        const fetchCallStatus = async () => {
+            try {
+                const res = await apis.GetAllCallStatus();
+                if (res.status === 200) {
+                    setCallStatus(res.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchCallStatus();
+    }, []);
+    const FetchApi = async () => {
+        try {
+            await apis
+                .GetAllCallHistory()
+                .then((res) => {
+                    if (res.status === 200) {
+                        setCallHistory(res.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        FetchApi();
+    }, []);
+    function handleChange(e) {
+        const { name, value } = e.target;
+
+        setValueAdd({
+            ...valueAdd,
+            [name]: name === 'status' ? Number(value) : value, // Chuyển statusId sang số
+        });
     }
 
-    const handleSubmitAdd = (e) => {
+    const handleSumbit = (e) => {
         e.preventDefault();
-        const FetApi = async() =>{
-            await apis.AddCallHistory()
-        } 
-    }
 
+        // const sanitizedData = {
+        //     ...valueAdd,
+        //     statusId: parseInt(valueAdd.statusId, 10), // Chuyển statusId thành số nếu cần
+        // };
+
+        console.log(valueAdd);
+
+        const FetchData = async () => {
+            try {
+                const res = await apis.AddCallHistory(valueAdd);
+                if (res.status === 200) {
+                    console.log('Submission Successful');
+                    if (valueAdd.status === 1) {
+                        // console.log('1');
+                        // const closeButton = document.querySelector('#order #order-open');
+                        // console.log(closeButton);
+                        // if (closeButton) {
+                        //     closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                        // }
+                        navigate("/order")
+                    }
+                    // window.location.reload();
+                }
+            } catch (error) {
+                console.error('Error Submitting Data:', error);
+            }
+        };
+
+        FetchData();
+    };
+
+    async function GetAllCallHistoryById(id) {
+        try {
+            const res = await apis.GetCallHistoryById(id);
+            if (res.status === 200) {
+                setCallHistoryId(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleDelete = async (id) => {
+        try {
+            console.log('try');
+            const res = await apis.DeleteCallHistory(id);
+            console.log(res);
+            if (res.status === 200) {
+                console.log('delete success');
+                FetchApi();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -86,10 +198,7 @@ function CallHistory() {
                 {/* Order List Table */}
                 <div className="card">
                     <div className="card-datatable table-responsive">
-                        <div
-                            id="DataTables_Table_0_wrapper"
-                            className="dataTables_wrapper dt-bootstrap5 no-footer"
-                        >
+                        <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                             <div className="card-header d-flex flex-column flex-md-row align-items-start align-items-md-center py-0 pb-5 pb-md-0">
                                 <div>
                                     <div id="DataTables_Table_0_filter" className="dataTables_filter">
@@ -104,10 +213,7 @@ function CallHistory() {
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-md-baseline justify-content-md-end gap-4">
-                                    <div
-                                        className="dataTables_length my-0"
-                                        id="DataTables_Table_0_length"
-                                    >
+                                    <div className="dataTables_length my-0" id="DataTables_Table_0_length">
                                         <label>
                                             <select
                                                 name="DataTables_Table_0_length"
@@ -134,11 +240,11 @@ function CallHistory() {
                                                     aria-expanded="false"
                                                 >
                                                     <span>
-                                                        <i className="ri-download-line ri-16px me-2" />{" "}
+                                                        <i className="ri-download-line ri-16px me-2" />{' '}
                                                         <span className="d-none d-sm-inline-block">Export</span>
                                                     </span>
                                                 </button>
-                                            </div>{" "}
+                                            </div>{' '}
                                         </div>
                                     </div>
                                     <div className="add-new">
@@ -148,10 +254,7 @@ function CallHistory() {
                                             data-bs-target="#offcanvasAddUser"
                                         >
                                             <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                            <span className="d-none d-sm-inline-block">
-                                                {" "}
-                                                Add New User{" "}
-                                            </span>
+                                            <span className="d-none d-sm-inline-block"> Add New User </span>
                                         </button>
                                     </div>
                                 </div>
@@ -168,7 +271,7 @@ function CallHistory() {
                                             className="control sorting_disabled dtr-hidden"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0, display: "none" }}
+                                            style={{ width: 0, display: 'none' }}
                                             aria-label=""
                                         />
                                         <th
@@ -181,18 +284,27 @@ function CallHistory() {
                                         >
                                             <input type="checkbox" className="form-check-input" />
                                         </th>
-                                     
-                                        <th
-                                            className="sorting sorting_asc"
+                                        {/* <th
+                                            className="sorting"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 154 }}
-                                            aria-label="date: activate to sort column descending"
-                                            aria-sort="ascending"
+                                            style={{ width: 99 }}
+                                            aria-label="Plan: activate to sort column ascending"
                                         >
-                                            date
+                                            callId
+                                        </th> */}
+                                        <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 99 }}
+                                            aria-label="Plan: activate to sort column ascending"
+                                        >
+                                            Employee
                                         </th>
                                         <th
                                             className="sorting"
@@ -200,10 +312,10 @@ function CallHistory() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 302 }}
-                                            aria-label="customers: activate to sort column ascending"
+                                            style={{ width: 99 }}
+                                            aria-label="Plan: activate to sort column ascending"
                                         >
-                                            Staff
+                                            callDatetime
                                         </th>
                                         <th
                                             className="sorting"
@@ -211,10 +323,10 @@ function CallHistory() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 117 }}
-                                            aria-label="payment: activate to sort column ascending"
+                                            style={{ width: 99 }}
+                                            aria-label="Plan: activate to sort column ascending"
                                         >
-                                            Phone Number
+                                            phoneNumber
                                         </th>
                                         <th
                                             className="sorting"
@@ -222,17 +334,28 @@ function CallHistory() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{    width: 136 }}
-                                            aria-label="status: activate to sort column ascending"
+                                            style={{ width: 99 }}
+                                            aria-label="Plan: activate to sort column ascending"
                                         >
                                             status
                                         </th>
-                                        
+                                        <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 99 }}
+                                            aria-label="Plan: activate to sort column ascending"
+                                        >
+                                            notes
+                                        </th>
+
                                         <th
                                             className="sorting_disabled"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 76 }}
+                                            style={{ width: 99 }}
                                             aria-label="Actions"
                                         >
                                             Actions
@@ -240,484 +363,144 @@ function CallHistory() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                    
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Apr 15, 2023, 10:21</span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <img
-                                                            src="../../assets/img/avatars/19.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
+                                    {callHistory.map((res) => (
+                                        <tr className="odd">
+                                            <td className="  control" tabIndex={0} style={{ display: 'none' }} />
+                                            <td className="  dt-checkboxes-cell">
+                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
+                                            </td>
+                                            {/* <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{res?.callId}</span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Cristine Easom</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        ceasomw@theguardian.com
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                0971279512
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-warning">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Pending
-                                            </h6>
-                                        </td>
-                                        
-                                        <td>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                    aria-expanded="false"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div
-                                                    className="dropdown-menu dropdown-menu-end m-0"
-                                                    style={{}}
-                                                >
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Apr 17, 2023, 6:43 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-primary">
-                                                            FS
-                                                        </span>
+                                            </td> */}
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">
+                                                                {
+                                                                    employee.find(
+                                                                        (r) => r.employeeId === res?.employeeId,
+                                                                    )?.firstName
+                                                                }{' '}
+                                                                {
+                                                                    employee.find(
+                                                                        (r) => r.employeeId === res?.employeeId,
+                                                                    )?.lastName
+                                                                }
+                                                            </span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Fayre Screech</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        fscreechs@army.mil
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                    0359512788
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-danger">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Failed
-                                            </h6>
-                                        </td>
-                                        
-                                        <td>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Apr 17, 2023, 8:05 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-success">
-                                                            PP
-                                                        </span>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{res?.callDatetime}</span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Pauline Pfaffe</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        ppfaffe1i@wikia.com
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-primary"
-                                                text-capitalized=""
-                                            >
-                                                0311212378
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Cancelled
-                                            </h6>
-                                        </td>
-                                        
-                                        <td>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr className="odd">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Aug 1, 2022, 7:24 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <img
-                                                            src="../../assets/img/avatars/9.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{res?.phoneNumber}</span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Etienne Duke</span>
-                                                    </a>
-                                                    <small className="text-truncate">eduke1z@dell.com</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-info"
-                                                text-capitalized=""
-                                            >
-                                                03456784688
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Cancelled
-                                            </h6>
-                                        </td>
-                                        
-                                        <td>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Aug 14, 2022, 3:26 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <span className="avatar-initial rounded-circle bg-label-dark">
-                                                            HM
-                                                        </span>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">
+                                                                {
+                                                                    callStatus.find((r) => r.statusId === res?.status)
+                                                                        ?.statusName
+                                                                }
+                                                            </span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
-                                                    <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
-                                                    >
-                                                        <span className="fw-medium">Hilliard Merck</span>
-                                                    </a>
-                                                    <small className="text-truncate">
-                                                        hmerck2n@printfriendly.com
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                09734562719
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Cancelled
-                                            </h6>
-                                        </td>
-                                        
-                                        <td>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr className="even">
-                                        <td
-                                            className="  control"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input
-                                                type="checkbox"
-                                                className="dt-checkboxes form-check-input"
-                                            />
-                                        </td>
-                                        
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">Aug 22, 2022, 6:36 </span>
-                                        </td>
-                                        <td>
-                                            <div className="d-flex justify-content-start align-items-center user-name">
-                                                <div className="avatar-wrapper me-3">
-                                                    <div className="avatar avatar-sm">
-                                                        <img
-                                                            src="../../assets/img/avatars/5.png"
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                        />
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{res?.notes}</span>
+                                                        </a>
                                                     </div>
                                                 </div>
-                                                <div className="d-flex flex-column">
+                                            </td>
+                                            <td className="" style={{}}>
+                                                <div id="order" className="d-flex align-items-center">
                                                     <a
-                                                        href="pages-profile-user.html"
-                                                        className="text-truncate text-heading"
+                                                        href="javascript:;"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Delete Invoice"
+                                                        onClick={() => handleDelete(res.callId)}
                                                     >
-                                                        <span className="fw-medium">Nowell Cornford</span>
+                                                        <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
-                                                    <small className="text-truncate">
-                                                        ncornfordn@sogou.com
-                                                    </small>
+                                                    <a
+                                                        href="javascript:;"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record"
+                                                        data-bs-target="#viewUser"
+                                                        title="Preview"
+                                                        data-bs-toggle="modal"
+                                                        onClick={() => GetAllCallHistoryById(res.callId)}
+                                                    >
+                                                        <i className="ri-eye-line ri-22px" />
+                                                    </a>
+                                                    <button
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
+                                                        data-bs-toggle="dropdown"
+                                                    >
+                                                        <i className="ri-more-2-line ri-22px" />
+                                                    </button>
+                                                    <div className="dropdown-menu dropdown-menu-end m-0">
+                                                        <a
+                                                            href="javascript:;"
+                                                            className="dropdown-item view-record"
+                                                            data-bs-target="#viewUser"
+                                                            data-bs-toggle="modal"
+                                                            onClick={() => GetAllCallHistoryById(res?.callId)}
+                                                        >
+                                                            <i className="ri-edit-box-line me-2" />
+                                                            <span>view</span>
+                                                        </a>
+                                                        <a
+                                                            href="javascript:;"
+                                                            id="order-open"
+                                                            className="dropdown-item delete-record"
+                                                            data-bs-target="#editUser"
+                                                            data-bs-toggle="modal"
+                                                            // onClick={()=>GetDepartmentByIdEdit(res.departmentID)}
+                                                        >
+                                                            <i className="ri-edit-box-line me-2" />
+                                                            <span>Edit</span>
+                                                        </a>
+                                                        <a
+                                                            href="javascript:;"
+                                                            onClick={() => handleDelete(res?.callId)}
+                                                            className="dropdown-item delete-record"
+                                                        >
+                                                            <i className="ri-delete-bin-7-line me-2" />
+                                                            <span>Delete</span>
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-primary"
-                                                text-capitalized=""
-                                            >
-                                                09865721153
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <h6 className="mb-0 w-px-100 d-flex align-items-center text-secondary">
-                                                <i className="ri-circle-fill ri-10px me-1" />
-                                                Cancelled
-                                            </h6>
-                                        </td>
-                                        
-                                        <td>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
-                                                >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
-                                                    >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -840,10 +623,7 @@ function CallHistory() {
                                                     10
                                                 </a>
                                             </li>
-                                            <li
-                                                className="paginate_button page-item next"
-                                                id="DataTables_Table_0_next"
-                                            >
+                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
                                                 <a
                                                     href="#"
                                                     aria-controls="DataTables_Table_0"
@@ -859,7 +639,7 @@ function CallHistory() {
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ width: "1%" }} />
+                            <div style={{ width: '1%' }} />
                         </div>
                     </div>
                     {/* Offcanvas to add new user */}
@@ -882,26 +662,56 @@ function CallHistory() {
                         </div>
                         <div className="offcanvas-body mx-0 flex-grow-0 h-100">
                             <form
-                                onSubmit={handleSubmitAdd}
+                                onSubmit={handleSumbit}
                                 className="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
                                 id="addNewUserForm"
                                 onsubmit="return false"
                                 noValidate="novalidate"
                             >
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                {/* <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                <div className="form-floating form-floating-outline form-floating-select2">
+                                    <div className="position-relative">
+                                        <select
+                                            id="select2Basic"
+                                            className=" form-select"
+                                            name="employeeId"
+                                            value={valueAdd.employeeId} // Gắn giá trị hiện tại
+                                            onChange={handleChange} // Gọi hàm xử lý sự kiện
+                                            aria-hidden="true"
+                                        >
+                                            <option value="" data-select2-id={2}>
+                                            employeeId
+                                            </option>
+                                            {employee.map((res,key)=>
+                                                <option key={key} value={res.employeeId}>
+                                                    {res.employeeId}
+                                                </option>
+                                            )}
+                                        </select>
+                                    </div>
+                                    <label htmlFor="select2Basic">employeeId</label>
+                                </div>
+                            </div> */}
+                                {/* <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                            <div className=" me-4 d-flex flex-column">
+                                <label className="text-sm-start" htmlFor="alignment-birthdate">
+                                callDatetime
+                                </label>
+                                <div className="">
                                     <input
                                         type="text"
-                                        className="form-control"
-                                        id="add-user-fullname"
-                                        placeholder="John Doe"
-                                        name="employeeId"
-                                        aria-label="John Doe"
+                                        id='alignment-birthdate'
+                                        name='callDatetime'
+                                        onChange={handleChange}
+                                        className="form-control dob-picker flatpickr-input"
+                                        placeholder="YYYY-MM-DD"
+                                        readOnly
+                                        ref={datePickerRef}
                                     />
-                                    <label htmlFor="add-user-fullname">Implementation staff</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
-                                
-                                <div className="form-floating form-floating-outline mb-5">
+                            </div>
+                            </div> */}
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
                                         id="add-user-contact"
@@ -909,71 +719,45 @@ function CallHistory() {
                                         placeholder="+84 974365472"
                                         aria-label="john.doe@example.com"
                                         name="phoneNumber"
+                                        onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-contact">Contact</label>
+                                    <label htmlFor="add-user-fullname">phoneNumber</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
-                                
-                                <div className="form-floating form-floating-outline mb-5 form-floating-select2">
-                                    <div className="position-relative">
-                                        <select
-                                            id="country"
-                                            className="select2 form-select"
-                                            data-select2-id="country"
-                                            tabIndex={-1}
-                                            aria-hidden="true"
-                                        >
-                                            <option value="" data-select2-id={2}>
-                                                Select
-                                            </option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Bangladesh">Bangladesh</option>
-                                            <option value="Belarus">Belarus</option>
-                                            <option value="Brazil">Brazil</option>
-                                            <option value="Canada">Canada</option>
-                                            <option value="China">China</option>
-                                            <option value="France">France</option>
-                                            <option value="Germany">Germany</option>
-                                            <option value="India">India</option>
-                                            <option value="Indonesia">Indonesia</option>
-                                            <option value="Israel">Israel</option>
-                                            <option value="Italy">Italy</option>
-                                            <option value="Japan">Japan</option>
-                                            <option value="Korea">Korea, Republic of</option>
-                                            <option value="Mexico">Mexico</option>
-                                            <option value="Philippines">Philippines</option>
-                                            <option value="Russia">Russian Federation</option>
-                                            <option value="South Africa">South Africa</option>
-                                            <option value="Thailand">Thailand</option>
-                                            <option value="Turkey">Turkey</option>
-                                            <option value="Ukraine">Ukraine</option>
-                                            <option value="United Arab Emirates">
-                                                United Arab Emirates
-                                            </option>
-                                            <option value="United Kingdom">United Kingdom</option>
-                                            <option value="United States">United States</option>
-                                        </select>
-                                        
+
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <div className="form-floating form-floating-outline form-floating-select2">
+                                        <div className="position-relative">
+                                            <select
+                                                id="select2Basic"
+                                                className="form-select"
+                                                name="status"
+                                                value={valueAdd.status}
+                                                onChange={handleChange}
+                                            >
+                                                <option value="">Select status</option>
+
+                                                {callStatus.map((res, key) => (
+                                                    <option key={key} value={res.statusId}>
+                                                        {res.statusName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <label htmlFor="select2Basic">status</label>
                                     </div>
-                                    <label htmlFor="country">Status</label>
                                 </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-role" className="form-select">
-                                        <option value="subscriber">Subscriber</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="maintainer">Maintainer</option>
-                                        <option value="author">Author</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                    <label htmlFor="user-role">User Role</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-plan" className="form-select">
-                                        <option value="basic">Basic</option>
-                                        <option value="enterprise">Enterprise</option>
-                                        <option value="company">Company</option>
-                                        <option value="team">Team</option>
-                                    </select>
-                                    <label htmlFor="user-plan">Select Plan</label>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control phone-mask"
+                                        placeholder=""
+                                        aria-label=""
+                                        name="notes"
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="add-user-fullname">notes</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button
                                     type="submit"
@@ -994,38 +778,285 @@ function CallHistory() {
                     </div>
                 </div>
             </div>
+            {/* getbyid */}
+            <div className="modal fade" id="viewUser" tabIndex={-1} style={{ display: 'none'}} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-view-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">details call History</h4>
+                            </div>
+                            <form
+                                id="viewUserForm"
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
+                            >
+                                <table
+                                    className="datatables-order table dataTable no-footer dtr-column"
+                                    id="DataTables_Table_0"
+                                    aria-describedby="DataTables_Table_0_info"
+                                    style={{ width: 1384 }}
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 99 }}
+                                                aria-label="Plan: activate to sort column ascending"
+                                            >
+                                                callId
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 99 }}
+                                                aria-label="Plan: activate to sort column ascending"
+                                            >
+                                                employeeId
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 99 }}
+                                                aria-label="Plan: activate to sort column ascending"
+                                            >
+                                                callDatetime
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 99 }}
+                                                aria-label="Plan: activate to sort column ascending"
+                                            >
+                                                phoneNumber
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 99 }}
+                                                aria-label="Plan: activate to sort column ascending"
+                                            >
+                                                status
+                                            </th>
+                                            <th
+                                                className="sorting"
+                                                tabIndex={0}
+                                                aria-controls="DataTables_Table_0"
+                                                rowSpan={1}
+                                                colSpan={1}
+                                                style={{ width: 99 }}
+                                                aria-label="Plan: activate to sort column ascending"
+                                            >
+                                                notes
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="odd">
+                                            <td className="  control" tabIndex={0} style={{ display: 'none' }} />
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{callHistoryId?.callId}</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">
+                                                                {callHistoryId?.employeeId}
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">
+                                                                {callHistoryId?.callDatetime}
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">
+                                                                {callHistoryId?.phoneNumber}
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{callHistoryId?.status}</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <div className="d-flex justify-content-start align-items-center user-name">
+                                                    <div className="d-flex flex-column">
+                                                        <a className="text-heading text-truncate">
+                                                            <span className="fw-medium">{callHistoryId?.notes}</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className="col-12 text-center">
+                                    <button
+                                        type="reset"
+                                        className="btn btn-outline-secondary waves-effect"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* getbyid */}
+            {/* edit */}
+            <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-edit-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">Add order</h4>
+                            </div>
+                            <form
+                                // onSubmit={()=>handleSumbitEdit()}
+                                id="editUserForm"
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
+                            >
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="orderer"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.departmentName}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">orderer</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="recipientName"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.managerId}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">recipientName</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="recipientPhone"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.managerId}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">recipientPhone</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="John Doe"
+                                        name="recipientAddress"
+                                        aria-label="John Doe"
+                                        // value={valueEdit.managerId}
+                                        // onChange={handleChangeEdit}
+                                    />
+                                    <label htmlFor="add-user-fullname">recipientAddress</label>
+                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                </div>
+                                <div className="col-12 text-center">
+                                    <button type="submit" className="btn btn-primary me-3 waves-effect waves-light">
+                                        Submit
+                                    </button>
+                                    <button
+                                        type="reset"
+                                        className="btn btn-outline-secondary waves-effect"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                                <input type="hidden" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">
                 <div className="container-xxl">
                     <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
                         <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{" "}
+                            © 2024, made with{' '}
                             <span className="text-danger">
                                 <i className="tf-icons ri-heart-fill" />
-                            </span>{" "}
-                            by{" "}
-                            <a
-                                href="https://themeselection.com"
-                                target="_blank"
-                                className="footer-link"
-                            >
+                            </span>{' '}
+                            by{' '}
+                            <a href="https://themeselection.com" target="_blank" className="footer-link">
                                 ThemeSelection
                             </a>
                         </div>
                         <div className="d-none d-lg-inline-block">
-                            <a
-                                href="https://themeselection.com/license/"
-                                className="footer-link me-4"
-                                target="_blank"
-                            >
+                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
                                 License
                             </a>
-                            <a
-                                href="https://themeselection.com/"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
+                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
                                 More Themes
                             </a>
                             <a
@@ -1049,7 +1080,6 @@ function CallHistory() {
             {/* / Footer */}
             <div className="content-backdrop fade" />
         </div>
-
-    )
+    );
 }
 export default CallHistory;

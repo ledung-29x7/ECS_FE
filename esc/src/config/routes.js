@@ -1,3 +1,6 @@
+import { register } from "~/apis";
+import RegisterClient from "~/pages/Admin/registerClient";
+
 const routes = {
     home: '/admin',
     following: '/following',
@@ -21,7 +24,8 @@ const routes = {
     role:"/role",
     client: "/client",
     loginClient: "/loginClient",
-    productAdmin: "/product-admin"
+    productAdmin: "/product-admin",
+    registerClient:"/registerClient"
 };
 
 export default routes;

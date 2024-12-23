@@ -23,6 +23,8 @@ import Client from '~/pages/Client';
 import LoginClient from '~/pages/Athor/loginClient';
 import ClientLayout from '~/layouts/DefaultLayout/ClientLayout';
 import ProductAdmin from '~/pages/Product/productAdmin';
+import EmployeeLayout from '~/layouts/DefaultLayout/EmployeeLayout';
+import RegisterClient from '~/pages/Admin/registerClient';
 
 // Public routes
 export const publicRoutes = [
@@ -58,6 +60,13 @@ export const publicRoutes = [
         role: "admin",
         profession: "manageService",
         name: "Service"
+    },
+    { 
+        path: config.routes.registerClient, 
+        component: RegisterClient,
+        role: "admin",
+        profession: "manageClient",
+        name: "Client"
     },
     { 
         path: config.routes.detailEmployee, 
@@ -108,9 +117,10 @@ export const publicRoutes = [
     { 
         path: config.routes.callhistory, 
         component: CallHistory,
-        role: "admin",
+        role: "employee",
         profession: "manageEmployee",
-        name: "History Call"
+        name: "History Call",
+        layout: EmployeeLayout
     },
     { 
         path: config.routes.role, 

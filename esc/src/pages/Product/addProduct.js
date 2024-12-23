@@ -101,7 +101,7 @@ function AddProducts() {
         if (files.length > 0) {
             setSelectedImage(files); // Lưu file vào state
             const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
-            setReaderImg(imgUpload); // Tạo URL preview ảnh
+            setReaderImg(prev => ({...prev, imgUpload})); // Tạo URL preview ảnh
         } else {
             console.error('No files selected.');
         }
@@ -201,7 +201,7 @@ function AddProducts() {
                             <p className="mb-0">Orders placed across your store</p>
                         </div>
                         <div className="d-flex align-content-center flex-wrap gap-4">
-                            <button className="btn btn-outline-secondary waves-effect">Discard</button>
+                            <button onClick={()=>navigate("/product")} className="btn btn-outline-secondary waves-effect">Discard</button>
                             <button className="btn btn-outline-primary waves-effect">Save draft</button>
                             <button onClick={handleSumbit} className="btn btn-primary waves-effect waves-light">
                                 Publish product
@@ -273,7 +273,7 @@ function AddProducts() {
                                                         type="number"
                                                         className="form-control"
                                                         id="ecommerce-product-barcode"
-                                                        placeholder="0123-4567"
+                                                        placeholder=""
                                                         name="InitialQuantity"
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
@@ -285,25 +285,20 @@ function AddProducts() {
                                         {/* Comment */}
                                         <div>
                                             <label className="mb-1">Description (Optional)</label>
-                                            <div className="form-control p-0 pt-1">
+                                            <div className=" p-0 pt-1">
                                                 <div
                                                     className="comment-editor border-0 pb-1 ql-container ql-snow"
                                                     id="ecommerce-category-description"
                                                 >
-                                                    <input
+                                                      <textarea 
                                                         type="text"
-                                                        className=" border-none "
                                                         name="Description"
                                                         onChange={handleChange}
-                                                        data-formula="e=mc^2"
-                                                        data-link="https://quilljs.com"
-                                                        data-video="Embed URL"
-                                                    />
-                                                    <div
-                                                        className="ql-editor ql-blank"
-                                                        data-gramm="false"
-                                                        contentEditable="true"
-                                                    ></div>
+                                                        class="form-control" 
+                                                        id="exampleFormControlTextarea1" 
+                                                        rows="3">  
+
+                                                        </textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -390,9 +385,9 @@ function AddProducts() {
                                                         <strong>1.6</strong> MB
                                                     </div>
                                                 </div>
-                                                <a className="dz-remove" href="javascript:undefined;" data-dz-remove="">
+                                                <button className="dz-remove" onClick={()=>img} data-dz-remove="">
                                                     Remove file
-                                                </a>
+                                                </button>
                                             </div>
                                         ))}
                                     </form>

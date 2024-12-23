@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as apis from '../../apis';
 function RegisterClient(){
+const[client,setClient]=useState([])
 const[valueAdd,setValueAdd]=useState({
         clientName:"",
         contactPerson:"",
@@ -9,6 +10,20 @@ const[valueAdd,setValueAdd]=useState({
         address:"",
         password:""
     })
+    const FetchApi = async ()=>{
+        try {
+            await apis.GetAllClient().then((res)=>{
+                if(res.status === 200){
+                    setClient(res.data)
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(()=>{
+        FetchApi();
+    },[])
     function handleChange(e){
         setValueAdd({...valueAdd,[e.target.name]:e.target.value})
     }
@@ -16,7 +31,7 @@ const[valueAdd,setValueAdd]=useState({
         e.preventDefault();
         const FetchData=async()=>{
             try {
-                await apis.AddEmployee(valueAdd).then((res)=>{
+                await apis.addClient(valueAdd).then((res)=>{
                     if(res.status === 200){
                         window.location.reload();
                     }
@@ -198,7 +213,7 @@ const[valueAdd,setValueAdd]=useState({
                                                 data-bs-toggle="modal"
                                             >
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                <span className="d-none d-sm-inline-block"> Add Employee </span>
+                                                <span className="d-none d-sm-inline-block"> Add Client </span>
                                             </button>
                                         </div>
                                     </div>
@@ -213,21 +228,16 @@ const[valueAdd,setValueAdd]=useState({
                                 <thead>
                                     <tr>
                                         <th
-                                            className="control sorting_disabled"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 0 }}
-                                            aria-label=""
-                                        />
-                                        <th
-                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
+                                            className="sorting sorting_asc"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 18 }}
-                                            data-col={1}
-                                            aria-label=""
+                                            aria-label="product: activate to sort column descending"
+                                            aria-sort="ascending"
                                         >
-                                            <input type="checkbox" className="form-check-input" />
+                                            clientName
                                         </th>
                                         <th
                                             className="sorting sorting_asc"
@@ -239,19 +249,7 @@ const[valueAdd,setValueAdd]=useState({
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
-                                            Order
-                                        </th>
-                                        <th
-                                            className="sorting sorting_asc"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 700 }}
-                                            aria-label="product: activate to sort column descending"
-                                            aria-sort="ascending"
-                                        >
-                                            product
+                                            contactPerson
                                         </th>
                                         <th
                                             className="sorting"
@@ -262,7 +260,7 @@ const[valueAdd,setValueAdd]=useState({
                                             style={{ width: 88 }}
                                             aria-label="price: activate to sort column ascending"
                                         >
-                                            price
+                                            email
                                         </th>
                                         <th
                                             className="sorting"
@@ -273,7 +271,31 @@ const[valueAdd,setValueAdd]=useState({
                                             style={{ width: 88 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
-                                            qty
+                                            phoneNumber
+                                        </th>
+                                        <th
+                                            className="sorting sorting_asc"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 18 }}
+                                            aria-label="product: activate to sort column descending"
+                                            aria-sort="ascending"
+                                        >
+                                            address
+                                        </th>
+                                        <th
+                                            className="sorting sorting_asc"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 18 }}
+                                            aria-label="product: activate to sort column descending"
+                                            aria-sort="ascending"
+                                        >
+                                            createdAt
                                         </th>
                                         <th
                                             className="sorting"
@@ -289,43 +311,25 @@ const[valueAdd,setValueAdd]=useState({
                                     </tr>
                                 </thead>
                                 <tbody>
+                                {client?.map((res)=>(
                                     <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
+                                        <td>
+                                            <span>{res?.clientName}</span>
                                         </td>
                                         <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-9.png"
-                                                            alt="Product-9"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Air Jordan
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Air Jordan is a line of basketball shoes produced by Nike
-                                                    </small>
-                                                </div>
-                                            </div>
+                                            <span>{res?.contactPerson}</span>
                                         </td>
                                         <td>
-                                            <span>$125</span>
+                                            <span>{res?.email}</span>
                                         </td>
                                         <td>
-                                            <span>942</span>
+                                            <span>{res?.phoneNumber}</span>
+                                        </td>
+                                        <td>
+                                            <span>{res?.address}</span>
+                                        </td>
+                                        <td>
+                                            <span>{res?.createdAt}</span>
                                         </td>
                                         <td className="" style={{}}>
                                             <div className="d-flex align-items-center">
@@ -341,314 +345,7 @@ const[valueAdd,setValueAdd]=useState({
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-13.png"
-                                                            alt="Product-13"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Amazon Fire TV
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        4K UHD smart TV, stream live TV without cable
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td>
-                                            <span>$263.49</span>
-                                        </td>
-                                        <td>
-                                            <span>587</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-15.png"
-                                                            alt="Product-15"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Apple iPad
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        10.2-inch Retina Display, 64GB
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$248.39</span>
-                                        </td>
-                                        <td>
-                                            <span>468</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-5.png"
-                                                            alt="Product-5"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Apple Watch Series 7
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Starlight Aluminum Case with Starlight Sport Band.
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$799</span>
-                                        </td>
-                                        <td>
-                                            <span>851</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-16.png"
-                                                            alt="Product-16"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        BANGE Anti Theft Backpack
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Smart Business Laptop Fits 15.6 Inch Notebook
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$79.99</span>
-                                        </td>
-                                        <td>
-                                            <span>519</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="even">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-18.png"
-                                                            alt="Product-18"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Canon EOS Rebel T7
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        18-55mm Lens | Built-in Wi-Fi | 24.1 MP CMOS Sensor
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <td>
-                                            <span>$399</span>
-                                        </td>
-                                        <td>
-                                            <span>810</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="odd">
-                                        <td className="control" tabIndex={0} style={{}} />
-                                        <td className="  dt-checkboxes-cell">
-                                            <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                        </td>
-                                        <td>
-                                            <a href="app-ecommerce-order-details.html">
-                                                <span>#6979</span>
-                                            </a>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <div className="d-flex justify-content-start align-items-center product-name">
-                                                <div className="avatar-wrapper me-4">
-                                                    <div className="avatar rounded-2 bg-label-secondary">
-                                                        <img
-                                                            src="../../assets/img/ecommerce-images/product-3.png"
-                                                            alt="Product-3"
-                                                            className="rounded-2"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="d-flex flex-column">
-                                                    <span className="text-nowrap text-heading fw-medium">
-                                                        Dohioue Wall Clock
-                                                    </span>
-                                                    <small className="text-truncate d-none d-sm-block">
-                                                        Modern 10 Inch Battery Operated Wall Clocks
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span>$16.34</span>
-                                        </td>
-                                        <td>
-                                            <span>804</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -792,14 +489,14 @@ const[valueAdd,setValueAdd]=useState({
                     </div>
                 </div>
             </div>
-            {/* add Employee */}
+            {/* add Client */}
             <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
                 <div className="modal-dialog modal-lg modal-simple modal-edit-user">
                     <div className="modal-content">
                         <div className="modal-body p-0">
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                             <div className="text-center mb-6">
-                                <h4 className="mb-2">Add Employee</h4>
+                                <h4 className="mb-2">Add Client</h4>
                             </div>
                             <form
                                 onSubmit={handleSumbit}
@@ -898,7 +595,7 @@ const[valueAdd,setValueAdd]=useState({
                     </div>
                 </div>
             </div>
-             {/* add Employee */}
+             {/* add Client */}
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">
