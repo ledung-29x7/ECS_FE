@@ -24,7 +24,7 @@ function Employee() {
         try {
             await apis.GetAllEmployee().then((res) => {
                 if (res.status === 200) {
-                    setEmployee(res.data);
+                    setEmployee(res.data.emplyees);
                 }
             });
         } catch (error) {

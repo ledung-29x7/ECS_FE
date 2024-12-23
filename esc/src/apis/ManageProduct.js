@@ -15,7 +15,7 @@ export const GetAllProductByClient =  (idClient) => new Promise(async (resolve, 
 export const GetAllProduct = () => new Promise(async (resolve, reject) =>{
     try {
         const response = await axios({
-            url:"/Product",
+            url:"/Product/GetAll",
             method: "get"
         })
         resolve(response)

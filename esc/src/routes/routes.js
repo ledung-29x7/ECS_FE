@@ -85,9 +85,10 @@ export const publicRoutes = [
     { 
         path: config.routes.order, 
         component: Order,
-        role: "admin",
+        role: "employee",
         profession: "manageEmployee",
-        name: "Order"
+        name: "Order",
+        layout: EmployeeLayout
     },
     { 
         path: config.routes.orderDetail, 

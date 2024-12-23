@@ -7,21 +7,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function ProductAdmin() {
     const navigate = useNavigate();
-    var totalItems = product.length
-    var pageSize = 5;
-    var currentPage = 1;
-    var totalPages = Math.Ceiling(totalItems / pageSize);
+
     const [product, setProduct] = useState([]);
     const [productService, setProductService] = useState([]);
     const [category, setCategory] = useState([]);
     const [service, setService] = useState([]);
     const [productStatus, setProductStatus] = useState([]);
-    
+   
     const FetApiProduct = async () => {
         try {
             await apis.GetAllProduct().then((res) => {
                 if (res.status === 200) {
-                    setProduct(res.data);
+                    setProduct(res.data.products);
                 }
             });
         } catch (error) {
@@ -365,28 +362,8 @@ function ProductAdmin() {
                                             >
                                                 Active
                                             </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="status: activate to sort column ascending"
-                                            >
-                                                quantity sold
-                                            </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="status: activate to sort column ascending"
-                                            >
-                                                remaining quantity
-                                            </th>
+                                      
+                                         
                                             <th
                                                 className="sorting_disabled"
                                                 rowSpan={1}
@@ -399,7 +376,7 @@ function ProductAdmin() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {product?.map((res, key) => (
+                                        {product.map((res, key) => (
                                             <tr key={key} className="odd">
                                                 <td className="  control" tabIndex={0} style={{ display: 'none' }} />
                                                 <td className="  dt-checkboxes-cell">
@@ -466,36 +443,14 @@ function ProductAdmin() {
                                                         />
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <span>{res?.ActiveProduct}</span>
-                                                </td>
+                                                
                                                 <td>
                                                     <div className="d-inline-block text-nowrap">
-                                                        <button className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
-                                                            <i className="ri-edit-box-line ri-22px" />
+                                                        <button className="btn btn-sm btn-success btn-text-white te waves-effect rounded-pill text-body me-1"
+                                                         onClick={() => handleActive(res?.productId)}>
+                                                            active
                                                         </button>
-                                                        <button
-                                                            className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body dropdown-toggle hide-arrow"
-                                                            data-bs-toggle="dropdown"
-                                                        >
-                                                            <i className="ri-more-2-line ri-22px" />
-                                                        </button>
-                                                        <div className="dropdown-menu dropdown-menu-end m-0">
-                                                            <div className="">
-                                                                <button
-                                                                    onClick={() => handleActive(res?.productId)}
-                                                                    className=" waves-effect waves-light"
-                                                                >
-                                                                    <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                                    <span className="d-none d-sm-inline-block">
-                                                                        Active
-                                                                    </span>
-                                                                </button>
-                                                            </div>
-                                                            <a href="javascript:0;" className="dropdown-item">
-                                                                Suspend
-                                                            </a>
-                                                        </div>
+                                                        
                                                     </div>
                                                 </td>
                                             </tr>
