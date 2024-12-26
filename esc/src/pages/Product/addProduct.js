@@ -18,7 +18,7 @@ function AddProducts() {
         ClientId: idClient,
         StartDate: '',
         EndDate: '',
-        RequiredEmployees: 1,
+        RequiredEmployees: "",
     });
 
     const [valueAdd, setValueAdd] = useState({
@@ -46,9 +46,15 @@ function AddProducts() {
         }
     }, []);
 
-    const caculation = () => {
-
-    }
+    const handleChangeProductService = (event) => {
+        const { name, value } = event.target;
+        console.log(value);
+        console.log(`Selected ${name}:`, value);
+        setAddService((prev) => ({
+            ...prev,
+            [name]: name === 'ServiceId' || name === 'RequiredEmployees' ? Number(value) : value,
+        }));
+    };
 
     const handleAddService = () => {
         if (!addService.ServiceId) {
@@ -100,8 +106,11 @@ function AddProducts() {
         const files = event.target.files;
         if (files.length > 0) {
             setSelectedImage(files); // Lưu file vào state
+            // Tạo danh sách URL ảnh từ danh sách file
             const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
-            setReaderImg(prev => ({...prev, imgUpload})); // Tạo URL preview ảnh
+            
+            // Cập nhật `readerImg` là một mảng
+            setReaderImg((prev) => [...prev, ...imgUpload]);
         } else {
             console.error('No files selected.');
         }
@@ -116,15 +125,6 @@ function AddProducts() {
         }));
     };
 
-    //
-    const handleChangeProductService = (event) => {
-        const { name, value } = event.target;
-        console.log(value);
-        setAddService((prev) => ({
-            ...prev,
-            [name]: name === 'ServiceId' || name === 'RequiredEmployees' ? Number(value) : value,
-        }));
-    };
 
     // get service
     const FetchService = async () => {
@@ -348,7 +348,7 @@ function AddProducts() {
                                             </span>
                                         </div>
 
-                                        {readerImg.map((img, key) => (
+                                        {readerImg?.map((img, key) => (
                                             <div
                                                 key={key}
                                                 className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
@@ -385,7 +385,7 @@ function AddProducts() {
                                                         <strong>1.6</strong> MB
                                                     </div>
                                                 </div>
-                                                <button className="dz-remove" onClick={()=>img} data-dz-remove="">
+                                                <button className="dz-remove border-none " onClick={()=>img} data-dz-remove="">
                                                     Remove file
                                                 </button>
                                             </div>
@@ -473,7 +473,7 @@ function AddProducts() {
                                                 >
                                                     <option value="">Select Service</option>
                                                     {service?.map((res) => (
-                                                        <option key={res.serviceId} value={res.serviceId}>
+                                                        <option key={res.serviceId} value={Number(res.serviceId)}>
                                                             {res.serviceName}
                                                         </option>
                                                     ))}

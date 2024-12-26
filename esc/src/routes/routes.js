@@ -149,8 +149,7 @@ export const publicRoutes = [
     {
         path:config.routes.addOrder,
         component:AddOrder,
-        role:'employee',
-        name:"Order"
+        layout:EmployeeLayout
     },
     {
         path:config.routes.contact,
