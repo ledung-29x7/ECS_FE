@@ -24,11 +24,12 @@ export const GetAllCallStatus = ()=>new Promise(async(resolve,reject)=>{
         reject(error)
     }
 })
-export const GetAllEmployee=()=>new Promise(async(resolve,reject)=>{
+export const GetAllEmployee=(param)=>new Promise(async(resolve,reject)=>{
     try {
        const responsive =await axios({
         url:"/Employee/GetAll",
-        method:"get"
+        method:"get",
+        params:param    
        })
        resolve(responsive)
     } catch (error) {

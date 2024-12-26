@@ -14,11 +14,12 @@ export const addClient = (name)=>new Promise(async(resolve,reject)=>{
         reject(error)
     }
 })
-export const GetAllClient = ()=> new Promise(async(resolve,reject)=>{
+export const GetAllClient = (param)=> new Promise(async(resolve,reject)=>{
     try {
         const response= await axios({
             url:"/Client",
             method:"get",
+            params: param
         })
         resolve(response)
     } catch (error) {

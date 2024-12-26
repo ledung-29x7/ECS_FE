@@ -1,47 +1,123 @@
 import { useEffect, useState } from 'react';
 import * as apis from '../../apis';
-function RegisterClient(){
-const[client,setClient]=useState([])
-const[valueAdd,setValueAdd]=useState({
-        clientName:"",
-        contactPerson:"",
-        email:"",
-        phoneNumber:"",
-        address:"",
-        password:""
-    })
-    const FetchApi = async ()=>{
-        try {
-            await apis.GetAllClient().then((res)=>{
-                if(res.status === 200){
-                    setClient(res.data)
+function RegisterClient() {
+    const [client, setClient] = useState([]);
+    const [valueAdd, setValueAdd] = useState({
+        clientName: '',
+        contactPerson: '',
+        email: '',
+        phoneNumber: '',
+        address: '',
+        password: '',
+    });
+    const [totalItem, setTotalItem] = useState([]);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const renderPageNumbers = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPage; i++) {
+            pages.push(
+                <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                    <a
+                        href="#"
+                        aria-controls="DataTables_Table_0"
+                        role="link"
+                        aria-current="page"
+                        data-dt-idx={0}
+                        tabIndex={0}
+                        className="page-link"
+                        onClick={() => {
+                            
+                            handlePageClick(i);
+                        }}
+                    >
+                        {i}
+                    </a>
+                </li>,
+            );
+        }
+        return pages;
+    };
+    const [filters, setFilters] = useState({
+        pageNumber: 1,
+        searchTerm: '',
+    });
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 2000); // 2 giây
+
+        return () => {
+            clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+        };
+    }, [filters]);
+
+    // Gọi API khi `debouncedFilters` thay đổi
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log(debouncedFilters.pageNumber)
+                const response = await apis.GetAllClient(debouncedFilters);
+                console.log(response);
+                if (response.status === 200) {
+                    setCurrentPage(debouncedFilters.pageNumber)
+                    setClient(response.data.clients);
+                    setTotalItem(response.data.totalRecords);
+                    setTotalPage(response.data.totalPages);
                 }
-            })
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [debouncedFilters]);
+
+    // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+    const handlePageClick = (newPage, newSearchTerm = '') => {
+        setFilters((prev) => ({
+            ...prev,
+            pageNumber: newPage || prev.pageNumber,
+            searchTerm: newSearchTerm || prev.searchTerm,
+        }));
+    };
+
+    const FetchApi = async () => {
+        try {
+            await apis.GetAllClient().then((res) => {
+                if (res.status === 200) {
+                    setClient(res.data.clients);
+                }
+            });
         } catch (error) {
             console.log(error);
         }
-    }
-    useEffect(()=>{
+    };
+    useEffect(() => {
         FetchApi();
-    },[])
-    function handleChange(e){
-        setValueAdd({...valueAdd,[e.target.name]:e.target.value})
+    }, []);
+    function handleChange(e) {
+        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
     }
-    const handleSumbit=(e)=>{
+    const handleSumbit = (e) => {
         e.preventDefault();
-        const FetchData=async()=>{
+        const FetchData = async () => {
             try {
-                await apis.addClient(valueAdd).then((res)=>{
-                    if(res.status === 200){
+                await apis.addClient(valueAdd).then((res) => {
+                    if (res.status === 200) {
                         window.location.reload();
                     }
-                })
+                });
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
         FetchData();
-    }
+    };
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -165,6 +241,7 @@ const[valueAdd,setValueAdd]=useState({
                                                 type="search"
                                                 className="form-control form-control-sm"
                                                 placeholder="Search"
+                                                onChange={(e) => handlePageClick(1, e.target.value)}
                                                 aria-controls="DataTables_Table_0"
                                             />
                                         </label>
@@ -209,7 +286,7 @@ const[valueAdd,setValueAdd]=useState({
                                         <div className="add-new">
                                             <button
                                                 className="btn btn-primary waves-effect waves-light"
-                                                 data-bs-target="#editUser"
+                                                data-bs-target="#editUser"
                                                 data-bs-toggle="modal"
                                             >
                                                 <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
@@ -311,41 +388,41 @@ const[valueAdd,setValueAdd]=useState({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {client?.map((res)=>(
-                                    <tr className="odd">
-                                        <td>
-                                            <span>{res?.clientName}</span>
-                                        </td>
-                                        <td>
-                                            <span>{res?.contactPerson}</span>
-                                        </td>
-                                        <td>
-                                            <span>{res?.email}</span>
-                                        </td>
-                                        <td>
-                                            <span>{res?.phoneNumber}</span>
-                                        </td>
-                                        <td>
-                                            <span>{res?.address}</span>
-                                        </td>
-                                        <td>
-                                            <span>{res?.createdAt}</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div className="d-flex align-items-center">
-                                                <a
-                                                    href="javascript:;"
-                                                    className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Delete Invoice"
-                                                    // onClick={() => handleDelete(res?.roleId)}
-                                                >
-                                                    <i className="ri-delete-bin-7-line ri-22px" />
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                    {client?.map((res) => (
+                                        <tr className="odd">
+                                            <td>
+                                                <span>{res?.clientName}</span>
+                                            </td>
+                                            <td>
+                                                <span>{res?.contactPerson}</span>
+                                            </td>
+                                            <td>
+                                                <span>{res?.email}</span>
+                                            </td>
+                                            <td>
+                                                <span>{res?.phoneNumber}</span>
+                                            </td>
+                                            <td>
+                                                <span>{res?.address}</span>
+                                            </td>
+                                            <td>
+                                                <span>{res?.createdAt}</span>
+                                            </td>
+                                            <td className="" style={{}}>
+                                                <div className="d-flex align-items-center">
+                                                    <a
+                                                        href="javascript:;"
+                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Delete Invoice"
+                                                        // onClick={() => handleDelete(res?.roleId)}
+                                                    >
+                                                        <i className="ri-delete-bin-7-line ri-22px" />
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -366,7 +443,9 @@ const[valueAdd,setValueAdd]=useState({
                                     >
                                         <ul className="pagination">
                                             <li
-                                                className="paginate_button page-item previous disabled"
+                                                className={`paginate_button page-item previous ${
+                                                    currentPage === 1 ? 'disabled' : ''
+                                                }`}
                                                 id="DataTables_Table_0_previous"
                                             >
                                                 <a
@@ -376,99 +455,23 @@ const[valueAdd,setValueAdd]=useState({
                                                     data-dt-idx="previous"
                                                     tabIndex={-1}
                                                     className="page-link"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                    }}
                                                 >
                                                     <i className="ri-arrow-left-s-line" />
                                                 </a>
                                             </li>
-                                            <li className="paginate_button page-item active">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    aria-current="page"
-                                                    data-dt-idx={0}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    1
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={1}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    2
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={2}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    3
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={3}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    4
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={4}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    5
-                                                </a>
-                                            </li>
+
+                                            {renderPageNumbers()}
+
                                             <li
-                                                className="paginate_button page-item disabled"
-                                                id="DataTables_Table_0_ellipsis"
+                                                className={`paginate_button page-item next ${
+                                                    currentPage === totalPage ? 'disabled' : ''
+                                                }`}
+                                                id="DataTables_Table_0_next"
                                             >
-                                                <a
-                                                    aria-controls="DataTables_Table_0"
-                                                    aria-disabled="true"
-                                                    role="link"
-                                                    data-dt-idx="ellipsis"
-                                                    tabIndex={-1}
-                                                    className="page-link"
-                                                >
-                                                    …
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={14}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    15
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
                                                 <a
                                                     href="#"
                                                     aria-controls="DataTables_Table_0"
@@ -476,6 +479,10 @@ const[valueAdd,setValueAdd]=useState({
                                                     data-dt-idx="next"
                                                     tabIndex={0}
                                                     className="page-link"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage < totalPage) handlePageClick(currentPage + 1);
+                                                    }}
                                                 >
                                                     <i className="ri-arrow-right-s-line" />
                                                 </a>
@@ -506,7 +513,7 @@ const[valueAdd,setValueAdd]=useState({
                             >
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                     type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
                                         name="clientName"
@@ -518,7 +525,7 @@ const[valueAdd,setValueAdd]=useState({
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
                                         name="contactPerson"
@@ -530,7 +537,7 @@ const[valueAdd,setValueAdd]=useState({
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
                                         name="email"
@@ -542,7 +549,7 @@ const[valueAdd,setValueAdd]=useState({
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
                                         name="phoneNumber"
@@ -554,7 +561,7 @@ const[valueAdd,setValueAdd]=useState({
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="text"
+                                        type="text"
                                         className="form-control"
                                         placeholder=""
                                         name="address"
@@ -566,7 +573,7 @@ const[valueAdd,setValueAdd]=useState({
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
-                                         type="password"
+                                        type="password"
                                         className="form-control"
                                         placeholder=""
                                         name="password"
@@ -595,49 +602,8 @@ const[valueAdd,setValueAdd]=useState({
                     </div>
                 </div>
             </div>
-             {/* add Client */}
+            {/* add Client */}
             {/* / Content */}
-            {/* Footer */}
-            <footer className="content-footer footer bg-footer-theme">
-                <div className="container-xxl">
-                    <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                        <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{' '}
-                            <span className="text-danger">
-                                <i className="tf-icons ri-heart-fill" />
-                            </span>{' '}
-                            by{' '}
-                            <a href="https://themeselection.com" target="_blank" className="footer-link">
-                                ThemeSelection
-                            </a>
-                        </div>
-                        <div className="d-none d-lg-inline-block">
-                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
-                                License
-                            </a>
-                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
-                                More Themes
-                            </a>
-                            <a
-                                href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/net-core-mvc-introduction.html"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
-                                Documentation
-                            </a>
-                            <a
-                                href="https://themeselection.com/support/"
-                                target="_blank"
-                                className="footer-link d-none d-sm-inline-block"
-                            >
-                                Support
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            {/* / Footer */}
-            <div className="content-backdrop fade" />
         </div>
     );
 }

@@ -13,20 +13,115 @@ function ProductAdmin() {
     const [category, setCategory] = useState([]);
     const [service, setService] = useState([]);
     const [productStatus, setProductStatus] = useState([]);
-   
+    const [totalItem, setTotalItem] = useState([]);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const renderPageNumbers = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPage; i++) {
+            pages.push(
+                <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                    <a
+                        href="#"
+                        aria-controls="DataTables_Table_0"
+                        role="link"
+                        aria-current="page"
+                        data-dt-idx={0}
+                        tabIndex={0}
+                        className="page-link"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handlePageClick(i);
+                        }}
+                    >
+                        {i}
+                    </a>
+                </li>,
+            );
+        }
+        return pages;
+    };
+
+    const [filters, setFilters] = useState({
+        pageNumber: 1,
+        searchTerm: '',
+        minPrice: 0,
+        maxPrice: 0,
+        isActive: null,
+    });
+
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    const handlePriceRangeChange = (event) => {
+        const { name, value, type, checked } = event.target;
+
+        setFilters((prev) => ({
+          ...prev,
+          [name]: type === "checkbox" ? checked : value,
+        }));
+    };
+    // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 2000); // 2 giây
+
+        return () => {
+            clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+        };
+    }, [filters]);
+
+    // Gọi API khi `debouncedFilters` thay đổi
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await apis.GetAllProduct(debouncedFilters);
+                console.log(response);
+                if (response.status === 200) {
+                    setCurrentPage(debouncedFilters.pageNumber);
+                    setProduct(response.data.products);
+                    setTotalItem(response.data.totalRecords);
+                    setTotalPage(response.data.totalPages);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [debouncedFilters]);
+
+    // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+    const handlePageClick = (newPage, newSearchTerm = '') => {
+        setFilters((prev) => ({
+            ...prev,
+            pageNumber: newPage || prev.pageNumber,
+            searchTerm: newSearchTerm || prev.searchTerm,
+        }));
+    };
+
     const FetApiProduct = async () => {
         try {
             await apis.GetAllProduct().then((res) => {
                 if (res.status === 200) {
                     setProduct(res.data.products);
+                    setTotalItem(res.data.totalRecords);
+                    setTotalPage(res.data.totalPages);
+                    const priceMaxs = Math.max(...res.data.products.map((item) => item.price));
+
+                    setFilters((prev) => ({
+                        ...prev,
+                        maxPrice: priceMaxs,
+                    }));
                 }
             });
         } catch (error) {
             console.log(error);
         }
     };
-    
-    const FetApiProductService = async(idProduct) => {
+
+    const FetApiProductService = async (idProduct) => {
         try {
             await apis.GetProductServiceByIdProduct(idProduct).then((res) => {
                 if (res.status === 200) {
@@ -36,7 +131,7 @@ function ProductAdmin() {
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     const FetApiCategory = async () => {
         try {
@@ -187,23 +282,53 @@ function ProductAdmin() {
                                         <option value="Inactive">Inactive</option>
                                     </select>
                                 </div>
-                                <div className="col-md-4 product_category">
-                                    <select id="ProductCategory" className="form-select text-capitalize">
-                                        <option value="">Category</option>
-                                        <option value="Household">Household</option>
-                                        <option value="Office">Office</option>
-                                        <option value="Electronics">Electronics</option>
-                                        <option value="Shoes">Shoes</option>
-                                        <option value="Accessories">Accessories</option>
-                                        <option value="Game">Game</option>
-                                    </select>
+
+                                <div className="col-md-4">
+                                    <div className="slider-track">
+                                        <div className="d-flex justify-content-between mb-4p">
+                                            <h5 style={{ color: 'black' }}>{filters.minPrice}</h5>
+                                            <h5 style={{ color: 'black' }}>{filters.maxPrice}</h5>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            name="minPrice"
+                                            min="0"
+                                            max={filters.maxPrice}
+                                            value={filters.minPrice}
+                                            onChange={handlePriceRangeChange}
+                                            style={{
+                                                width: '100%',
+                                                background: 'rgb(60, 188, 28)',
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                        <input
+                                            type="range"
+                                            name="maxPrice"
+                                            min="0"
+                                            max={filters.maxPrice}
+                                            value={filters.maxPrice}
+                                            onChange={handlePriceRangeChange}
+                                            style={{
+                                                width: '100%',
+                                                color: 'rgb(60, 188, 28)',
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                        <div className="d-flex justify-content-between mt-2">
+                                            <span style={{ color: 'rgb(60, 188, 28)' }}>MIN</span>
+                                            <span style={{ color: 'rgb(60, 188, 28)' }}>MAX</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="col-md-4 product_stock">
-                                    <select id="ProductStock" className="form-select text-capitalize">
-                                        <option value=""> Stock </option>
-                                        <option value="Out_of_Stock">Out of Stock</option>
-                                        <option value="In_Stock">In Stock</option>
-                                    </select>
+                                <div className="col-md-4">
+                                    <input
+                                        type="checkbox"
+                                        name="isActive" 
+                                        checked={filters.isActive || false} 
+                                        onChange={handlePriceRangeChange}
+                                    />
+                                    <label>Active</label>
                                 </div>
                             </div>
                         </div>
@@ -217,6 +342,7 @@ function ProductAdmin() {
                                                     type="search"
                                                     className="form-control form-control-sm"
                                                     placeholder="Search"
+                                                    onChange={(e) => handlePageClick(1, e.target.value)}
                                                     aria-controls="DataTables_Table_0"
                                                 />
                                             </label>
@@ -241,7 +367,6 @@ function ProductAdmin() {
                                                 </label>
                                             </div>
                                             <div className="dt-buttons btn-group flex-wrap d-flex">
-                                                {' '}
                                                 <div className="btn-group">
                                                     <button
                                                         className="btn btn-secondary buttons-collection dropdown-toggle btn-outline-secondary me-4 waves-effect waves-light"
@@ -256,7 +381,7 @@ function ProductAdmin() {
                                                             <span className="d-none d-sm-inline-block">Export </span>
                                                         </span>
                                                     </button>
-                                                </div>{' '}
+                                                </div>
                                                 <button
                                                     className="btn btn-secondary btn-primary waves-effect waves-light"
                                                     tabIndex={0}
@@ -267,7 +392,7 @@ function ProductAdmin() {
                                                         <i className="ri-add-line ri-16px me-0 me-sm-1_5" />
                                                         <span className="d-none d-sm-inline-block">Add Product</span>
                                                     </span>
-                                                </button>{' '}
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -362,8 +487,7 @@ function ProductAdmin() {
                                             >
                                                 Active
                                             </th>
-                                      
-                                         
+
                                             <th
                                                 className="sorting_disabled"
                                                 rowSpan={1}
@@ -433,9 +557,9 @@ function ProductAdmin() {
                                                 </td>
 
                                                 <td>
-                                                    <div  class="form-check text-truncate form-switch">
+                                                    <div class="form-check text-truncate form-switch">
                                                         <input
-                                                            style={{width: "30px"}}
+                                                            style={{ width: '30px' }}
                                                             class="form-check-input"
                                                             checked={res?.isActive}
                                                             type="checkbox"
@@ -443,14 +567,15 @@ function ProductAdmin() {
                                                         />
                                                     </div>
                                                 </td>
-                                                
+
                                                 <td>
                                                     <div className="d-inline-block text-nowrap">
-                                                        <button className="btn btn-sm btn-success btn-text-white te waves-effect rounded-pill text-body me-1"
-                                                         onClick={() => handleActive(res?.productId)}>
+                                                        <button
+                                                            className="btn btn-sm btn-success btn-text-white te waves-effect rounded-pill text-body me-1"
+                                                            onClick={() => handleActive(res?.productId)}
+                                                        >
                                                             active
                                                         </button>
-                                                        
                                                     </div>
                                                 </td>
                                             </tr>
@@ -475,7 +600,9 @@ function ProductAdmin() {
                                         >
                                             <ul className="pagination">
                                                 <li
-                                                    className="paginate_button page-item previous disabled"
+                                                    className={`paginate_button page-item previous ${
+                                                        currentPage === 1 ? 'disabled' : ''
+                                                    }`}
                                                     id="DataTables_Table_0_previous"
                                                 >
                                                     <a
@@ -485,100 +612,21 @@ function ProductAdmin() {
                                                         data-dt-idx="previous"
                                                         tabIndex={-1}
                                                         className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                        }}
                                                     >
                                                         <i className="ri-arrow-left-s-line" />
                                                     </a>
                                                 </li>
-                                                <li className="paginate_button page-item active">
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        aria-current="page"
-                                                        data-dt-idx={0}
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                    >
-                                                        1
-                                                    </a>
-                                                </li>
-                                                <li className="paginate_button page-item ">
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx={1}
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                    >
-                                                        2
-                                                    </a>
-                                                </li>
-                                                <li className="paginate_button page-item ">
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx={2}
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                    >
-                                                        3
-                                                    </a>
-                                                </li>
-                                                <li className="paginate_button page-item ">
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx={3}
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                    >
-                                                        4
-                                                    </a>
-                                                </li>
-                                                <li className="paginate_button page-item ">
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx={4}
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                    >
-                                                        5
-                                                    </a>
-                                                </li>
+
+                                                {renderPageNumbers()}
+
                                                 <li
-                                                    className="paginate_button page-item disabled"
-                                                    id="DataTables_Table_0_ellipsis"
-                                                >
-                                                    <a
-                                                        aria-controls="DataTables_Table_0"
-                                                        aria-disabled="true"
-                                                        role="link"
-                                                        data-dt-idx="ellipsis"
-                                                        tabIndex={-1}
-                                                        className="page-link"
-                                                    >
-                                                        …
-                                                    </a>
-                                                </li>
-                                                <li className="paginate_button page-item ">
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx={14}
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                    >
-                                                        15
-                                                    </a>
-                                                </li>
-                                                <li
-                                                    className="paginate_button page-item next"
+                                                    className={`paginate_button page-item next ${
+                                                        currentPage === totalPage ? 'disabled' : ''
+                                                    }`}
                                                     id="DataTables_Table_0_next"
                                                 >
                                                     <a
@@ -588,6 +636,11 @@ function ProductAdmin() {
                                                         data-dt-idx="next"
                                                         tabIndex={0}
                                                         className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage < totalPage)
+                                                                handlePageClick(currentPage + 1);
+                                                        }}
                                                     >
                                                         <i className="ri-arrow-right-s-line" />
                                                     </a>
