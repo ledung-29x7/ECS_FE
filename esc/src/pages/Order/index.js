@@ -1,24 +1,25 @@
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 function Order() {
-    const[order,setOrder]=useState([])
-    const FetchApi = async ()=>{
+    const [order, setOrder] = useState([]);
+
+    const FetchApi = async () => {
         try {
-            await apis.GetAllOrder()
-                        .then((res)=>{
-                            if(res.status===200){
-                                setOrder(res.data)
-                            }
-                        }) 
+            await apis.GetAllOrder().then((res) => {
+                if (res.status === 200) {
+                    setOrder(res.data);
+                }
+            });
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
-    useEffect(()=>{
+    };
+    useEffect(() => {
         FetchApi();
-    },[])
+    }, []);
+
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -89,10 +90,7 @@ function Order() {
                 {/* Order List Table */}
                 <div className="card">
                     <div className="card-datatable table-responsive">
-                        <div
-                            id="DataTables_Table_0_wrapper"
-                            className="dataTables_wrapper dt-bootstrap5 no-footer"
-                        >
+                        <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                             <div className="card-header d-flex flex-column flex-md-row align-items-start align-items-md-center py-0 pb-5 pb-md-0">
                                 <div>
                                     <div id="DataTables_Table_0_filter" className="dataTables_filter">
@@ -107,10 +105,7 @@ function Order() {
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-md-baseline justify-content-md-end gap-4">
-                                    <div
-                                        className="dataTables_length my-0"
-                                        id="DataTables_Table_0_length"
-                                    >
+                                    <div className="dataTables_length my-0" id="DataTables_Table_0_length">
                                         <label>
                                             <select
                                                 name="DataTables_Table_0_length"
@@ -137,18 +132,18 @@ function Order() {
                                                     aria-expanded="false"
                                                 >
                                                     <span>
-                                                        <i className="ri-download-line ri-16px me-2" />{" "}
+                                                        <i className="ri-download-line ri-16px me-2" />{' '}
                                                         <span className="d-none d-sm-inline-block">Export</span>
                                                     </span>
                                                 </button>
-                                            </div>{" "}
+                                            </div>{' '}
                                         </div>
                                     </div>
                                     <div className="add-new">
                                         <button
                                             className="btn btn-primary waves-effect waves-light"
-                                            data-bs-toggle="offcanvas"
-                                            data-bs-target="#offcanvasAddUser"
+                                            data-bs-target="#editUser"
+                                            data-bs-toggle="modal"
                                         >
                                             <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
                                             <span className="d-none d-sm-inline-block"> Add Order </span>
@@ -168,7 +163,7 @@ function Order() {
                                             className="control sorting_disabled dtr-hidden"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 5, display: "none" }}
+                                            style={{ width: 5, display: 'none' }}
                                             aria-label=""
                                         />
                                         <th
@@ -227,7 +222,7 @@ function Order() {
                                         >
                                             order Status
                                         </th>
-                                         <th
+                                        <th
                                             className="sorting"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
@@ -249,7 +244,7 @@ function Order() {
                                         >
                                             totalAmount
                                         </th>
-                                       
+
                                         <th
                                             className="sorting_disabled"
                                             rowSpan={1}
@@ -262,66 +257,63 @@ function Order() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {order.map((res)=>(
-                                    <tr className="odd">
-                                        <td
-                                            className="control dtr-hidden"
-                                            tabIndex={0}
-                                            style={{ display: "none" }}
-                                        />
-                                        <td>
+                                    {order.map((res) => (
+                                        <tr className="odd">
+                                            <td
+                                                className="control dtr-hidden"
+                                                tabIndex={0}
+                                                style={{ display: 'none' }}
+                                            />
+                                            <td>
                                                 <span>{res?.orderer}</span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">{res?.recipient_Name}</span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">{res?.recipient_Phone}</span>
-                                        </td>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <span className="text-nowrap">{res?.recipient_Name}</span>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <span className="text-nowrap">{res?.recipient_Phone}</span>
+                                            </td>
 
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">{res?.recipient_Address}</span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                className="badge px-2 rounded-pill bg-label-success"
-                                                text-capitalized=""
-                                            >
-                                                {res?.orderStatus}
-                                            </span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">{res?.orderDate}</span>
-                                        </td>
-                                        <td className="sorting_1">
-                                            <span className="text-nowrap">{res?.totalAmount}$</span>
-                                        </td>
-                                        <td className="" style={{}}>
-                                            <div>
-                                                <button
-                                                    className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                    data-bs-toggle="dropdown"
+                                            <td className="sorting_1">
+                                                <span className="text-nowrap">{res?.recipient_Address}</span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    className="badge px-2 rounded-pill bg-label-success"
+                                                    text-capitalized=""
                                                 >
-                                                    <i className="ri-more-2-line" />
-                                                </button>
-                                                <div className="dropdown-menu dropdown-menu-end m-0">
-                                                    <a
-                                                        href="app-ecommerce-order-details.html"
-                                                        className="dropdown-item"
+                                                    {res?.orderStatus}
+                                                </span>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <span className="text-nowrap">{res?.orderDate}</span>
+                                            </td>
+                                            <td className="sorting_1">
+                                                <span className="text-nowrap">{res?.totalAmount}$</span>
+                                            </td>
+                                            <td className="" style={{}}>
+                                                <div>
+                                                    <button
+                                                        className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
+                                                        data-bs-toggle="dropdown"
                                                     >
-                                                        View
-                                                    </a>
-                                                    <a
-                                                        href="javascript:0;"
-                                                        className="dropdown-item delete-record"
-                                                    >
-                                                        Delete
-                                                    </a>
+                                                        <i className="ri-more-2-line" />
+                                                    </button>
+                                                    <div className="dropdown-menu dropdown-menu-end m-0">
+                                                        <a
+                                                            href="app-ecommerce-order-details.html"
+                                                            className="dropdown-item"
+                                                        >
+                                                            View
+                                                        </a>
+                                                        <a href="javascript:0;" className="dropdown-item delete-record">
+                                                            Delete
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -444,10 +436,7 @@ function Order() {
                                                     10
                                                 </a>
                                             </li>
-                                            <li
-                                                className="paginate_button page-item next"
-                                                id="DataTables_Table_0_next"
-                                            >
+                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
                                                 <a
                                                     href="#"
                                                     aria-controls="DataTables_Table_0"
@@ -463,185 +452,32 @@ function Order() {
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ width: "1%" }} />
+                            <div style={{ width: '1%' }} />
                         </div>
                     </div>
                 </div>
             </div>
-             {/* Offcanvas to add new user */}
-             <div
-                        className="offcanvas offcanvas-end"
-                        tabIndex={-1}
-                        id="offcanvasAddUser"
-                        aria-labelledby="offcanvasAddUserLabel"
-                    >
-                        <div className="offcanvas-header border-bottom">
-                            <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
-                                Add Call History
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close text-reset"
-                                data-bs-dismiss="offcanvas"
-                                aria-label="Close"
-                            />
-                        </div>
-                        <div className="offcanvas-body mx-0 flex-grow-0 h-100">
-                            <form
-                                // onSubmit={handleSumbit}
-                                className="add-new-user pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
-                                id="addNewUserForm"
-                                onsubmit="return false"
-                                noValidate="novalidate"
-                            >
-                            <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                            </div>
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        id="add-user-contact"
-                                        className="form-control phone-mask"
-                                        placeholder="+84 974365472"
-                                        aria-label="john.doe@example.com"
-                                        name="phoneNumber"
-                                        // onChange={handleChange}
-                                    />
-                                    <label htmlFor="add-user-fullname">phoneNumber</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <input
-                                        type="number"
-                                        id="add-user-contact"
-                                        className="form-control phone-mask"
-                                        placeholder=""
-                                        aria-label=""
-                                        name="status"
-                                    />
-                                    <label htmlFor="add-user-contact">status</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        className="form-control phone-mask"
-                                        placeholder=""
-                                        aria-label=""
-                                        name="notes"
-                                        // onChange={handleChange}
-                                    />
-                                    <label htmlFor="add-user-fullname">notes</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-
-                                {/* <div className="form-floating form-floating-outline mb-5 form-floating-select2">
-                                    <div className="position-relative">
-                                        <select
-                                            id="country"
-                                            className="select2 form-select"
-                                            data-select2-id="country"
-                                            tabIndex={-1}
-                                            aria-hidden="true"
-                                        >
-                                            <option value="" data-select2-id={2}>
-                                                Select
-                                            </option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Bangladesh">Bangladesh</option>
-                                            <option value="Belarus">Belarus</option>
-                                            <option value="Brazil">Brazil</option>
-                                            <option value="Canada">Canada</option>
-                                            <option value="China">China</option>
-                                            <option value="France">France</option>
-                                            <option value="Germany">Germany</option>
-                                            <option value="India">India</option>
-                                            <option value="Indonesia">Indonesia</option>
-                                            <option value="Israel">Israel</option>
-                                            <option value="Italy">Italy</option>
-                                            <option value="Japan">Japan</option>
-                                            <option value="Korea">Korea, Republic of</option>
-                                            <option value="Mexico">Mexico</option>
-                                            <option value="Philippines">Philippines</option>
-                                            <option value="Russia">Russian Federation</option>
-                                            <option value="South Africa">South Africa</option>
-                                            <option value="Thailand">Thailand</option>
-                                            <option value="Turkey">Turkey</option>
-                                            <option value="Ukraine">Ukraine</option>
-                                            <option value="United Arab Emirates">United Arab Emirates</option>
-                                            <option value="United Kingdom">United Kingdom</option>
-                                            <option value="United States">United States</option>
-                                        </select>
-                                    </div>
-                                    <label htmlFor="country">Status</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-role" className="form-select">
-                                        <option value="subscriber">Subscriber</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="maintainer">Maintainer</option>
-                                        <option value="author">Author</option>
-                                        <option value="admin">Admin</option>
-                                    </select>
-                                    <label htmlFor="user-role">User Role</label>
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5">
-                                    <select id="user-plan" className="form-select">
-                                        <option value="basic">Basic</option>
-                                        <option value="enterprise">Enterprise</option>
-                                        <option value="company">Company</option>
-                                        <option value="team">Team</option>
-                                    </select>
-                                    <label htmlFor="user-plan">Select Plan</label>
-                                </div> */}
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary me-sm-3 me-1 data-submit waves-effect waves-light"
-                                >
-                                    Submit
-                                </button>
-                                <button
-                                    type="reset"
-                                    className="btn btn-outline-danger waves-effect"
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    Cancel
-                                </button>
-                                <input type="hidden" />
-                            </form>
-                        </div>
-                    </div>
+            {/* add order */}
             {/* / Content */}
             {/* Footer */}
             <footer className="content-footer footer bg-footer-theme">
                 <div className="container-xxl">
                     <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
                         <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{" "}
+                            © 2024, made with{' '}
                             <span className="text-danger">
                                 <i className="tf-icons ri-heart-fill" />
-                            </span>{" "}
-                            by{" "}
-                            <a
-                                href="https://themeselection.com"
-                                target="_blank"
-                                className="footer-link"
-                            >
+                            </span>{' '}
+                            by{' '}
+                            <a href="https://themeselection.com" target="_blank" className="footer-link">
                                 ThemeSelection
                             </a>
                         </div>
                         <div className="d-none d-lg-inline-block">
-                            <a
-                                href="https://themeselection.com/license/"
-                                className="footer-link me-4"
-                                target="_blank"
-                            >
+                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
                                 License
                             </a>
-                            <a
-                                href="https://themeselection.com/"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
+                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
                                 More Themes
                             </a>
                             <a
@@ -665,7 +501,6 @@ function Order() {
             {/* / Footer */}
             <div className="content-backdrop fade" />
         </div>
-
-    )
+    );
 }
 export default Order;

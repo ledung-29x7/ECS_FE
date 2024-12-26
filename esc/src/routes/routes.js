@@ -25,6 +25,10 @@ import ClientLayout from '~/layouts/DefaultLayout/ClientLayout';
 import ProductAdmin from '~/pages/Product/productAdmin';
 import EmployeeLayout from '~/layouts/DefaultLayout/EmployeeLayout';
 import RegisterClient from '~/pages/Admin/registerClient';
+import AddOrder from '~/pages/Order/addOrder';
+import Contact from '~/pages/Contact';
+import Thank from '~/pages/Contact/Thanks';
+import Category from '~/pages/Category';
 
 // Public routes
 export const publicRoutes = [
@@ -141,6 +145,30 @@ export const publicRoutes = [
         role: 'admin',
         profession: "manageClient",
         name: "Product"
+    },
+    {
+        path:config.routes.addOrder,
+        component:AddOrder,
+        role:'employee',
+        name:"Order"
+    },
+    {
+        path:config.routes.contact,
+        component:Contact,
+        role:'admin',
+        name:"Contact"
+    },
+    {
+        path:config.routes.category,
+        component:Category,
+        role:"admin",
+        name:"Category"
+    },
+    {
+        path:config.routes.thank,
+        component:Thank,
+        layout: null,
+
     }
 ];
 
