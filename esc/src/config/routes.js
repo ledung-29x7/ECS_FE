@@ -1,5 +1,6 @@
 import { register } from "~/apis";
 import RegisterClient from "~/pages/Admin/registerClient";
+import Category from "~/pages/Category";
 
 const routes = {
     home: '/admin',
@@ -18,14 +19,17 @@ const routes = {
     orderDetail: '/order/:id',
     product: '/product',
     addProduct: '/addProduct',
-    productCategory: '/category',
+    productCategory: '/productCategory',
     customer: "/customer",
     callhistory: "/callhistory",
     role:"/role",
     client: "/client",
     loginClient: "/loginClient",
     productAdmin: "/product-admin",
-    registerClient:"/registerClient"
+    registerClient:"/registerClient",
+    addOrder:"/addOrder",
+    contact:"/contact",
+    thank:"/thank",
+    category:"/category"
 };
-
 export default routes;
