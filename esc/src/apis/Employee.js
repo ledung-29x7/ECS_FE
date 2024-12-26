@@ -12,3 +12,29 @@ export const AddEmployee=(prop)=> new Promise(async(resolve,reject)=>{
         reject(error)
     }
 })
+export const GetAvailableEmployees = async (data) => {
+    try {
+        const response = await axios.post('/Employee/available', data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching required employees:', error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const AddEmployeeService = (prop) =>
+    new Promise(async (resolve, reject) => {
+        try {
+            const response = await axios({
+                url: "/EmployeeService",
+                method: "post",
+                data: prop,
+            });
+            resolve(response);
+        } catch (error) {
+            reject(error);
+        }
+    });
+
+
+
