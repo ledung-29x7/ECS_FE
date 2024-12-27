@@ -18,7 +18,7 @@ import Product from '~/pages/Product';
 import ProductCategory from '~/pages/Product/ProductCategory';
 import CallHistory from '~/pages/Call/callHistory';
 import AddProducts from '~/pages/Product/addProduct';
-
+import WorkList from '~/pages/Call/workList';
 import Role from '~/pages/Role';
 import Client from '~/pages/Client';
 import LoginClient from '~/pages/Athor/loginClient';
@@ -133,6 +133,14 @@ export const publicRoutes = [
         role: "employee",
         profession: "manageEmployee",
         name: "History Call",
+        layout: EmployeeLayout
+    },
+    { 
+        path: config.routes.WorkList, 
+        component: WorkList,
+        role: "employee",
+        profession: "WorkList",
+        name: "Work List",
         layout: EmployeeLayout
     },
     { 

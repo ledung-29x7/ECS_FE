@@ -1,5 +1,6 @@
 import { register } from "~/apis";
 import RegisterClient from "~/pages/Admin/registerClient";
+import WorkList from "~/pages/Call/workList";
 import Category from "~/pages/Category";
 
 const routes = {
@@ -32,5 +33,6 @@ const routes = {
     thank:"/thank",
     category:"/category",
     productService : "/productService",
+    WorkList: "/worklist",
 };
 export default routes;
