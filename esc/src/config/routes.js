@@ -32,5 +32,6 @@ const routes = {
     thank:"/thank",
     category:"/category",
     productService : "/productService",
+    productAdminWithClient: "/product-admin-with-client"
 };
 export default routes;

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import * as apis from '../../apis';
+import { useNavigate } from 'react-router-dom';
+
+
 function RegisterClient() {
+    const navigate = useNavigate();
     const [client, setClient] = useState([]);
     const [totalItem, setTotalItem] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
@@ -423,6 +427,12 @@ function RegisterClient() {
                                                     >
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
+                                                    <button
+                                                        className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body dropdown-toggle hide-arrow"
+                                                        onClick={()=>(navigate("/product-admin-with-client"), window.localStorage.setItem('idAdminWithClient',res.clientId) )}
+                                                        >
+                                                            <i className="ri-eye-line ri-22px" />
+                                                        </button>
                                                 </div>
                                             </td>
                                         </tr>

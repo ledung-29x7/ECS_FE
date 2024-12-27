@@ -30,6 +30,7 @@ import AddOrder from '~/pages/Order/addOrder';
 import Contact from '~/pages/Contact';
 import Thank from '~/pages/Contact/Thanks';
 import Category from '~/pages/Category';
+import ProductAdminWithClient from '~/pages/Product/productAdminWithClient';
 
 // Public routes
 export const publicRoutes = [
@@ -176,6 +177,13 @@ export const publicRoutes = [
         component:Thank,
         layout: null,
 
+    },
+    {
+        path:config.routes.productAdminWithClient,
+        component: ProductAdminWithClient,
+        role:"admin",
+        name: "Product of Client",
+        performance: "manageClient"
     }
 ];
 
