@@ -6,9 +6,12 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function Employee() {
     const navigate = useNavigate();
+    const idEmployee = window.sessionStorage.getItem('idEmployee');
     const [employee, setEmployee] = useState([]);
+    const [employeeProductCategoryAll,setEmployeeProductCategoryAll]=useState([]);
     const [role, setRole] = useState([]);
     const [department, setDepartment] = useState([]);
+    const [category, setCategory] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [readerImg, setReaderImg] = useState([]);
     const [valueAdd, setValueAdd] = useState({
@@ -20,87 +23,98 @@ function Employee() {
         Password: '',
         PhoneNumber: '',
     });
-        const [totalItem,setTotalItem] = useState([]);
-        const [totalPage, setTotalPage] = useState(0);
-        const [currentPage, setCurrentPage] = useState(1);
-    
-        const renderPageNumbers = () => {
-            const pages = [];
-            for (let i = 1; i <= totalPage; i++) {
-              pages.push(
-                <li
-                  key={i}
-                  className={`paginate_button page-item ${
-                    currentPage === i ? "active" : ""
-                  }`}
-                >
-                  <a
-                    href="#"
-                    aria-controls="DataTables_Table_0"
-                    role="link"
-                    aria-current="page"
-                    data-dt-idx={0}
-                    tabIndex={0}
-                    className="page-link"
-                    onClick={() => {
-                      
-                      handlePageClick(i);
-                    }}
-                  >
-                    {i}
-                  </a>
-                </li>
-              );
+    const [valueAddEmployeeProductCategory, setEmployeeProductCategory] = useState({
+        employeeId: '',
+        categoryId: 0,
+    });
+    const [totalItem, setTotalItem] = useState([]);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    useEffect(() => {
+        const fetchEmployeeProductCategoryAll = async () => {
+            try {
+                const res = await apis.GetAllEmployeeProductCategory();
+                if (res.status === 200) {
+                    setEmployeeProductCategoryAll(res.data);
+                }
+            } catch (error) {
+                console.log(error);
             }
-            return pages;
+        };
+        fetchEmployeeProductCategoryAll();
+    },[]);
+
+    const renderPageNumbers = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPage; i++) {
+            pages.push(
+                <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                    <a
+                        href="#"
+                        aria-controls="DataTables_Table_0"
+                        role="link"
+                        aria-current="page"
+                        data-dt-idx={0}
+                        tabIndex={0}
+                        className="page-link"
+                        onClick={() => {
+                            handlePageClick(i);
+                        }}
+                    >
+                        {i}
+                    </a>
+                </li>,
+            );
         }
-        const [filters, setFilters] = useState({
-            pageNumber: 1,
-            searchTerm: "",
-            
-          });
-          const [debouncedFilters, setDebouncedFilters] = useState(filters);
-        
-          // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
-          useEffect(() => {
-            const handler = setTimeout(() => {
-              setDebouncedFilters(filters);
-            }, 2000); // 2 giây
-        
-            return () => {
-              clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
-            };
-          }, [filters]);
-        
-          // Gọi API khi `debouncedFilters` thay đổi
-          useEffect(() => {
-            const fetchData = async () => {
-              try {
-              
+        return pages;
+    };
+    // console.log("idEmployee from props:", idEmployee);
+
+    const [filters, setFilters] = useState({
+        pageNumber: 1,
+        searchTerm: '',
+    });
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 2000); // 2 giây
+
+        return () => {
+            clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+        };
+    }, [filters]);
+
+    // Gọi API khi `debouncedFilters` thay đổi
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
                 const response = await apis.GetAllEmployee(debouncedFilters);
-                console.log(response)
+                console.log(response);
                 if (response.status === 200) {
-                    setCurrentPage(debouncedFilters.pageNumber)
+                    setCurrentPage(debouncedFilters.pageNumber);
                     setEmployee(response.data.employees);
                     setTotalItem(response.data.totalRecords);
                     setTotalPage(response.data.totalPages);
                 }
-              } catch (error) {
-                console.error("Error fetching data:", error);
-              }
-            };
-        
-            fetchData();
-          }, [debouncedFilters]);
-        
-          // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
-          const handlePageClick = (newPage, newSearchTerm = "") => {
-            setFilters((prev) => ({
-              ...prev,
-              pageNumber: newPage || prev.pageNumber,
-              searchTerm: newSearchTerm || prev.searchTerm
-            }));
-          };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [debouncedFilters]);
+
+    // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+    const handlePageClick = (newPage, newSearchTerm = '') => {
+        setFilters((prev) => ({
+            ...prev,
+            pageNumber: newPage || prev.pageNumber,
+            searchTerm: newSearchTerm || prev.searchTerm,
+        }));
+    };
     const FetchApi = async () => {
         try {
             await apis.GetAllEmployee().then((res) => {
@@ -125,6 +139,19 @@ function Employee() {
         };
         fetchRole();
     }, []);
+    useEffect(() => {
+        const fetchCategory = async () => {
+            try {
+                const res = await apis.GetAllCategory();
+                if (res.status === 200) {
+                    setCategory(res.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchCategory();
+    });
     useEffect(() => {
         const fetchDepartment = async () => {
             try {
@@ -158,6 +185,36 @@ function Employee() {
             ...prev,
             [name]: ['DepartmentID', 'RoleId'].includes(name) ? Number(value) : value,
         }));
+    };
+    const handleChangeEmployeeProductCategory = (e, employeeId) => {
+        const { name, value } = e.target;
+    
+        // Cập nhật state
+        setEmployeeProductCategory({
+            ...valueAddEmployeeProductCategory,
+            [name]: value,
+            employeeId: employeeId, // Gắn employeeId vào state
+        });
+    
+        // Gọi API
+        const FetchData = async () => {
+            try {
+                const response = await apis.AddEmployeeProductCategory({
+                    ...valueAddEmployeeProductCategory,
+                    [name]: value,
+                    employeeId: employeeId,
+                });
+    
+                if (response.status === 200) {
+                    alert("Category added successfully!");
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+    
+        FetchData();
     };
 
     const handleSumbit = (e) => {
@@ -199,6 +256,7 @@ function Employee() {
         };
         fetchData();
     };
+   
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -385,14 +443,13 @@ function Employee() {
                             >
                                 <thead>
                                     <tr>
-                                       
                                         <th
                                             className="sorting sorting_asc"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 18 }}
+                                            style={{ width: 10 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -404,7 +461,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 700 }}
+                                            style={{ width: 30 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -416,7 +473,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="price: activate to sort column ascending"
                                         >
                                             phoneNumber
@@ -427,7 +484,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
                                             role
@@ -438,10 +495,21 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
                                             department
+                                        </th>
+                                        <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 88 }}
+                                            aria-label="qty: activate to sort column ascending"
+                                        >
+                                            Category
                                         </th>
                                         <th
                                             className="sorting"
@@ -458,8 +526,7 @@ function Employee() {
                                 </thead>
                                 <tbody>
                                     {employee?.map((res) => (
-                                        <tr className="odd">
-                                            
+                                        <tr className="odd" key={res.employeeId}>
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center product-name">
                                                     <div className="avatar-wrapper me-4">
@@ -473,8 +540,7 @@ function Employee() {
                                                     </div>
                                                     <div className="d-flex flex-column">
                                                         <span className="text-nowrap text-heading fw-medium">
-                                                            {res?.firstName}
-                                                            {res.lastName}
+                                                            {res?.firstName} {res?.lastName}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -486,26 +552,48 @@ function Employee() {
                                                 <span>{res?.phoneNumber}</span>
                                             </td>
                                             <td>
-                                                <span> {role.find((r) => r.roleId === res?.roleId)?.roleName}</span>
+                                                <span>{role.find((r) => r.roleId === res?.roleId)?.roleName}</span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {' '}
                                                     {
                                                         department.find((r) => r.departmentID === res?.departmentId)
                                                             ?.departmentName
                                                     }
                                                 </span>
                                             </td>
-
-                                            <td className="" style={{}}>
+                                            <td>
+                                                <span>
+                                                    <select
+                                                        id="select2Basic"
+                                                        className="form-select"
+                                                        name="categoryId"
+                                                        value={
+                                                            employeeProductCategoryAll.find((r) => r.employeeId === res.employeeId)
+                                                                    ?.categoryId || ''
+                                                            }
+                                                        onChange={(e) =>
+                                                            handleChangeEmployeeProductCategory(e, res.employeeId)
+                                                        } // Truyền employeeId
+                                                    >
+                                                        <option value="">Select category</option>
+                                                        {category.map((categoryRes, key) => (
+                                                            <option key={key} value={categoryRes.categoryId}>
+                                                                {categoryRes.categoryName}
+                                                            </option>
+                                                        ))}
+                                                       
+                                                    </select>
+                                                    
+                                                </span>
+                                            </td>
+                                            <td>
                                                 <div className="d-flex align-items-center">
                                                     <a
                                                         href="javascript:;"
                                                         className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
                                                         data-bs-toggle="tooltip"
                                                         title="Delete Invoice"
-                                                        // onClick={() => handleDelete(res?.roleId)}
                                                     >
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
@@ -533,11 +621,10 @@ function Employee() {
                                     >
                                         <ul className="pagination">
                                             <li
-                                                    className={`paginate_button page-item previous ${
-                                                    currentPage === 1 ? "disabled" : ""
-                                                    }`}
+                                                className={`paginate_button page-item previous ${
+                                                    currentPage === 1 ? 'disabled' : ''
+                                                }`}
                                                 id="DataTables_Table_0_previous"
-
                                             >
                                                 <a
                                                     aria-controls="DataTables_Table_0"
@@ -549,19 +636,17 @@ function Employee() {
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         if (currentPage > 1) handlePageClick(currentPage - 1);
-                                                        }}
+                                                    }}
                                                 >
                                                     <i className="ri-arrow-left-s-line" />
                                                 </a>
                                             </li>
-                                            
-                                            {
-                                                renderPageNumbers()
-                                            }
+
+                                            {renderPageNumbers()}
 
                                             <li
                                                 className={`paginate_button page-item next ${
-                                                    currentPage === totalPage ? "disabled" : ""
+                                                    currentPage === totalPage ? 'disabled' : ''
                                                 }`}
                                                 id="DataTables_Table_0_next"
                                             >
