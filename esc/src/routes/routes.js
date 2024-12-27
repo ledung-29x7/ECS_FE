@@ -91,7 +91,7 @@ export const publicRoutes = [
         path: config.routes.department, 
         component: Department, 
         role: 'admin', 
-        profession: "manageEmployee",
+        profession: "User",
         name: "Department"
     },
     { 
