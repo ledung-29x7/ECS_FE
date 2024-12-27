@@ -50,7 +50,7 @@ function Product() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
-                        setProduct(res.data);
+                        setProduct(res.data.products);
                     }
                 })
                 .catch((error) => {
@@ -148,7 +148,7 @@ function Product() {
                     console.log(res);
                     if (res.status === 200) {
                         setIsShowEdit(true)
-                        setValueEdit(res.data);
+                        setValueEdit(res.data.products);
                     }
                 });
             } catch (error) {
