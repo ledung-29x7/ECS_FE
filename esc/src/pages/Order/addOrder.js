@@ -2,20 +2,29 @@ import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 function AddOrder() {
+    const navigate = useNavigate();
+    const callId = window.localStorage.getItem("callId")
     const [valueAdd, setValueAdd] = useState({
-        callId: 0,
-        orderer: '',
-        recipientName: '',
-        recipientPhone: '',
-        recipientAddress: '',
+        order: {
+            callId: callId,
+            orderer: '',
+            totalAmount: 0,
+            recipientName: '',
+            recipientPhone: '',
+            recipientAddress: '',
+        },
         orderDetails: [],
     });
     const [valueAddOrderDetails, setValueAddOrderDetails] = useState({
-        productId: 0,
-        quantity: '',
+        orderId: 0,
+        productId: '',
+        quantity: 0,
+        totalPrice: 0,
     });
-    const [totalPrice, setTotalPrice] = useState(0);
+
+    
     const [product, setProduct] = useState([]);
     useEffect(() => {
         const FetchProduct = async () => {
@@ -30,22 +39,78 @@ function AddOrder() {
         };
         FetchProduct();
     }, []);
-    function handleChange(e) {
-        setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
-    }
-    function handleChangeOrderDetails(e) {
-        setValueAddOrderDetails({ ...valueAddOrderDetails, [e.target.name]: e.target.value });
-    }
-    const handleAddOrder = (e) => {
-        e.preventDefault();
+
+    const handleAddService = () => {
         if (!valueAddOrderDetails.productId) {
-            alert('Please select a service!');
+            alert('Please select a product!');
             return;
         }
-        const selectPriceProduct = product.find((p) => p.productId === valueAddOrderDetails.productId);
-        const orderDetailsCost = selectPriceProduct.price * valueAddOrderDetails.quantity;
-        setTotalPrice(orderDetailsCost);
+
+        const selectedProduct = product.find((p) => p.productId === valueAddOrderDetails.productId);
+        if (!selectedProduct) {
+            alert('Product not found!');
+            return;
+        }
+
+        const ttPrice = valueAddOrderDetails.quantity * selectedProduct.price;
+
+        setValueAdd((prev) => {
+            const updatedOrderDetails = [...prev.orderDetails, { ...valueAddOrderDetails, totalPrice: ttPrice }];
+
+            const updatedTotalAmount = updatedOrderDetails.reduce(
+                (sum, item) => sum + item.totalPrice,
+                0, // Giá trị khởi tạo
+            );
+
+            return {
+                ...prev,
+                order: { ...prev.order, totalAmount: updatedTotalAmount },
+                orderDetails: updatedOrderDetails,
+            };
+        });
+
+        // Reset productId trong valueAddOrderDetails (nếu cần)
+        setValueAddOrderDetails((prev) => ({
+            ...prev,
+            productId: '',
+            quantity: 0,
+        }));
     };
+
+    function handleChange(event) {
+        const { name, value } = event.target;
+        setValueAdd((prev) => ({
+            ...prev,
+            order: {
+                ...prev.order,
+                [name]: value,
+            },
+        }));
+    }
+
+    function handleChangeOrderDetails(event) {
+        const { name, value } = event.target;
+        setValueAddOrderDetails((prev) => ({
+            ...prev,
+            [name]: ['quantity'].includes(name) ? Number(value) : value,
+        }));
+    }
+    const handleSubmit = () => {
+        const FetchApi = async () => {
+            try {
+                await apis.AddOrderWithDetails(valueAdd).then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        navigate('/order');
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        FetchApi();
+    };
+
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -65,7 +130,9 @@ function AddOrder() {
                                 Discard
                             </button>
                             <button className="btn btn-outline-primary waves-effect">Save draft</button>
-                            <button className="btn btn-primary waves-effect waves-light">Publish order</button>
+                            <button onClick={handleSubmit} className="btn btn-primary waves-effect waves-light">
+                                Publish order
+                            </button>
                         </div>
                     </div>
                     <div className="row">
@@ -78,12 +145,12 @@ function AddOrder() {
                                 </div>
                                 <div className="card-body">
                                     <form className="form-repeater">
-                                    <div className="form-floating form-floating-outline mb-5">
+                                        <div className="form-floating form-floating-outline mb-5">
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 id="ecommerce-product-name"
-                                                placeholder="Product title"
+                                                placeholder="Orderer"
                                                 name="orderer"
                                                 onChange={handleChange}
                                                 aria-label="Product title"
@@ -92,10 +159,10 @@ function AddOrder() {
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="form-control"
                                                 id="ecommerce-product-name"
-                                                placeholder="Product title"
+                                                placeholder="Recipient Name"
                                                 name="recipientName"
                                                 onChange={handleChange}
                                                 aria-label="Product title"
@@ -104,10 +171,10 @@ function AddOrder() {
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="form-control"
                                                 id="ecommerce-product-name"
-                                                placeholder="Product title"
+                                                placeholder="Recipient Phone"
                                                 name="recipientPhone"
                                                 onChange={handleChange}
                                                 aria-label="Product title"
@@ -116,10 +183,10 @@ function AddOrder() {
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="form-control"
                                                 id="ecommerce-product-name"
-                                                placeholder="Product title"
+                                                placeholder="Recipient Address"
                                                 name="recipientAddress"
                                                 onChange={handleChange}
                                                 aria-label="Product title"
@@ -136,64 +203,64 @@ function AddOrder() {
                         {/* Second column */}
                         <div className="col-12 col-lg-4">
                             {/* Organize Card */}
+                            <div className="card mb-6">
+                                {/* Form chung */}
                                 <div className="card mb-6">
-                                    {/* Form chung */}
-                                    <div className="card mb-6">
-                                        <h5 className="card-header">Form Order</h5>
-                                        <form className="card-body">
-                                            <div className="d-flex flex-column">
-                                                <label className="text-sm-start" htmlFor="alignment-phone">
-                                                    quantity
-                                                </label>
-                                                <div>
-                                                    <input
-                                                        type="number"
-                                                        id="alignment-phone"
-                                                        className="form-control"
-                                                        name="quantity"
-                                                        value={valueAddOrderDetails.quantity}
-                                                        min={1}
-                                                        onChange={handleChangeOrderDetails}
-                                                        placeholder="quantity"
-                                                        aria-label="10"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div className="card-header">
-                                        <h5 className="card-title mb-0">Product</h5>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="position-relative mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
-                                            <div className="w-100 me-4">
-                                                <select
-                                                    id="select2Basic"
-                                                    className="form-select"
-                                                    name="productId"
-                                                    value={valueAddOrderDetails.productId}
-                                                    onChange={handleChangeOrderDetails}
-                                                >
-                                                    <option value="">Select product</option>
-
-                                                    {product.map((res, key) => (
-                                                        <option key={key} value={res.productId}>
-                                                            {res.productName}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                    <h5 className="card-header">Form Order</h5>
+                                    <form className="card-body">
+                                        <div className="d-flex flex-column">
+                                            <label className="text-sm-start" htmlFor="alignment-phone">
+                                                quantity
+                                            </label>
                                             <div>
-                                                <button
-                                                    className="btn btn-outline-primary btn-icon waves-effect"
-                                                    // onClick={handleAddService}
-                                                >
-                                                    <i className="ri-add-line" />
-                                                </button>
+                                                <input
+                                                    type="number"
+                                                    id="alignment-phone"
+                                                    className="form-control"
+                                                    name="quantity"
+                                                    value={valueAddOrderDetails.quantity}
+                                                    min={1}
+                                                    onChange={handleChangeOrderDetails}
+                                                    placeholder="quantity"
+                                                    aria-label="10"
+                                                />
                                             </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="card-header">
+                                    <h5 className="card-title mb-0">Product</h5>
+                                </div>
+                                <div className="card-body">
+                                    <div className="position-relative mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
+                                        <div className="w-100 me-4">
+                                            <select
+                                                id="select2Basic"
+                                                className="form-select"
+                                                name="productId"
+                                                value={valueAddOrderDetails.productId}
+                                                onChange={handleChangeOrderDetails}
+                                            >
+                                                <option value="">Select product</option>
+
+                                                {product?.map((res, key) => (
+                                                    <option key={key} value={res.productId}>
+                                                        {res.productName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <button
+                                                className="btn btn-outline-primary btn-icon waves-effect"
+                                                onClick={handleAddService}
+                                            >
+                                                <i className="ri-add-line" />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             {/* /Organize Card */}
                         </div>
                         {/* /Second column */}
@@ -253,39 +320,56 @@ function AddOrder() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="odd">
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center product-name">
-                                                    <div className="avatar-wrapper me-3">
-                                                        <div className="avatar avatar-sm rounded-2 bg-label-secondary">
-                                                            <img
-                                                                src="../../assets/img/products/woodenchair.png"
-                                                                alt="product-Wooden Chair"
-                                                                className="rounded-2"
-                                                            />
+                                        {valueAdd.orderDetails?.map((res, key) => (
+                                            <tr className="odd" key={key}>
+                                                <td className="sorting_1">
+                                                    <div className="d-flex justify-content-start align-items-center product-name">
+                                                        <div className="avatar-wrapper me-3">
+                                                            <div className="avatar avatar-sm rounded-2 bg-label-secondary">
+                                                                <img
+                                                                    src={`data:${
+                                                                        product.find(
+                                                                            (p) => p.productId === res.productId,
+                                                                        )?.images[0]?.type
+                                                                    };base64,${
+                                                                        product.find(
+                                                                            (p) => p.productId === res.productId,
+                                                                        )?.images[0]?.imageBase64
+                                                                    }`}
+                                                                    alt="product-Wooden Chair"
+                                                                    className="rounded-2"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="d-flex flex-column">
+                                                            <span className="text-nowrap text-heading fw-medium">
+                                                                {
+                                                                    product.find((p) => p.productId === res.productId)
+                                                                        ?.productName
+                                                                }
+                                                            </span>
+                                                            <small className="text-truncate d-none d-sm-block">
+                                                                {
+                                                                    product.find((p) => p.productId === res.productId)
+                                                                        ?.description
+                                                                }
+                                                            </small>
                                                         </div>
                                                     </div>
-                                                    <div className="d-flex flex-column">
-                                                        <span className="text-nowrap text-heading fw-medium">
-                                                            Wooden Chair
-                                                        </span>
-                                                        <small className="text-truncate d-none d-sm-block">
-                                                            Material: Wooden
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span>$841</span>
-                                            </td>
-                                            <td>
-                                                <span>2</span>
-                                            </td>
-                                            <td>
-                                                <span>$1682</span>
-                                            </td>
-                                        </tr>
-                                       
+                                                </td>
+                                                <td>
+                                                    <span>
+                                                        {product.find((p) => p.productId === res.productId)?.price}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span>{res?.quantity}</span>
+                                                </td>
+                                                <td>
+                                                    <span>{res?.totalPrice}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                                 <div style={{ width: '1%' }} />
@@ -306,7 +390,7 @@ function AddOrder() {
                                     </div>
                                     <div className="d-flex justify-content-start gap-4">
                                         <h6 className="w-px-100 mb-0">Total:</h6>
-                                        <h6 className="mb-0">$5100.25</h6>
+                                        <h6 className="mb-0">{valueAdd?.order?.totalAmount}</h6>
                                     </div>
                                 </div>
                             </div>

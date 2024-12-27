@@ -64,14 +64,14 @@ function ProductAdmin() {
     // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
     useEffect(() => {
         const handler = setTimeout(() => {
-            setDebouncedFilters(filters);
+            setDebouncedFilters({ ...filters }); // Sử dụng bản sao mới nhất của filters
         }, 2000); // 2 giây
-
+    
         return () => {
             clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
         };
     }, [filters]);
-
+ 
     // Gọi API khi `debouncedFilters` thay đổi
     useEffect(() => {
         const fetchData = async () => {
@@ -97,7 +97,7 @@ function ProductAdmin() {
         setFilters((prev) => ({
             ...prev,
             pageNumber: newPage || prev.pageNumber,
-            searchTerm: newSearchTerm || prev.searchTerm,
+            searchTerm: newSearchTerm, // Cập nhật chính xác giá trị rỗng nếu người dùng xóa
         }));
     };
 

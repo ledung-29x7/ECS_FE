@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import * as apis from '../../apis';
 function RegisterClient() {
     const [client, setClient] = useState([]);
+    const [totalItem, setTotalItem] = useState([]);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [valueAdd, setValueAdd] = useState({
         clientName: '',
         contactPerson: '',
@@ -10,11 +13,8 @@ function RegisterClient() {
         address: '',
         password: '',
     });
-    const [totalItem, setTotalItem] = useState([]);
-    const [totalPage, setTotalPage] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
 
-    const renderPageNumbers = () => {
+   const renderPageNumbers = () => {
         const pages = [];
         for (let i = 1; i <= totalPage; i++) {
             pages.push(
@@ -27,8 +27,8 @@ function RegisterClient() {
                         data-dt-idx={0}
                         tabIndex={0}
                         className="page-link"
-                        onClick={() => {
-                            
+                        onClick={(e) => {
+                            e.preventDefault();
                             handlePageClick(i);
                         }}
                     >
@@ -39,32 +39,33 @@ function RegisterClient() {
         }
         return pages;
     };
+
     const [filters, setFilters] = useState({
         pageNumber: 1,
         searchTerm: '',
     });
+
     const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
     // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
     useEffect(() => {
         const handler = setTimeout(() => {
-            setDebouncedFilters(filters);
+            setDebouncedFilters({ ...filters }); // Sử dụng bản sao mới nhất của filters
         }, 2000); // 2 giây
-
+    
         return () => {
             clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
         };
     }, [filters]);
-
+    console.log(debouncedFilters)
     // Gọi API khi `debouncedFilters` thay đổi
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(debouncedFilters.pageNumber)
                 const response = await apis.GetAllClient(debouncedFilters);
                 console.log(response);
                 if (response.status === 200) {
-                    setCurrentPage(debouncedFilters.pageNumber)
+                    setCurrentPage(debouncedFilters.pageNumber);
                     setClient(response.data.clients);
                     setTotalItem(response.data.totalRecords);
                     setTotalPage(response.data.totalPages);
@@ -76,30 +77,30 @@ function RegisterClient() {
 
         fetchData();
     }, [debouncedFilters]);
-
+    console.log(debouncedFilters)
     // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
     const handlePageClick = (newPage, newSearchTerm = '') => {
         setFilters((prev) => ({
             ...prev,
             pageNumber: newPage || prev.pageNumber,
-            searchTerm: newSearchTerm || prev.searchTerm,
+            searchTerm: newSearchTerm, // Cập nhật chính xác giá trị rỗng nếu người dùng xóa
         }));
     };
-
     const FetchApi = async () => {
         try {
             await apis.GetAllClient().then((res) => {
                 if (res.status === 200) {
                     setClient(res.data.clients);
+                    setTotalItem(res.data.totalRecords);
+                    setTotalPage(res.data.totalPages);
+                    
                 }
             });
         } catch (error) {
             console.log(error);
         }
     };
-    useEffect(() => {
-        FetchApi();
-    }, []);
+
     function handleChange(e) {
         setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
     }
@@ -118,6 +119,9 @@ function RegisterClient() {
         };
         FetchData();
     };
+    useEffect(() => {
+        FetchApi();
+    }, []);
     return (
         <div className="content-wrapper">
             {/* Content */}

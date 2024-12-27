@@ -93,7 +93,8 @@ function CallHistory() {
                         // if (closeButton) {
                         //     closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
                         // }
-                        navigate("/order")
+                        navigate("/addorder")
+                        window.localStorage.setItem("callId",res.data.callId)
                     }
                     // window.location.reload();
                 }
