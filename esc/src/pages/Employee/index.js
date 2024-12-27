@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
 import * as apis from '../../apis';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function Employee() {
-    const navigate = useNavigate();
-    const idEmployee = window.sessionStorage.getItem('idEmployee');
     const [employee, setEmployee] = useState([]);
-    const [employeeProductCategoryAll,setEmployeeProductCategoryAll]=useState([]);
+    // const [employeeProductCategoryAll, setEmployeeProductCategoryAll] = useState([]);
     const [role, setRole] = useState([]);
     const [department, setDepartment] = useState([]);
     const [category, setCategory] = useState([]);
@@ -22,27 +17,32 @@ function Employee() {
         RoleId: 0,
         Password: '',
         PhoneNumber: '',
-    });
-    const [valueAddEmployeeProductCategory, setEmployeeProductCategory] = useState({
-        employeeId: '',
-        categoryId: 0,
+        CategoryIds: [],
     });
     const [totalItem, setTotalItem] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    useEffect(() => {
-        const fetchEmployeeProductCategoryAll = async () => {
-            try {
-                const res = await apis.GetAllEmployeeProductCategory();
-                if (res.status === 200) {
-                    setEmployeeProductCategoryAll(res.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        fetchEmployeeProductCategoryAll();
-    },[]);
+    const [selectedCategory, setSelectedCategory] = useState(''); // Lưu categoryId được chọn
+
+    // Xử lý thay đổi khi chọn category từ dropdown
+    const handleChangeCategory = (event) => {
+        const { value } = event.target;
+        console.log(value);
+        setSelectedCategory(value); // Cập nhật selectedCategory
+    };
+
+    // Xử lý khi click vào nút "Add"
+    const handleAddCategory = () => {
+        // Kiểm tra xem categoryId đã có trong mảng CategoryIds chưa
+        if (selectedCategory && !valueAdd.CategoryIds.includes(Number(selectedCategory))) {
+            setValueAdd((prev) => ({
+                ...prev,
+                CategoryIds: [...prev.CategoryIds, Number(selectedCategory)], // Thêm categoryId vào mảng
+            }));
+        } else {
+            alert('Category đã được thêm hoặc chưa chọn!');
+        }
+    };
 
     const renderPageNumbers = () => {
         const pages = [];
@@ -151,7 +151,7 @@ function Employee() {
             }
         };
         fetchCategory();
-    });
+    }, []);
     useEffect(() => {
         const fetchDepartment = async () => {
             try {
@@ -186,39 +186,7 @@ function Employee() {
             [name]: ['DepartmentID', 'RoleId'].includes(name) ? Number(value) : value,
         }));
     };
-    const handleChangeEmployeeProductCategory = (e, employeeId) => {
-        const { name, value } = e.target;
-    
-        // Cập nhật state
-        setEmployeeProductCategory({
-            ...valueAddEmployeeProductCategory,
-            [name]: value,
-            employeeId: employeeId, // Gắn employeeId vào state
-        });
-    
-        // Gọi API
-        const FetchData = async () => {
-            try {
-                const response = await apis.AddEmployeeProductCategory({
-                    ...valueAddEmployeeProductCategory,
-                    [name]: value,
-                    employeeId: employeeId,
-                });
-    
-                if (response.status === 200) {
-                    alert("Category added successfully!");
-                    window.location.reload();
-                }
-            } catch (error) {
-                console.error("Error:", error);
-            }
-        };
-    
-        FetchData();
-    };
-
-    const handleSumbit = (e) => {
-        e.preventDefault();
+    const handleSumbit = () => {
         const formData = new FormData();
         formData.append('FirstName', valueAdd.FirstName);
         formData.append('LastName', valueAdd.LastName);
@@ -239,6 +207,17 @@ function Employee() {
         for (let pair of formData.entries()) {
             console.log(pair[0], pair[1]);
         }
+        // valueAdd.CategoryIds.forEach((category)=>{
+        //     category.RequiredEmployees= Number(category.RequiredEmployees);
+        // });
+        if (valueAdd.CategoryIds && valueAdd.CategoryIds.length > 0) {
+            for (let i = 0; i < valueAdd.CategoryIds.length; i++) {
+                formData.append('CategoryIds', valueAdd.CategoryIds[i]);
+            }
+        } else {
+            console.error('No files to upload.');
+            return;
+        }
 
         const fetchData = async () => {
             try {
@@ -256,7 +235,7 @@ function Employee() {
         };
         fetchData();
     };
-   
+
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -557,34 +536,27 @@ function Employee() {
                                             <td>
                                                 <span>
                                                     {
-                                                        department.find((r) => r.departmentID === res?.departmentId)
+                                                        department.find((r) => r.departmentID === res?.departmentID)
                                                             ?.departmentName
                                                     }
                                                 </span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    <select
-                                                        id="select2Basic"
-                                                        className="form-select"
-                                                        name="categoryId"
-                                                        value={
-                                                            employeeProductCategoryAll.find((r) => r.employeeId === res.employeeId)
-                                                                    ?.categoryId || ''
-                                                            }
-                                                        onChange={(e) =>
-                                                            handleChangeEmployeeProductCategory(e, res.employeeId)
-                                                        } // Truyền employeeId
-                                                    >
-                                                        <option value="">Select category</option>
-                                                        {category.map((categoryRes, key) => (
+                                                   {res.categories.length >0 ?
+                                                    <select id="select2Basic" className="form-select border-none" name="categoryId">
+                                                        {res.categories.map((categoryRes, key) => (
                                                             <option key={key} value={categoryRes.categoryId}>
-                                                                {categoryRes.categoryName}
+                                                                {category.find((r)=> r.categoryId === categoryRes.categoryId)?.categoryName}
                                                             </option>
                                                         ))}
-                                                       
                                                     </select>
-                                                    
+                                                   :(
+                                                    <div id="select2Basic" className="form-control border-none" name="categoryId">
+                                                        none
+                                                    </div>
+                                                   )}
+                                                   
                                                 </span>
                                             </td>
                                             <td>
@@ -683,8 +655,8 @@ function Employee() {
                             <div className="text-center mb-6">
                                 <h4 className="mb-2">Add Employee</h4>
                             </div>
-                            <form
-                                onSubmit={handleSumbit}
+                            <div
+                                // onSubmit={handleSumbit}
                                 id="editUserForm"
                                 className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
                                 noValidate="novalidate"
@@ -848,8 +820,60 @@ function Employee() {
                                         </div>
                                     ))}
                                 </div>
+                                <div className="position-relative mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
+                                    <div className="w-100 me-4">
+                                        <select
+                                            id="alignment-country"
+                                            typeof="number"
+                                            className="select2 form-select form-select-sm"
+                                            value={selectedCategory} // Dùng selectedCategory để bind giá trị của select
+                                            onChange={handleChangeCategory}
+                                        >
+                                            <option value="">Select category</option>
+                                            {category?.map((res) => (
+                                                <option key={res.categoryId} value={res.categoryId}>
+                                                    {res.categoryName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-outline-primary btn-icon waves-effect"
+                                            onClick={handleAddCategory}
+                                        >
+                                            <i className="ri-add-line" />
+                                        </button>
+                                    </div>
+                                    <ul className="list-unstyled">
+                                        {valueAdd.CategoryIds.map((categoryId, key) => {
+                                            const selectedCategoryObj = category.find(
+                                                (cat) => cat.categoryId === categoryId,
+                                            );
+                                            return selectedCategoryObj ? (
+                                                <li key={key} className="d-flex gap-4 mb-4">
+                                                    <div className="flex-shrink-0">
+                                                        {selectedCategoryObj.categoryName}
+                                                    </div>
+                                                    <div className="flex-grow-1">
+                                                        <p className="mb-0">
+                                                            <a className="text-body" href="javascript:void(0)">
+                                                                {/* Assuming you want to show some additional info from `category` */}
+                                                                {selectedCategoryObj.RequiredEmployees}
+                                                            </a>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            ) : null;
+                                        })}
+                                    </ul>
+                                </div>
                                 <div className="col-12 text-center">
-                                    <button type="submit" className="btn btn-primary me-3 waves-effect waves-light">
+                                    <button
+                                        type="submit"
+                                        onClick={handleSumbit}
+                                        className="btn btn-primary me-3 waves-effect waves-light"
+                                    >
                                         Submit
                                     </button>
                                     <button
@@ -862,7 +886,7 @@ function Employee() {
                                     </button>
                                 </div>
                                 <input type="hidden" />
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
