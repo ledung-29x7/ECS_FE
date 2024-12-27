@@ -30,6 +30,7 @@ const routes = {
     addOrder:"/addOrder",
     contact:"/contact",
     thank:"/thank",
-    category:"/category"
+    category:"/category",
+    productService : "/productService",
 };
 export default routes;

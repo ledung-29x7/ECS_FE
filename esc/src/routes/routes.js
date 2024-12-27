@@ -9,6 +9,7 @@ import Login from '~/pages/Athor/login';
 import Register from '~/pages/Athor/register';
 import Employee from '~/pages/Employee';
 import ServiceManage from '~/pages/Service_manage';
+import ProductServiceManage from '~/pages/Service_manage/product_Service';
 import DetailEmployee from '~/pages/Employee/detail';
 import Department from '~/pages/Department';
 import Order from '~/pages/Order';
@@ -64,6 +65,13 @@ export const publicRoutes = [
         role: "admin",
         profession: "manageService",
         name: "Service"
+    },
+    { 
+        path: config.routes.productService, 
+        component: ProductServiceManage,
+        role: "admin",
+        profession: "manageService",
+        name: "Product Service"
     },
     { 
         path: config.routes.registerClient, 
