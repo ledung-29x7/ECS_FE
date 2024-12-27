@@ -255,7 +255,7 @@ function CallHistory() {
                                             data-bs-target="#offcanvasAddUser"
                                         >
                                             <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                            <span className="d-none d-sm-inline-block"> Add New User </span>
+                                            <span className="d-none d-sm-inline-block"> Add Call History </span>
                                         </button>
                                     </div>
                                 </div>

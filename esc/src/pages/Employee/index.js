@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import * as apis from '../../apis';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function Employee() {
-    const navigate = useNavigate();
     const [employee, setEmployee] = useState([]);
+    // const [employeeProductCategoryAll, setEmployeeProductCategoryAll] = useState([]);
     const [role, setRole] = useState([]);
     const [department, setDepartment] = useState([]);
+    const [category, setCategory] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [readerImg, setReaderImg] = useState([]);
     const [valueAdd, setValueAdd] = useState({
@@ -19,88 +17,104 @@ function Employee() {
         RoleId: 0,
         Password: '',
         PhoneNumber: '',
+        CategoryIds: [],
     });
-        const [totalItem,setTotalItem] = useState([]);
-        const [totalPage, setTotalPage] = useState(0);
-        const [currentPage, setCurrentPage] = useState(1);
-    
-        const renderPageNumbers = () => {
-            const pages = [];
-            for (let i = 1; i <= totalPage; i++) {
-              pages.push(
-                <li
-                  key={i}
-                  className={`paginate_button page-item ${
-                    currentPage === i ? "active" : ""
-                  }`}
-                >
-                  <a
-                    href="#"
-                    aria-controls="DataTables_Table_0"
-                    role="link"
-                    aria-current="page"
-                    data-dt-idx={0}
-                    tabIndex={0}
-                    className="page-link"
-                    onClick={() => {
-                      
-                      handlePageClick(i);
-                    }}
-                  >
-                    {i}
-                  </a>
-                </li>
-              );
-            }
-            return pages;
+    const [totalItem, setTotalItem] = useState([]);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedCategory, setSelectedCategory] = useState(''); // Lưu categoryId được chọn
+
+    // Xử lý thay đổi khi chọn category từ dropdown
+    const handleChangeCategory = (event) => {
+        const { value } = event.target;
+        console.log(value);
+        setSelectedCategory(value); // Cập nhật selectedCategory
+    };
+
+    // Xử lý khi click vào nút "Add"
+    const handleAddCategory = () => {
+        // Kiểm tra xem categoryId đã có trong mảng CategoryIds chưa
+        if (selectedCategory && !valueAdd.CategoryIds.includes(Number(selectedCategory))) {
+            setValueAdd((prev) => ({
+                ...prev,
+                CategoryIds: [...prev.CategoryIds, Number(selectedCategory)], // Thêm categoryId vào mảng
+            }));
+        } else {
+            alert('Category đã được thêm hoặc chưa chọn!');
         }
-        const [filters, setFilters] = useState({
-            pageNumber: 1,
-            searchTerm: "",
-            
-          });
-          const [debouncedFilters, setDebouncedFilters] = useState(filters);
-        
-          // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
-          useEffect(() => {
-            const handler = setTimeout(() => {
-              setDebouncedFilters(filters);
-            }, 2000); // 2 giây
-        
-            return () => {
-              clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
-            };
-          }, [filters]);
-        
-          // Gọi API khi `debouncedFilters` thay đổi
-          useEffect(() => {
-            const fetchData = async () => {
-              try {
-              
+    };
+
+    const renderPageNumbers = () => {
+        const pages = [];
+        for (let i = 1; i <= totalPage; i++) {
+            pages.push(
+                <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                    <a
+                        href="#"
+                        aria-controls="DataTables_Table_0"
+                        role="link"
+                        aria-current="page"
+                        data-dt-idx={0}
+                        tabIndex={0}
+                        className="page-link"
+                        onClick={() => {
+                            handlePageClick(i);
+                        }}
+                    >
+                        {i}
+                    </a>
+                </li>,
+            );
+        }
+        return pages;
+    };
+    // console.log("idEmployee from props:", idEmployee);
+
+    const [filters, setFilters] = useState({
+        pageNumber: 1,
+        searchTerm: '',
+    });
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 2000); // 2 giây
+
+        return () => {
+            clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+        };
+    }, [filters]);
+
+    // Gọi API khi `debouncedFilters` thay đổi
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
                 const response = await apis.GetAllEmployee(debouncedFilters);
-                console.log(response)
+                console.log(response);
                 if (response.status === 200) {
-                    setCurrentPage(debouncedFilters.pageNumber)
+                    setCurrentPage(debouncedFilters.pageNumber);
                     setEmployee(response.data.employees);
                     setTotalItem(response.data.totalRecords);
                     setTotalPage(response.data.totalPages);
                 }
-              } catch (error) {
-                console.error("Error fetching data:", error);
-              }
-            };
-        
-            fetchData();
-          }, [debouncedFilters]);
-        
-          // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
-          const handlePageClick = (newPage, newSearchTerm = "") => {
-            setFilters((prev) => ({
-              ...prev,
-              pageNumber: newPage || prev.pageNumber,
-              searchTerm: newSearchTerm || prev.searchTerm
-            }));
-          };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [debouncedFilters]);
+
+    // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+    const handlePageClick = (newPage, newSearchTerm = '') => {
+        setFilters((prev) => ({
+            ...prev,
+            pageNumber: newPage || prev.pageNumber,
+            searchTerm: newSearchTerm || prev.searchTerm,
+        }));
+    };
     const FetchApi = async () => {
         try {
             await apis.GetAllEmployee().then((res) => {
@@ -124,6 +138,19 @@ function Employee() {
             }
         };
         fetchRole();
+    }, []);
+    useEffect(() => {
+        const fetchCategory = async () => {
+            try {
+                const res = await apis.GetAllCategory();
+                if (res.status === 200) {
+                    setCategory(res.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchCategory();
     }, []);
     useEffect(() => {
         const fetchDepartment = async () => {
@@ -159,9 +186,7 @@ function Employee() {
             [name]: ['DepartmentID', 'RoleId'].includes(name) ? Number(value) : value,
         }));
     };
-
-    const handleSumbit = (e) => {
-        e.preventDefault();
+    const handleSumbit = () => {
         const formData = new FormData();
         formData.append('FirstName', valueAdd.FirstName);
         formData.append('LastName', valueAdd.LastName);
@@ -182,6 +207,17 @@ function Employee() {
         for (let pair of formData.entries()) {
             console.log(pair[0], pair[1]);
         }
+        // valueAdd.CategoryIds.forEach((category)=>{
+        //     category.RequiredEmployees= Number(category.RequiredEmployees);
+        // });
+        if (valueAdd.CategoryIds && valueAdd.CategoryIds.length > 0) {
+            for (let i = 0; i < valueAdd.CategoryIds.length; i++) {
+                formData.append('CategoryIds', valueAdd.CategoryIds[i]);
+            }
+        } else {
+            console.error('No files to upload.');
+            return;
+        }
 
         const fetchData = async () => {
             try {
@@ -199,6 +235,7 @@ function Employee() {
         };
         fetchData();
     };
+
     return (
         <div className="content-wrapper">
             {/* Content */}
@@ -385,14 +422,13 @@ function Employee() {
                             >
                                 <thead>
                                     <tr>
-                                       
                                         <th
                                             className="sorting sorting_asc"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 18 }}
+                                            style={{ width: 10 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -404,7 +440,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 700 }}
+                                            style={{ width: 30 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -416,7 +452,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="price: activate to sort column ascending"
                                         >
                                             phoneNumber
@@ -427,7 +463,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
                                             role
@@ -438,10 +474,21 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
                                             department
+                                        </th>
+                                        <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 88 }}
+                                            aria-label="qty: activate to sort column ascending"
+                                        >
+                                            Category
                                         </th>
                                         <th
                                             className="sorting"
@@ -458,8 +505,7 @@ function Employee() {
                                 </thead>
                                 <tbody>
                                     {employee?.map((res) => (
-                                        <tr className="odd">
-                                            
+                                        <tr className="odd" key={res.employeeId}>
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center product-name">
                                                     <div className="avatar-wrapper me-4">
@@ -473,8 +519,7 @@ function Employee() {
                                                     </div>
                                                     <div className="d-flex flex-column">
                                                         <span className="text-nowrap text-heading fw-medium">
-                                                            {res?.firstName}
-                                                            {res.lastName}
+                                                            {res?.firstName} {res?.lastName}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -486,26 +531,41 @@ function Employee() {
                                                 <span>{res?.phoneNumber}</span>
                                             </td>
                                             <td>
-                                                <span> {role.find((r) => r.roleId === res?.roleId)?.roleName}</span>
+                                                <span>{role.find((r) => r.roleId === res?.roleId)?.roleName}</span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {' '}
                                                     {
-                                                        department.find((r) => r.departmentID === res?.departmentId)
+                                                        department.find((r) => r.departmentID === res?.departmentID)
                                                             ?.departmentName
                                                     }
                                                 </span>
                                             </td>
-
-                                            <td className="" style={{}}>
+                                            <td>
+                                                <span>
+                                                   {res?.categories?.length >0 ?
+                                                    <select id="select2Basic" className="form-select border-none" name="categoryId">
+                                                        {res.categories.map((categoryRes, key) => (
+                                                            <option key={key} value={categoryRes.categoryId}>
+                                                                {category.find((r)=> r.categoryId === categoryRes.categoryId)?.categoryName}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                   :(
+                                                    <div id="select2Basic" className="form-control border-none" name="categoryId">
+                                                        none
+                                                    </div>
+                                                   )}
+                                                   
+                                                </span>
+                                            </td>
+                                            <td>
                                                 <div className="d-flex align-items-center">
                                                     <a
                                                         href="javascript:;"
                                                         className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
                                                         data-bs-toggle="tooltip"
                                                         title="Delete Invoice"
-                                                        // onClick={() => handleDelete(res?.roleId)}
                                                     >
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
@@ -533,11 +593,10 @@ function Employee() {
                                     >
                                         <ul className="pagination">
                                             <li
-                                                    className={`paginate_button page-item previous ${
-                                                    currentPage === 1 ? "disabled" : ""
-                                                    }`}
+                                                className={`paginate_button page-item previous ${
+                                                    currentPage === 1 ? 'disabled' : ''
+                                                }`}
                                                 id="DataTables_Table_0_previous"
-
                                             >
                                                 <a
                                                     aria-controls="DataTables_Table_0"
@@ -549,19 +608,17 @@ function Employee() {
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         if (currentPage > 1) handlePageClick(currentPage - 1);
-                                                        }}
+                                                    }}
                                                 >
                                                     <i className="ri-arrow-left-s-line" />
                                                 </a>
                                             </li>
-                                            
-                                            {
-                                                renderPageNumbers()
-                                            }
+
+                                            {renderPageNumbers()}
 
                                             <li
                                                 className={`paginate_button page-item next ${
-                                                    currentPage === totalPage ? "disabled" : ""
+                                                    currentPage === totalPage ? 'disabled' : ''
                                                 }`}
                                                 id="DataTables_Table_0_next"
                                             >
@@ -598,8 +655,8 @@ function Employee() {
                             <div className="text-center mb-6">
                                 <h4 className="mb-2">Add Employee</h4>
                             </div>
-                            <form
-                                onSubmit={handleSumbit}
+                            <div
+                                // onSubmit={handleSumbit}
                                 id="editUserForm"
                                 className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
                                 noValidate="novalidate"
@@ -763,8 +820,60 @@ function Employee() {
                                         </div>
                                     ))}
                                 </div>
+                                <div className="position-relative mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
+                                    <div className="w-100 me-4">
+                                        <select
+                                            id="alignment-country"
+                                            typeof="number"
+                                            className="select2 form-select form-select-sm"
+                                            value={selectedCategory} // Dùng selectedCategory để bind giá trị của select
+                                            onChange={handleChangeCategory}
+                                        >
+                                            <option value="">Select category</option>
+                                            {category?.map((res) => (
+                                                <option key={res.categoryId} value={res.categoryId}>
+                                                    {res.categoryName}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-outline-primary btn-icon waves-effect"
+                                            onClick={handleAddCategory}
+                                        >
+                                            <i className="ri-add-line" />
+                                        </button>
+                                    </div>
+                                    <ul className="list-unstyled">
+                                        {valueAdd.CategoryIds.map((categoryId, key) => {
+                                            const selectedCategoryObj = category.find(
+                                                (cat) => cat.categoryId === categoryId,
+                                            );
+                                            return selectedCategoryObj ? (
+                                                <li key={key} className="d-flex gap-4 mb-4">
+                                                    <div className="flex-shrink-0">
+                                                        {selectedCategoryObj.categoryName}
+                                                    </div>
+                                                    <div className="flex-grow-1">
+                                                        <p className="mb-0">
+                                                            <a className="text-body" href="javascript:void(0)">
+                                                                {/* Assuming you want to show some additional info from `category` */}
+                                                                {selectedCategoryObj.RequiredEmployees}
+                                                            </a>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            ) : null;
+                                        })}
+                                    </ul>
+                                </div>
                                 <div className="col-12 text-center">
-                                    <button type="submit" className="btn btn-primary me-3 waves-effect waves-light">
+                                    <button
+                                        type="submit"
+                                        onClick={handleSumbit}
+                                        className="btn btn-primary me-3 waves-effect waves-light"
+                                    >
                                         Submit
                                     </button>
                                     <button
@@ -777,7 +886,7 @@ function Employee() {
                                     </button>
                                 </div>
                                 <input type="hidden" />
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
