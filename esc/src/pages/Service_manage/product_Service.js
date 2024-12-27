@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function ProductServiceManage() {
     const [productService, setproductService] = useState([]);
     const [serviceId, setServiceId] = useState({});
+    const [idService, setIdService] = useState(0);
     const [service, setService] = useState({});
     const [product, setProduct] = useState([]);
     const [client, setClient] = useState([]);
@@ -107,7 +108,7 @@ function ProductServiceManage() {
         };
         FetchData();
     };
-    const handleGetRequiredEmployees = async (productId, requiredEmployees) => {
+    const handleGetRequiredEmployees = async (productId, requiredEmployees,serviceId) => {
         try {
             const params = { productId, requiredEmployees };
             const response = await apis.GetAvailableEmployees(params);
@@ -117,6 +118,7 @@ function ProductServiceManage() {
 
             if (Array.isArray(response)) {
                 setServiceId(response);
+                setIdService(serviceId);
             } else {
                 console.error('Response is not an array:', response);
                 toast.error('Dữ liệu trả về không đúng định dạng!');
@@ -134,7 +136,7 @@ function ProductServiceManage() {
                 employeeId,
                 serviceId,
             };
-            const res = await apis.AddEmployeeService(payload); // Call the function to assign
+            const res = await apis.AddEmployeeService(payload);
             toast.success(`Employee ${employeeId} assigned to Service ${serviceId}!`);
         } catch (error) {
             console.error('Error adding employee to service:', error);
@@ -547,7 +549,8 @@ function ProductServiceManage() {
                                                         data-bs-target="#viewUser"
                                                         title="Preview"
                                                         data-bs-toggle="modal"
-                                                        onClick={() => GetServiceById(res.serviceId)}
+                                                        onClick={() => handleGetRequiredEmployees(res.productId, res.requiredEmployees,res.serviceId)}
+
 
                                                     >
                                                         <i className="ri-eye-line ri-22px" />
@@ -569,15 +572,7 @@ function ProductServiceManage() {
                                                             <i className="ri-edit-box-line me-2" />
                                                             <span>view</span>
                                                         </a>
-                                                        <a
-                                                            href="javascript:;"
-                                                            className="dropdown-item view-record"
-                                                            data-bs-target="#viewUser"
-                                                            data-bs-toggle="modal"
-                                                            onClick={() => handleGetRequiredEmployees(res.productId, res.requiredEmployees)}
-                                                        >
-                                                            Xem nhân viên
-                                                        </a>
+                                                  
                                                         <a
                                                             href="javascript:;"
                                                             className="dropdown-item delete-record"
@@ -875,9 +870,9 @@ function ProductServiceManage() {
                     className="datatables-users table dataTable no-footer dtr-column"
                     id="DataTables_Table_0"
                     aria-describedby="DataTables_Table_0_info"
-                    style={{ width: 1394 }}
+                    style={{ width: 1394 , textAlign: 'center'}} 
                 >
-                    <thead>
+                    <thead >
                         <tr>
                             <th>Employee ID</th>
                             <th>First Name</th>
@@ -894,9 +889,9 @@ function ProductServiceManage() {
                                     <td>{employee.lastName}</td>
                                     <td>
                                         <button
-                                            onClick={() => handleAddToService(employee.employeeId, valueAdd.serviceId)}
+                                            onClick={() => handleAddToService(employee.employeeId, idService)}
                                         >
-                                            Assign to Service
+                                         +
                                         </button>
                                     </td>
                                 </tr>
