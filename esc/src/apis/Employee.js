@@ -36,5 +36,17 @@ export const AddEmployeeService = (prop) =>
         }
     });
 
+export const WorkList = (employeeId) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await axios({
+            url: `/Employee/${employeeId}/worklist`,  
+            method: "get",
+        });
+        resolve(response);
+    } catch (error) {
+        reject(error);
+    }
+});
+
 
 
