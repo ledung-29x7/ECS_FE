@@ -5,14 +5,46 @@ import Header from '~/layouts/components/Header';
 import styles from './DefaultLayout.module.scss';
 import { publicRoutes } from '~/routes';
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import * as actions from "../../store/actions"
 
 function EmployeeLayout ({children}){
   var role = window.sessionStorage.getItem("role")
   const {checklogin} = useSelector(state => state.app)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+          checkLoggedIn();
+        }, [checklogin]);
+      
+        // Hàm để lấy giá trị của một cookie
+        function getCookie(name) {
+          const cookies = document.cookie.split("; ");
+          console.log(cookies)
+          for (let cookie of cookies) {
+              const [key, value] = cookie.split("=");
+              if (key === name) {
+                  return decodeURIComponent(value);
+              }
+          }
+          return undefined;
+      }
+      
+        // check xem người dùng đã đăng nhập chưa
+        function checkLoggedIn() {
+          var token = getCookie("token");
+          if (token) {
+            // Gọi các API hoặc thực hiện các hành động khác khi người dùng đã đăng nhập
+            dispatch(actions.checkLogin(true))
+          } else {
+            // Hiển thị form đăng nhập hoặc các nút chức năng đăng nhập
+            dispatch(actions.checkLogin(false))
+          }
+        }
     return(
         <>
-        {checklogin && role === "Employee" ? (
+        {checklogin && role === "Service" ? (
             <div className="layout-wrapper layout-content-navbar">
                 <div className="layout-container">
                     <SidebarEmployee routes={publicRoutes} />

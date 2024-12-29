@@ -42,7 +42,7 @@ export const logout = () =>
     new Promise(async (resolve, reject) => {
         try {
             const response = await axios({
-                url: `/Auth/logout`,
+                url: `/Authentication/logout`,
                 method: "post",
                 withCredentials: true,
                 headers: {
@@ -58,7 +58,7 @@ export const logout = () =>
 export const changePassword = (data) => new Promise(async (resolve,reject) =>{
     try {
         const response = await axios({
-            url: "/Auth/changePassword",
+            url: "/Authentication/change-password",
             method:"post",
             withCredentials:true,
             headers: {

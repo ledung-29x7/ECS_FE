@@ -4,13 +4,45 @@ import Header from '~/layouts/components/Header';
 import styles from './DefaultLayout.module.scss';
 import { publicRoutes } from '~/routes';
 import SidebarClient from '../components/Sidebar/SiderbarClient';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import * as actions from "../../store/actions"
 
 const cx = classNames.bind(styles);
 
 function ClientLayout({ children }) {
     const idClient = window.sessionStorage.getItem('idClient');
     const {checklogin} = useSelector(state => state.app)
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+            checkLoggedIn();
+          }, [checklogin]);
+        
+          // Hàm để lấy giá trị của một cookie
+          function getCookie(name) {
+            const cookies = document.cookie.split("; ");
+            console.log(cookies)
+            for (let cookie of cookies) {
+                const [key, value] = cookie.split("=");
+                if (key === name) {
+                    return decodeURIComponent(value);
+                }
+            }
+            return undefined;
+        }
+        
+          // check xem người dùng đã đăng nhập chưa
+          function checkLoggedIn() {
+            var token = getCookie("token");
+            if (token) {
+              // Gọi các API hoặc thực hiện các hành động khác khi người dùng đã đăng nhập
+              dispatch(actions.checkLogin(true))
+            } else {
+              // Hiển thị form đăng nhập hoặc các nút chức năng đăng nhập
+              dispatch(actions.checkLogin(false))
+            }
+          }
     return (
         <>
             {checklogin && idClient !== null ? (

@@ -7,16 +7,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function OrderDetail() {
 
-    // const { id } = useParams();
-
-    // useEffect(() => {
-    // console.log('Order ID:', id);
-    
-    // }, [id]);
         const [product, setProduct] = useState([]);
+        const [orderDetail,setOrderDetail] = useState([]);
         const [image, setImage] = useState([]);
         const idClient = window.sessionStorage.getItem('idClient');
-const FetchApi = async () => {
+    const FetchApi = async () => {
         try {
             await apis
                 .GetAllProductByClient(idClient)
@@ -33,6 +28,23 @@ const FetchApi = async () => {
             console.log(error);
         }
     };
+    
+    const FetchOrderDetail = async() =>{
+        try {
+            await apis.GetOrderDetail()
+            .then(res => {
+                if(res.status === 200 ) {
+                    setOrderDetail(res.data)
+                }
+            })
+        } catch (error) {
+            toast.error("Can't get order detail")
+        }
+    }
+    useEffect(()=>{
+        FetchOrderDetail()
+    },[])
+
     useEffect(() => {
         // Hàm để hiển thị ảnh từ JSON
         const images = [];

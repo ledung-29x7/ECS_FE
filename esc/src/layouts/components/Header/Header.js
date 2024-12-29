@@ -118,8 +118,8 @@ function Header() {
 
     
       // handle Logout
-      const handleLogout = (e) => {
-        e.preventDefault()
+      const handleLogout = () => {
+        
         const FetchData = async () => {
           try {
             await apis.logout().then((res) => {
@@ -853,7 +853,7 @@ function Header() {
                                         <a
                                             className="btn btn-danger d-flex"
                                             href="#"
-                                            onClick={()=>handleLogout}
+                                            onClick={handleLogout}
                                             
                                         >
                                             <small className="align-middle">Logout</small>

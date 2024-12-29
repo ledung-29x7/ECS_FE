@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 function Order() {
     const [order, setOrder] = useState([]);
+    const [product,setProduct] = useState([])
+    const [orderDetail,setOrderDetail] = useState();
+    const navigate = useNavigate()
 
     const FetchApi = async () => {
         try {
@@ -14,13 +20,51 @@ function Order() {
             });
         } catch (error) {
             console.log(error);
+            toast.error(error.message)
         }
     };
+    const FetchProduct = async () => {
+        try {
+            await apis
+                .GetProduct()
+                .then((res) => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setProduct(res.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleViewOrderDetail = (id) => {
+
+        const FetchDetailOrder = async() =>{
+            try {
+                await apis.GetOrderDetailById(id)
+                .then(res =>{
+                    if(res.status === 200){
+                        setOrderDetail(res.data)
+                        FetchProduct();
+                    }
+                })
+            } catch (error) {
+                toast.error("Get not Order detail")
+            }
+        }
+        FetchDetailOrder()
+    }
+
     useEffect(() => {
         FetchApi();
     }, []);
 
     return (
+        
         <div className="content-wrapper">
             {/* Content */}
             <div className="container-xxl flex-grow-1 container-p-y">
@@ -142,8 +186,7 @@ function Order() {
                                     <div className="add-new">
                                         <button
                                             className="btn btn-primary waves-effect waves-light"
-                                            data-bs-target="#editUser"
-                                            data-bs-toggle="modal"
+                                            onClick={()=> navigate('/addOrder')}
                                         >
                                             <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
                                             <span className="d-none d-sm-inline-block"> Add Order </span>
@@ -172,7 +215,8 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 55 }}
+                                            style={{ width: 40 }}
+                                            data-toggle="tooltip" data-placement="top" title="order"
                                             aria-label="order: activate to sort column ascending"
                                         >
                                             order
@@ -183,11 +227,12 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 144 }}
+                                            style={{ width: 20 }}
+                                            data-toggle="tooltip" data-placement="top" title="Recipient Name"
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
-                                            recipient_Name
+                                            recipient Name
                                         </th>
                                         <th
                                             className="sorting"
@@ -195,7 +240,8 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 109 }}
+                                            style={{ width: 30 }}
+                                            data-toggle="tooltip" data-placement="top" title=" Recipient Phone"
                                             aria-label="payment: activate to sort column ascending"
                                         >
                                             recipient Phone
@@ -206,7 +252,8 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 127 }}
+                                            style={{ width: 40 }}
+                                            data-toggle="tooltip" data-placement="top" title=" recipient Address"
                                             aria-label="status: activate to sort column ascending"
                                         >
                                             recipient Address
@@ -217,8 +264,9 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0 }}
+                                            style={{ width: 20 }}
                                             aria-label="method: activate to sort column ascending"
+                                            data-toggle="tooltip" data-placement="top" title="Order Status"
                                         >
                                             order Status
                                         </th>
@@ -228,8 +276,9 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0 }}
+                                            style={{ width: 40 }}
                                             aria-label="method: activate to sort column ascending"
+                                            data-toggle="tooltip" data-placement="top" title="Order Date"
                                         >
                                             orderDate
                                         </th>
@@ -239,17 +288,18 @@ function Order() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0 }}
+                                            style={{ width: 30 }}
                                             aria-label="method: activate to sort column ascending"
+                                            data-toggle="tooltip" data-placement="top" title="Total Amount"
                                         >
-                                            totalAmount
+                                            total Amount
                                         </th>
 
                                         <th
                                             className="sorting_disabled"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 0 }}
+                                            style={{ width: 30 }}
                                             aria-label="Actions"
                                         >
                                             Actions
@@ -264,31 +314,32 @@ function Order() {
                                                 tabIndex={0}
                                                 style={{ display: 'none' }}
                                             />
-                                            <td>
+                                            <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
                                                 <span>{res?.orderer}</span>
                                             </td>
-                                            <td className="sorting_1">
+                                            <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
                                                 <span className="text-nowrap">{res?.recipient_Name}</span>
                                             </td>
-                                            <td className="sorting_1">
+                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
                                                 <span className="text-nowrap">{res?.recipient_Phone}</span>
                                             </td>
 
-                                            <td className="sorting_1">
+                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Address}>
                                                 <span className="text-nowrap">{res?.recipient_Address}</span>
                                             </td>
                                             <td>
                                                 <span
                                                     className="badge px-2 rounded-pill bg-label-success"
                                                     text-capitalized=""
+                                                    data-toggle="tooltip" data-placement="top" title={res?.orderStatus}
                                                 >
                                                     {res?.orderStatus}
                                                 </span>
                                             </td>
-                                            <td className="sorting_1">
-                                                <span className="text-nowrap">{res?.orderDate}</span>
+                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.orderDate}>
+                                                <span className="text-nowrap" >{res?.orderDate}</span>
                                             </td>
-                                            <td className="sorting_1">
+                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.totalAmount}>
                                                 <span className="text-nowrap">{res?.totalAmount}$</span>
                                             </td>
                                             <td className="" style={{}}>
@@ -301,8 +352,12 @@ function Order() {
                                                     </button>
                                                     <div className="dropdown-menu dropdown-menu-end m-0">
                                                         <a
-                                                            href="app-ecommerce-order-details.html"
-                                                            className="dropdown-item"
+                                                            href="#"
+                                                            className="dropdown-item delete-record"
+                                                            data-bs-target="#editUser"
+                                                            data-bs-toggle="modal"
+                                                            onClick={()=>handleViewOrderDetail(res.orderId)}
+                                                            
                                                         >
                                                             View
                                                         </a>
@@ -458,48 +513,45 @@ function Order() {
                 </div>
             </div>
             {/* add order */}
-            {/* / Content */}
-            {/* Footer */}
-            <footer className="content-footer footer bg-footer-theme">
-                <div className="container-xxl">
-                    <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                        <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{' '}
-                            <span className="text-danger">
-                                <i className="tf-icons ri-heart-fill" />
-                            </span>{' '}
-                            by{' '}
-                            <a href="https://themeselection.com" target="_blank" className="footer-link">
-                                ThemeSelection
-                            </a>
-                        </div>
-                        <div className="d-none d-lg-inline-block">
-                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
-                                License
-                            </a>
-                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
-                                More Themes
-                            </a>
-                            <a
-                                href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/net-core-mvc-introduction.html"
-                                target="_blank"
-                                className="footer-link me-4"
+            <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
+                <div className="modal-dialog modal-lg modal-simple modal-edit-user">
+                    <div className="modal-content">
+                        <div className="modal-body p-0">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            <div className="text-center mb-6">
+                                <h4 className="mb-2">Order Detail</h4>
+                            </div>
+                            <div
+                                
+                                
+                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
+                                noValidate="novalidate"
                             >
-                                Documentation
-                            </a>
-                            <a
-                                href="https://themeselection.com/support/"
-                                target="_blank"
-                                className="footer-link d-none d-sm-inline-block"
-                            >
-                                Support
-                            </a>
+                                <div className="d-flex gap-2">
+                                    <span>Product</span>
+                                    <span>{product?.find(p => p.productId === orderDetail?.productId)?.productName}</span>
+                                </div>
+                                <div className="d-flex gap-2">
+                                    <span>Quantity: </span>
+                                    <span>
+                                        {orderDetail?.quantity}
+                                    </span>
+                                </div>
+                               
+                                <div className="d-flex gap-2">
+                                    <span>Total Price: </span>
+                                    <span>
+                                        {orderDetail?.totalPrice}
+                                    </span>
+                                </div>
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
-            </footer>
-            {/* / Footer */}
-            <div className="content-backdrop fade" />
+            </div>
+            {/* / Content */}
+            
         </div>
     );
 }

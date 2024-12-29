@@ -5,8 +5,9 @@ import { useSelector,useDispatch } from "react-redux";
 import { useState,useEffect } from "react";
 import { Link,useNavigate,useLocation } from 'react-router-dom';
 
+
 function Login() {
-   const {checkLogin} =useSelector(state=>state.app)
+   const {checklogin} =useSelector(state=>state.app)
    const dispatch = useDispatch();
    const navigate = useNavigate();
    const [formData,setFormData]=useState({
@@ -17,6 +18,34 @@ function Login() {
     setFormData({...formData,[e.target.name]: e.target.value})
    }
 
+   useEffect(() => {
+           checkLoggedIn();
+         }, [checklogin]);
+       
+         // Hàm để lấy giá trị của một cookie
+         function getCookie(name) {
+           const cookies = document.cookie.split("; ");
+           console.log(cookies)
+           for (let cookie of cookies) {
+               const [key, value] = cookie.split("=");
+               if (key === name) {
+                   return decodeURIComponent(value);
+               }
+           }
+           return undefined;
+       }
+       
+         // check xem người dùng đã đăng nhập chưa
+         function checkLoggedIn() {
+           var token = getCookie("token");
+           if (token) {
+             // Gọi các API hoặc thực hiện các hành động khác khi người dùng đã đăng nhập
+             dispatch(actions.checkLogin(true))
+           } else {
+             // Hiển thị form đăng nhập hoặc các nút chức năng đăng nhập
+             dispatch(actions.checkLogin(false))
+           }
+         }
    const handleSubmit =(e) =>{
         e.preventDefault();
         const Login = async() =>{
@@ -48,12 +77,12 @@ function Login() {
         }
         Login()
    }    
-
+   console.log(checklogin)
     return (
         <>
-            {checkLogin ? (
+            {checklogin ? (
                 <div >
-                    <button onClick={()=> navigate('/admin')}>Go to page</button>
+                    <button onClick={()=> navigate('/callHistory')}>Go to page</button>
                 </div>
             ) : (
                             <div className="authentication-wrapper authentication-cover">

@@ -25,6 +25,18 @@ export const GetAllProduct = (param) => new Promise(async (resolve, reject) =>{
         reject(error)
     }
 })
+export const GetProduct = () => new Promise(async (resolve, reject) =>{
+    try {
+        const response = await axios({
+            url:"/Product",
+            method: "get",
+            
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
 export const GetProductStatus = () => new Promise(async (resolve, reject) =>{
     try {
         const response = await axios({
