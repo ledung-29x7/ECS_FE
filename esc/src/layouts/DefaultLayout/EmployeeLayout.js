@@ -5,11 +5,14 @@ import Header from '~/layouts/components/Header';
 import styles from './DefaultLayout.module.scss';
 import { publicRoutes } from '~/routes';
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 function EmployeeLayout ({children}){
-    const employee = window.sessionStorage.getItem("employeeID")
+  var role = window.sessionStorage.getItem("role")
+  const {checklogin} = useSelector(state => state.app)
     return(
         <>
-        {employee !== null ? (
+        {checklogin && role === "Employee" ? (
             <div className="layout-wrapper layout-content-navbar">
                 <div className="layout-container">
                     <SidebarEmployee routes={publicRoutes} />

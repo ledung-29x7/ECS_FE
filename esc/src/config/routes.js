@@ -5,11 +5,9 @@ import Category from "~/pages/Category";
 
 const routes = {
     home: '/admin',
-    following: '/following',
-    profile: '/:nickname',
+    profile: '/profile/:nickname',
     upload: '/upload',
     search: '/search',
-    live: '/live',
     login: '/login',
     register: '/register',
     employee: '/employee',

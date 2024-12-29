@@ -5,14 +5,16 @@ import Sidebar from '~/layouts/components/Sidebar';
 import styles from './DefaultLayout.module.scss';
 import { publicRoutes } from '~/routes';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 function DefaultLayout({ children }) {
     var role = window.sessionStorage.getItem("role")
+    const {checklogin} = useSelector(state => state.app)
     return (
         <>
-            {role === "Admin" ? (
+            { checklogin && role === "Admin" ? (
                 <div className="layout-wrapper layout-content-navbar">
                     <div className="layout-container">
                         <Sidebar routes={publicRoutes} />

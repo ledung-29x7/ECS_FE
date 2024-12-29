@@ -802,7 +802,10 @@ function Header() {
                                     <div className="dropdown-divider" />
                                 </li>
                                 <li>
-                                    <a className="dropdown-item" href="pages-profile-user.html">
+                                    <a className="dropdown-item" 
+                                        href="#"
+                                        onClick={()=> navigate("")}
+                                    >
                                         <i className="ri-user-3-line ri-22px me-2" />
                                         <span className="align-middle">My Profile</span>
                                     </a>
@@ -810,7 +813,7 @@ function Header() {
                                 <li>
                                     <a
                                         className="dropdown-item"
-                                        href="pages-account-settings-account.html"
+                                        href="#"
                                     >
                                         <i className="ri-settings-4-line ri-22px me-2" />
                                         <span className="align-middle">Settings</span>
@@ -851,7 +854,7 @@ function Header() {
                                             className="btn btn-danger d-flex"
                                             href="#"
                                             onClick={()=>handleLogout}
-                                            target="_blank"
+                                            
                                         >
                                             <small className="align-middle">Logout</small>
                                             <i className="ri-logout-box-r-line ms-2 ri-16px" />

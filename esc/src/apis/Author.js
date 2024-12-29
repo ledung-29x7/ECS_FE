@@ -55,3 +55,18 @@ export const logout = () =>
         }
     });
 
+export const changePassword = (data) => new Promise(async (resolve,reject) =>{
+    try {
+        const response = await axios({
+            url: "/Auth/changePassword",
+            method:"post",
+            withCredentials:true,
+            headers: {
+                Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+            }
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})

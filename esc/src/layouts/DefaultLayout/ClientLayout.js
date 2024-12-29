@@ -4,25 +4,27 @@ import Header from '~/layouts/components/Header';
 import styles from './DefaultLayout.module.scss';
 import { publicRoutes } from '~/routes';
 import SidebarClient from '../components/Sidebar/SiderbarClient';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
 function ClientLayout({ children }) {
     const idClient = window.sessionStorage.getItem('idClient');
+    const {checklogin} = useSelector(state => state.app)
     return (
         <>
-              {idClient !== null ? (
-                  <div className="layout-wrapper layout-content-navbar">
-                      <div className="layout-container">
-                          <SidebarClient routes={publicRoutes} />
-                          <div class="layout-page">
-                              <Header />
-                              <div className="">
-                                  <div className="">{children}</div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+            {checklogin && idClient !== null ? (
+                <div className="layout-wrapper layout-content-navbar">
+                    <div className="layout-container">
+                        <SidebarClient routes={publicRoutes} />
+                        <div class="layout-page">
+                            <Header />
+                            <div className="">
+                            <div className="">{children}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             ) : (
                 <div className="misc-wrapper">
                     <h1 className="mb-2 mx-2" style={{ fontSize: '6rem', lineHeight: '6rem' }}>

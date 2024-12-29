@@ -27,6 +27,7 @@ function LoginClient(){
                     console.log(res)
                     
                     window.sessionStorage.setItem('idClient',res.data.userId)
+                    window.sessionStorage.setItem('userName');
                     dispatch(actions.checkLogin(true))
                     navigate("/product")
                 }
@@ -225,7 +226,7 @@ function LoginClient(){
                             </form>
                             <p className="text-center">
                                 <span>New on our platform?</span>
-                                <a href="auth-register-cover.html">
+                                <a href="#" onClick={()=> navigate("/client")}>
                                     <span>Create an account</span>
                                 </a>
                             </p>
