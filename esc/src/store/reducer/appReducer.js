@@ -9,7 +9,7 @@ const appReducer = (state = initState, action) => {
         case actionType.CHECK_LOGIN:
             return {
                 ...state,
-                checklogin: action.ischeck
+                checklogin: action.checklog
             }
 
         default:

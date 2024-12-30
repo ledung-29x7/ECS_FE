@@ -1,3 +1,4 @@
+import { ExploreIcon } from "~/components/Icons";
 import axios from "../axios";
 export const GetAllOrder=()=>new Promise(async(resoleve,reject)=>{
     try {
@@ -50,6 +51,30 @@ export const DeleteOrder=(id)=>new Promise(async(resolve,reject)=>{
         const response=await axios({
             url:`/Order/${id}`,
             method:"delete"
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const GetOrderDetail = () => new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:"/OrderDetail",
+            method:"Get"
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const GetOrderDetailById = (id) => new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/OrderDetail/${id}`,
+            method:"Get"
         })
         resolve(response)
     } catch (error) {

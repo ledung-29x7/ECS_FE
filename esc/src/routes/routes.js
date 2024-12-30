@@ -31,6 +31,7 @@ import Contact from '~/pages/Contact';
 import Thank from '~/pages/Contact/Thanks';
 import Category from '~/pages/Category';
 import ProductAdminWithClient from '~/pages/Product/productAdminWithClient';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 // Public routes
 export const publicRoutes = [
@@ -100,6 +101,7 @@ export const publicRoutes = [
         component: Order,
         role: "employee",
         profession: "manageEmployee",
+        icon : "ri-shopping-cart-line",
         name: "Order",
         layout: EmployeeLayout
     },
@@ -112,6 +114,7 @@ export const publicRoutes = [
         path: config.routes.product, 
         component: Product ,
         role: "client",
+        icon: "ri-box-3-line",
         layout: ClientLayout,
         profession: null,
         name: "Products"
@@ -125,6 +128,7 @@ export const publicRoutes = [
         path: config.routes.productCategory, 
         component: ProductCategory,
         role: "client",
+        icon: "ri-list-settings-line",
         layout: ClientLayout,
         name: "Product Service"
     },
@@ -132,6 +136,7 @@ export const publicRoutes = [
         path: config.routes.callhistory, 
         component: CallHistory,
         role: "employee",
+        icon: "ri-phone-line",
         profession: "manageEmployee",
         name: "History Call",
         layout: EmployeeLayout
@@ -140,6 +145,7 @@ export const publicRoutes = [
         path: config.routes.WorkList, 
         component: WorkList,
         role: "employee",
+        icon: "ri-suitcase-line",
         profession: "WorkList",
         name: "Work List",
         layout: EmployeeLayout

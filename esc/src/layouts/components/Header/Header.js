@@ -94,7 +94,7 @@ function Header() {
       // Hàm để lấy giá trị của một cookie
       function getCookie(name) {
         const cookies = document.cookie.split("; ");
-        console.log(cookies)
+        
         for (let cookie of cookies) {
             const [key, value] = cookie.split("=");
             if (key === name) {
@@ -118,8 +118,8 @@ function Header() {
 
     
       // handle Logout
-      const handleLogout = (e) => {
-        e.preventDefault()
+      const handleLogout = () => {
+        
         const FetchData = async () => {
           try {
             await apis.logout().then((res) => {
@@ -853,7 +853,7 @@ function Header() {
                                         <a
                                             className="btn btn-danger d-flex"
                                             href="#"
-                                            onClick={()=>handleLogout}
+                                            onClick={handleLogout}
                                             
                                         >
                                             <small className="align-middle">Logout</small>
