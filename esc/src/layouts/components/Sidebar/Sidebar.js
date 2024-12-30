@@ -31,9 +31,6 @@ const Sidebar = (props) => {
 
     const [collapseOpen, setCollapseOpen] = useState();
     // verifies if routeName is the one active (in browser input)
-    const activeRoute = (routeName) => {
-        return props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
-    };
     // toggles collapse between opened and closed (true/false)
     const toggleCollapse = () => {
         setCollapseOpen((data) => !data);
@@ -42,18 +39,25 @@ const Sidebar = (props) => {
     const closeCollapse = () => {
         setCollapseOpen(false);
     };
+
+    const activeRoute = (routeName) => {
+        return props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
+    };
     // creates the links that appear in the left menu / Sidebar
     const createLinks = (routes,profession) => {
         console.log(routes,profession)
         return routes.map((prop, key) => {
-            console.log(prop.profession,profession)
+           
             if (prop.role === 'admin' && prop?.profession === profession) {
                 return (
-                    <li className={`menu-item `} key={key}>
-                        <NavLink to={prop.path} onClick={closeCollapse} className="menu-link">
-                            <div data-i18n={prop.name}>{prop.name}</div>
+                        <NavLink to={prop.path} onClick={closeCollapse} key={key} 
+                        className={({ isActive }) => 
+                            isActive ? 'menu-item active' : 'menu-item'
+                        }>
+                            <li className={`menu-link `} key={key}>
+                                    <div data-i18n={prop.name}>{prop.name}</div>
+                            </li>
                         </NavLink>
-                    </li>
                 );
             }
         });
@@ -163,32 +167,12 @@ const Sidebar = (props) => {
             </div>
             <div className="menu-inner-shadow" />
             <ul className="menu-inner py-1">
-                {/* Dashboards */}
-                <li className="menu-item active open ">
-                    <a href="" onClick={(e) => e.preventDefault()} className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-home-smile-line" />
-                        <div data-i18n="Dashboards">Dashboards</div>
-                        <div className="badge bg-danger rounded-pill ms-auto">5</div>
-                    </a>
-                    <ul className="menu-sub">
-                        <li className="menu-item ">
-                            <NavLink href="/admin" className="menu-link">
-                                <div data-i18n="Analytics">Home</div>
-                            </NavLink>
-                        </li>
-                    </ul>
-                </li>
-                {/* Apps & Pages */}
-                <li className="menu-header mt-7">
-                    <span className="menu-header-text" data-i18n="Apps & Pages">
-                        Apps &amp; Pages
-                    </span>
-                </li>
-
+                
+                
                 {/* e-commerce-app menu start */}
                 <li className="menu-item">
                     <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
+                    <i class="menu-icon ri-service-fill"></i>
                         <div data-i18n="Manage Service">Manage Service</div>
                     </a>
                     <ul className="menu-sub">
@@ -197,7 +181,7 @@ const Sidebar = (props) => {
                 </li>
                 <li className="menu-item">
                     <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
+                        <i class="menu-icon ri-customer-service-2-fill"></i>
                         <div data-i18n="Manage Employee">Manage Employee</div>
                     </a>
                     <ul className="menu-sub">
@@ -206,7 +190,7 @@ const Sidebar = (props) => {
                 </li>
                 <li className="menu-item">
                     <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
+                        <i class="menu-icon ri-team-fill"></i>
                         <div data-i18n="Manage Client">Manage Client</div>
                     </a>
                     <ul className="menu-sub">
@@ -216,7 +200,7 @@ const Sidebar = (props) => {
                 </li>
                 <li className="menu-item">
                     <a href="javascript:void(0);" className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
+                        <i class="menu-icon ri-user-received-2-fill"></i>
                         <div data-i18n="User">User</div>
                     </a>
                     <ul className="menu-sub">

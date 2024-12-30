@@ -6,7 +6,7 @@ import { useState,useEffect } from "react";
 import { Link,useNavigate,useLocation } from 'react-router-dom';
 
 function LoginClient(){
-    const {} =useSelector(state=>state.app)
+    const {checklogin} =useSelector(state=>state.app)
    const dispatch = useDispatch();
    const navigate = useNavigate();
    const [formData,setFormData]=useState({
@@ -25,9 +25,8 @@ function LoginClient(){
             .then(res =>{
                 if(res.status === 200){
                     console.log(res)
-                    
-                    window.sessionStorage.setItem('idClient',res.data.userId)
-                    window.sessionStorage.setItem('userName');
+                    window.sessionStorage.setItem('idClient',res.data.userId);
+                    window.sessionStorage.setItem('userName',res.data.userName);
                     dispatch(actions.checkLogin(true))
                     navigate("/product")
                 }
@@ -38,7 +37,7 @@ function LoginClient(){
         }
         Login()
    }    
-
+   console.log(checklogin)
     return (
         <>
             <div className="authentication-wrapper authentication-cover">

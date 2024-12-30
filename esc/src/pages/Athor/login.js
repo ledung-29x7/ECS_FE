@@ -21,7 +21,11 @@ function Login() {
    useEffect(() => {
            checkLoggedIn();
          }, [checklogin]);
-       
+             // hủy Cookie
+      function deleteCookie(name) {
+        document.cookie =
+          name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      }
          // Hàm để lấy giá trị của một cookie
          function getCookie(name) {
            const cookies = document.cookie.split("; ");
@@ -77,12 +81,31 @@ function Login() {
         }
         Login()
    }    
+
+   const handleLogout = () => {
+           
+           const FetchData = async () => {
+             try {
+               await apis.logout().then((res) => {
+                   deleteCookie("token");
+                 if (res.status === 200) {
+                   checkLoggedIn();
+                   dispatch(actions.checkLogin(false));
+                   
+                 }
+               });
+             } catch (error) {
+               console.error(error);
+             }
+           };
+           FetchData();
+         };
    console.log(checklogin)
     return (
         <>
             {checklogin ? (
                 <div >
-                    <button onClick={()=> navigate('/callHistory')}>Go to page</button>
+                    <button onClick={()=> handleLogout}>Go to page</button>
                 </div>
             ) : (
                             <div className="authentication-wrapper authentication-cover">

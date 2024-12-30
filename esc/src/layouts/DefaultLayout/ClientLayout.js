@@ -14,7 +14,7 @@ function ClientLayout({ children }) {
     const idClient = window.sessionStorage.getItem('idClient');
     const {checklogin} = useSelector(state => state.app)
     const dispatch = useDispatch();
-
+    console.log(checklogin)
     useEffect(() => {
             checkLoggedIn();
           }, [checklogin]);
@@ -22,10 +22,11 @@ function ClientLayout({ children }) {
           // Hàm để lấy giá trị của một cookie
           function getCookie(name) {
             const cookies = document.cookie.split("; ");
-            console.log(cookies)
+           
             for (let cookie of cookies) {
                 const [key, value] = cookie.split("=");
                 if (key === name) {
+                    console.log(value)
                     return decodeURIComponent(value);
                 }
             }
@@ -43,6 +44,7 @@ function ClientLayout({ children }) {
               dispatch(actions.checkLogin(false))
             }
           }
+          console.log(checklogin,idClient)
     return (
         <>
             {checklogin && idClient !== null ? (

@@ -23,7 +23,7 @@ function DefaultLayout({ children }) {
           // Hàm để lấy giá trị của một cookie
           function getCookie(name) {
             const cookies = document.cookie.split("; ");
-            console.log(cookies)
+          
             for (let cookie of cookies) {
                 const [key, value] = cookie.split("=");
                 if (key === name) {

@@ -43,15 +43,18 @@ const SidebarClient = (props) => {
     const createLinks = (routes) => {
         
         return routes.map((prop, key) => {
-            console.log(prop.profession);
+           
             if (prop.role === 'client') {
                 return (
-                    <li className="menu-item" key={key}>
-                        <NavLink to={prop.path} className="menu-link">
-                            <i className="menu-icon tf-icons ri-shopping-bag-3-line" />
+                        <NavLink to={prop.path} key={key} 
+                        className={({ isActive }) => 
+                            isActive ? 'menu-item active' : 'menu-item'
+                        }>
+                    <li className="menu-link" >
+                            <i className={`menu-icon ${prop.icon}`} />
                             <div data-i18n={prop.name}>{prop.name}</div>
-                        </NavLink>
                     </li>
+                        </NavLink>
                 );
             }
         });
@@ -147,28 +150,7 @@ const SidebarClient = (props) => {
             </div>
             <div className="menu-inner-shadow" />
             <ul className="menu-inner py-1">
-                {/* Dashboards */}
-                <li className="menu-item active open ">
-                    <a href="" onClick={(e) => e.preventDefault()} className="menu-link menu-toggle">
-                        <i className="menu-icon tf-icons ri-home-smile-line" />
-                        <div data-i18n="Dashboards">Dashboards</div>
-                        <div className="badge bg-danger rounded-pill ms-auto">5</div>
-                    </a>
-                    <ul className="menu-sub">
-                        <li className="menu-item ">
-                            <NavLink href="/admin" className="menu-link">
-                                <div data-i18n="Analytics">Home</div>
-                            </NavLink>
-                        </li>
-                    </ul>
-                </li>
-                {/* Apps & Pages */}
-                <li className="menu-header mt-7">
-                    <span className="menu-header-text" data-i18n="Apps & Pages">
-                        Apps &amp; Pages
-                    </span>
-                </li>
-
+            
                 {/* e-commerce-app menu start */}
                 {createLinks(routes)}
 

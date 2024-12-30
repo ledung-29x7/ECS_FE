@@ -398,78 +398,7 @@ function Product() {
                 {/* Product List Widget */}
                 <div className="card mb-6">
                     <div className="card-widget-separator-wrapper">
-                        <div className="card-body card-widget-separator">
-                            <div className="row gy-4 gy-sm-1">
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
-                                        <div>
-                                            <p className="mb-1">In-store Sales</p>
-                                            <h4 className="mb-1">$5,345.43</h4>
-                                            <p className="mb-0">
-                                                <span className="me-2">5k orders</span>
-                                                <span className="badge rounded-pill bg-label-success">+5.7%</span>
-                                            </p>
-                                        </div>
-                                        <div className="avatar me-sm-6">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-home-6-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <hr className="d-none d-sm-block d-lg-none me-6" />
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-                                        <div>
-                                            <p className="mb-1">Website Sales</p>
-                                            <h4 className="mb-1">$674,347.12</h4>
-                                            <p className="mb-0">
-                                                <span className="me-2">21k orders</span>
-                                                <span className="badge rounded-pill bg-label-success">+12.4%</span>
-                                            </p>
-                                        </div>
-                                        <div className="avatar me-lg-6">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-computer-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <hr className="d-none d-sm-block d-lg-none" />
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
-                                        <div>
-                                            <p className="mb-1">Discount</p>
-                                            <h4 className="mb-1">$14,235.12</h4>
-                                            <p className="mb-0">6k orders</p>
-                                        </div>
-                                        <div className="avatar me-sm-6">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-gift-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <p className="mb-1">Affiliate</p>
-                                            <h4 className="mb-1">$8,345.23</h4>
-                                            <p className="mb-0">
-                                                <span className="me-2">150 orders</span>
-                                                <span className="badge rounded-pill bg-label-danger">-3.5%</span>
-                                            </p>
-                                        </div>
-                                        <div className="avatar">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-money-dollar-circle-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         
-                        </div>
                     </div>
                     <div className="card-datatable table-responsive">
                         <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
@@ -488,22 +417,7 @@ function Product() {
                                 </div>
                                 <div className="d-flex justify-content-start justify-content-md-end align-items-baseline">
                                     <div className="dt-action-buttons d-flex align-items-start align-items-md-center justify-content-sm-center gap-4 pt-0">
-                                        <div className="dataTables_length my-0" id="DataTables_Table_0_length">
-                                            <label>
-                                                <select
-                                                    name="DataTables_Table_0_length"
-                                                    aria-controls="DataTables_Table_0"
-                                                    className="form-select form-select-sm"
-                                                >
-                                                    <option value={7}>7</option>
-                                                    <option value={10}>10</option>
-                                                    <option value={20}>20</option>
-                                                    <option value={50}>50</option>
-                                                    <option value={70}>70</option>
-                                                    <option value={100}>100</option>
-                                                </select>
-                                            </label>
-                                        </div>
+                                        
                                         <div className="dt-buttons btn-group flex-wrap d-flex">
                                             {' '}
                                             <div className="btn-group">
