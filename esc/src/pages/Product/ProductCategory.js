@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function ProductCategory() {
     const idClient = window.sessionStorage.getItem('idClient');
@@ -63,7 +64,7 @@ function ProductCategory() {
                 $select.select2('destroy');
             };
         } else {
-            console.error('jQuery hoặc select2 chưa được tải.');
+            toast.error('jQuery or select2 is not loaded.');
         }
     }, [addProductService]);
 
@@ -75,14 +76,15 @@ function ProductCategory() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        // toast.success("GetProductServiceById success")
                         setProductService(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
 
@@ -94,14 +96,15 @@ function ProductCategory() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        // toast.success("GetAllService success")
                         setService(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                   toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     // get product
@@ -112,14 +115,15 @@ function ProductCategory() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        // toast.success("GetAllProductByClient success")
                         setProduct(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
 

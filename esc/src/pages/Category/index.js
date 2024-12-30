@@ -20,11 +20,12 @@ function Category() {
             try {
                 await apis.AddCategory(valueAdd).then((res) => {
                     if (res.status === 200) {
+                        toast.success("AddCategory success")
                         window.location.reload();
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         FetchData();
@@ -35,6 +36,7 @@ function Category() {
             try {
                 await apis.PutCategory(valueAdd.categoryId,valueAdd).then((res)=>{
                     if(res.status === 200){
+                        toast.success("PutCategory success")
                         FetchApi()
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
@@ -52,11 +54,11 @@ function Category() {
             try {
                 const res = await apis.DeleteCategory(id);
                 if(res.status === 200){
+                    toast.success("DeleteCategory success")
                     FetchApi();
                 }
             } catch (error) {
                 toast.error("delete error")
-                console.log(error)
             }
         }
     console.log(valueAdd)
@@ -64,6 +66,7 @@ function Category() {
         try {
             await apis.GetAllCategory().then((res) => {
                 if (res.status === 200) {
+                    toast.success("GetAllCategory success")
                     setCategory(res.data);
                 }
             });
@@ -75,6 +78,7 @@ function Category() {
         try {
             const res = await apis.GetCategoryById(id);
                 if(res.status === 200){
+                    toast.success("GetCategoryById success")
                     setValueAdd(res.data)
                 }
         } catch (error) {

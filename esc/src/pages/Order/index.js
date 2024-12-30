@@ -15,6 +15,7 @@ function Order() {
         try {
             await apis.GetAllOrder().then((res) => {
                 if (res.status === 200) {
+                    toast.success("GetAllOrder success")
                     setOrder(res.data);
                 }
             });
@@ -30,14 +31,15 @@ function Order() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("GetProduct success")
                         setProduct(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
 
@@ -48,6 +50,7 @@ function Order() {
                 await apis.GetOrderDetailById(id)
                 .then(res =>{
                     if(res.status === 200){
+                        toast.success("GetOrderDetailById success")
                         setOrderDetail(res.data)
                         FetchProduct();
                     }

@@ -23,7 +23,7 @@ function Role() {
             await apis.GetAllRole()
             .then((res)=>{
                 if(res.status === 200){
-                    console.log(res);
+                    // toast.success("GetAllRole success")
                     setRole(res.data);
                 }
             }) 
@@ -47,6 +47,7 @@ function Role() {
             try {
                 await apis.AddRole(valueAdd).then((res)=>{
                     if(res.status === 200){
+                        toast.success("Add Role Success")
                         window.location.reload();
                     }
                 })
@@ -60,10 +61,11 @@ function Role() {
         try {
             const res= await apis.GetRoleById(id);
             if(res.status === 200){
+                // toast.success("GetRoleById succes")
                 setRoleId(res.data)
             }    
         } catch (error) {
-            console.log(error)
+            toast.error("GetRoleById error")
         } 
     }
     const handleSumbitEdit = (e)=>{
@@ -72,6 +74,7 @@ function Role() {
             try {
                 await apis.PutRole(valueEdit.roleId,valueEdit).then((res)=>{
                     if(res.status === 200){
+                        toast.success("PutRole success")
                         FetchApi();
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
@@ -90,6 +93,7 @@ function Role() {
         try {
             const res = await apis.DeleteRole(id);
             if(res.status === 200){
+                toast.success("DeleteRole success")
                 FetchApi();
             }
         } catch (error) {
@@ -100,6 +104,7 @@ function Role() {
         try {
             const res= await apis.GetRoleById(id);
             if(res.status ===200){
+                // toast.success("GetRoleByIdEdit success")
                 setValueEdit(res.data);
             }
         } catch (error) {
@@ -305,16 +310,6 @@ function Role() {
                                             aria-label=""
                                         />
                                         <th
-                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 18 }}
-                                            data-col={1}
-                                            aria-label=""
-                                        >
-                                            <input type="checkbox" className="form-check-input" />
-                                        </th>
-                                        <th
                                             className="sorting sorting_desc"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
@@ -324,7 +319,7 @@ function Role() {
                                             aria-label="User: activate to sort column ascending"
                                             aria-sort="descending"
                                         >
-                                            roleName
+                                            Role Name
                                         </th>
                                         <th
                                             className="sorting"
@@ -335,7 +330,7 @@ function Role() {
                                             style={{ width: 315 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
-                                            baseSalary
+                                            Base Salary
                                         </th>
                                         <th
                                             className="sorting_disabled"
@@ -356,9 +351,6 @@ function Role() {
                                                 tabIndex={0}
                                                 style={{ display: 'none' }}
                                             />
-                                            <td className="  dt-checkboxes-cell">
-                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                            </td>
                                             <td>
                                                 <span className="text-truncate d-flex align-items-center text-heading">
                                                     <i className="ri-pie-chart-line ri-22px text-success me-2" />
@@ -586,7 +578,7 @@ function Role() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">roleName</label>
+                                    <label htmlFor="add-user-fullname">Role Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -598,7 +590,7 @@ function Role() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">baseSalary</label>
+                                    <label htmlFor="add-user-fullname">Base Salary</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
@@ -642,7 +634,7 @@ function Role() {
                                         value={valueEdit.roleName}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">roleName</label>
+                                    <label htmlFor="add-user-fullname">Role Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -655,7 +647,7 @@ function Role() {
                                         value={valueEdit.baseSalary}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">baseSalary</label>
+                                    <label htmlFor="add-user-fullname">Base Salary</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 {/* <div className="col-12 col-md-6">
@@ -726,7 +718,7 @@ function Role() {
                                                 aria-label="User: activate to sort column ascending"
                                                 aria-sort="descending"
                                             >
-                                                roleName
+                                                Role Name
                                             </th>
                                             <th
                                                 className="sorting"
@@ -737,7 +729,7 @@ function Role() {
                                                 style={{ width: 315 }}
                                                 aria-label="Email: activate to sort column ascending"
                                             >
-                                                baseSalary
+                                                Base Salary
                                             </th>
                                         </tr>
                                     </thead>

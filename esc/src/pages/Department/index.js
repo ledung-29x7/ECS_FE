@@ -23,15 +23,16 @@ function Department() {
                 .GetAllDepartment()
                 .then((res) => {
                     if (res.status === 200) {
+                        // toast.success("GetAllDepartment success")
                         console.log(res);
                         setDepartment(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                  toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+          toast.error(error)
         }
     };
     useEffect(() => {
@@ -50,11 +51,12 @@ function Department() {
                 await apis.AddDepartment(valueAdd).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("AddDepartment success")
                         window.location.reload();
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         FetchData();
@@ -66,11 +68,12 @@ function Department() {
             const res = await apis.DeleteDepartment(id);
             console.log(res);
             if (res.status === 204) {
+                toast.success("DeleteDepartment success")
                 console.log('delete success');
                 FetchApi();
             }
         } catch (error) {
-            console.error(error);
+            toast.error('delete error');
         }
     };
     const handleSumbitEdit = async (e) => {
@@ -98,6 +101,7 @@ function Department() {
             const res = await apis.GetDepartmentById(id);
             console.log(res)
             if(res.status === 200){
+                // toast.success("GetDepartmentById success")
                 setDepartmentId(res.data);
             }
         } catch (error) {
@@ -108,10 +112,11 @@ function Department() {
         try {
             const res = await apis.GetDepartmentById(id);
             if(res.status ===200){
+                // toast.success("GetDepartmentById success")
                 setValueEdit(res.data)
             }
         } catch (error) {
-            console.log(error)
+            toast.error(error)
         }
     }
 
@@ -643,7 +648,7 @@ function Department() {
                                         aria-label="John Doe"
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">departmentName</label>
+                                    <label htmlFor="add-user-fullname">Department Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
@@ -687,7 +692,7 @@ function Department() {
                                         value={valueEdit.departmentName}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">departmentName</label>
+                                    <label htmlFor="add-user-fullname">Department Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -700,7 +705,7 @@ function Department() {
                                         value={valueEdit.managerId}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">managerId</label>
+                                    <label htmlFor="add-user-fullname">Manager Id</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 {/* <div className="col-12 col-md-6">
@@ -771,7 +776,7 @@ function Department() {
                                                 aria-label="User: activate to sort column ascending"
                                                 aria-sort="descending"
                                             >
-                                                departmentName
+                                                Department Name
                                             </th>
                                             <th
                                                 className="sorting"
@@ -782,7 +787,7 @@ function Department() {
                                                 style={{ width: 315 }}
                                                 aria-label="Email: activate to sort column ascending"
                                             >
-                                                managerId
+                                                ManagerId
                                             </th>
                                         </tr>
                                     </thead>

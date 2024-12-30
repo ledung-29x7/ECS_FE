@@ -4,6 +4,7 @@ import * as actions from "../../store/actions"
 import { useSelector,useDispatch } from "react-redux";
 import { useState,useEffect } from "react";
 import { Link,useNavigate,useLocation } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 
 function Login() {
@@ -57,6 +58,7 @@ function Login() {
                 await apis.login(formData)
             .then(res =>{
                 if(res.status === 200){
+                    toast.success("login success")
                     console.log(res)
                     window.sessionStorage.setItem("token",res.data.token);
                     window.sessionStorage.getItem("name",res.data?.userName)
@@ -76,7 +78,7 @@ function Login() {
                 }
             })
             } catch (error) {
-                console.log(error)
+                toast.error(error)
             }
         }
         Login()

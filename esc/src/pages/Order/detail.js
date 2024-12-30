@@ -18,14 +18,15 @@ function OrderDetail() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("GetAllProductByClient success")
                         setProduct(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     
@@ -34,6 +35,7 @@ function OrderDetail() {
             await apis.GetOrderDetail()
             .then(res => {
                 if(res.status === 200 ) {
+                    toast.success("GetOrderDetail success")
                     setOrderDetail(res.data)
                 }
             })

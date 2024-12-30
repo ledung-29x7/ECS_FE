@@ -50,25 +50,27 @@ function Product() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        // toast.success("GetAllProductByClient success")
                         setProduct(res.data.products);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     const FetApiProductStatus = async () => {
         try {
             await apis.GetProductStatus().then((res) => {
                 if (res.status === 200) {
+                    // toast.success=("GetProductStatus")
                     setProductStatus(res.data);
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     // Fetch danh mục sản phẩm
@@ -77,10 +79,11 @@ function Product() {
             try {
                 const res = await apis.GetAllProductCategory();
                 if (res.status === 200) {
+                    // toast.success("GetAllProductCategory success")
                     setCategory(res.data);
                 }
             } catch (error) {
-                console.error('Lỗi khi lấy danh mục:', error);
+                toast.error('Lỗi khi lấy danh mục:',error)
             }
         };
         fetchCategories();
@@ -147,12 +150,13 @@ function Product() {
                 await apis.GetProductById(pram).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        // toast.success("GetProductById success")
                         setIsShowEdit(true)
                         setValueEdit(res.data.products);
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         FetchData();
@@ -164,11 +168,11 @@ function Product() {
             const res = await apis.DeleteDepartment(id);
             console.log(res);
             if (res.status === 204) {
-                console.log('delete success');
+                toast.success("DeleteDepartment success")
                 FetchApi();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error)
         }
     };
 
@@ -179,13 +183,14 @@ function Product() {
                 await apis.UpdateProduct(valueEdit).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("UpdateProduct success")
                         setIsShowEdit(false)
                         FetchApi()
                         FetApiProductStatus();
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         FetchData();

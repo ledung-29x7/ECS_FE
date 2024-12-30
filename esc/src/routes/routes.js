@@ -27,7 +27,7 @@ import ProductAdmin from '~/pages/Product/productAdmin';
 import EmployeeLayout from '~/layouts/DefaultLayout/EmployeeLayout';
 import RegisterClient from '~/pages/Admin/registerClient';
 import AddOrder from '~/pages/Order/addOrder';
-import Contact from '~/pages/Contact';
+import Contact from '~/pages/Contact/index';
 import Thank from '~/pages/Contact/Thanks';
 import Category from '~/pages/Category';
 import ProductAdminWithClient from '~/pages/Product/productAdminWithClient';
@@ -106,6 +106,13 @@ export const publicRoutes = [
         layout: EmployeeLayout
     },
     { 
+        path: config.routes.contact, 
+        component: Contact,
+        role: "admin",
+        // profession: "User",
+        name: "contact"
+    },
+    { 
         path: config.routes.orderDetail, 
         component: OrderDetail,
         
@@ -175,12 +182,6 @@ export const publicRoutes = [
         layout:EmployeeLayout
     },
     {
-        path:config.routes.contact,
-        component:Contact,
-        role:'admin',
-        name:"Contact"
-    },
-    {
         path:config.routes.category,
         component:Category,
         role:"admin",
@@ -198,7 +199,7 @@ export const publicRoutes = [
         role:"admin",
         name: "Product of Client",
         performance: "manageClient"
-    }
+    }, 
 ];
 
 // Private routes

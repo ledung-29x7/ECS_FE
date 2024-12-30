@@ -4,6 +4,7 @@ import styles from './Sidebar.module.scss';
 import * as userService from '~/services/userService';
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import Contact from '~/pages/Contact';
 
 const Sidebar = (props) => {
     useEffect(() => {
@@ -54,7 +55,8 @@ const Sidebar = (props) => {
                         className={({ isActive }) => 
                             isActive ? 'menu-item active' : 'menu-item'
                         }>
-                            <li className={`menu-link `} key={key}>
+                            <li className={`menu-link `} >
+                                <i className={`menu-icon ${prop.icon && ""}`} />
                                     <div data-i18n={prop.name}>{prop.name}</div>
                             </li>
                         </NavLink>
@@ -207,6 +209,16 @@ const Sidebar = (props) => {
                         {createLinks(routes,"User")}
                     </ul>
                 </li>
+                <li className="menu-item">
+                            <NavLink to='/contact' onClick={closeCollapse} 
+                    
+                            >
+                            <li className={`menu-link `} >
+                                <i className={`menu-icon ri-mail-line`} />
+                                    <div data-i18n='contact'>{"Contact"}</div>
+                            </li>
+                        </NavLink>
+                        </li>
 
                 {/* e-commerce-app menu end */}
             </ul>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link,useNavigate,useLocation } from 'react-router-dom';
 import * as apis from '../../apis';
+import { toast } from 'react-toastify';
 
 function Client() {
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ function Client() {
         try {
             const res = await apis.AddContact(valueAdd);
             if (res.status === 200) {
+                toast.success("AddContact success")
                 navigate("/thank")
                 window.location.reload();
             }

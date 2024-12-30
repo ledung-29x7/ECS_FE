@@ -85,7 +85,7 @@ function ProductAdmin() {
                     setTotalPage(response.data.totalPages);
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                toast.error('Error fetching data:',error)
             }
         };
 
@@ -105,6 +105,7 @@ function ProductAdmin() {
         try {
             await apis.GetAllProduct().then((res) => {
                 if (res.status === 200) {
+                    // toast.success("GetAllProduct success")
                     setProduct(res.data.products);
                     setTotalItem(res.data.totalRecords);
                     setTotalPage(res.data.totalPages);
@@ -117,7 +118,7 @@ function ProductAdmin() {
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
 
@@ -125,11 +126,12 @@ function ProductAdmin() {
         try {
             await apis.GetProductServiceByIdProduct(idProduct).then((res) => {
                 if (res.status === 200) {
+                    // toast.success("FetApiProductService success")
                     setProductService(res.data);
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
 
@@ -137,11 +139,12 @@ function ProductAdmin() {
         try {
             await apis.GetAllProductCategory().then((res) => {
                 if (res.status === 200) {
+                    // toast.success("GetAllProductCategory success")
                     setCategory(res.data);
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
 
@@ -149,22 +152,24 @@ function ProductAdmin() {
         try {
             await apis.GetAllService().then((res) => {
                 if (res.status === 200) {
+                    // toast.success("GetAllService success")
                     setService(res.data);
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     const FetApiProductStatus = async () => {
         try {
             await apis.GetProductStatus().then((res) => {
                 if (res.status === 200) {
+                    // toast.success("GetProductStatus success")
                     setProductStatus(res.data);
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     const handleActive = async (productId) => {
