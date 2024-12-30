@@ -50,10 +50,10 @@ function ProductServiceManage() {
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    toast.error('get error GetAllProductService');
                 });
         } catch (error) {
-            toast.error('get error');
+            toast.error('get error GetAllProductService');
         }
     };
     useEffect(() => {
@@ -61,10 +61,11 @@ function ProductServiceManage() {
             try {
                 const res = await apis.GetAllService();
                 if (res.status === 200) {
+                    // toast.success("GetAllService success")
                     setService(res.data);
                 }
             } catch (error) {
-                console.log(error);
+                toast.error("error GetAllService")
             }
         };
         fetchSevice();
@@ -74,10 +75,11 @@ function ProductServiceManage() {
             try {
                 const res = await apis.GetAllProduct();
                 if (res.status === 200) {
+                    // toast.success("GetAllProduct success")
                     setProduct(res.data.products);
                 }
             } catch (error) {
-                console.log(error);
+                toast.error("error GetAllProduct")
             }
         };
         fetchProduct();
@@ -99,11 +101,12 @@ function ProductServiceManage() {
                 await apis.AddService(valueAdd).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("AddService success")
                         window.location.reload();
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error("error")
             }
         };
         FetchData();
@@ -151,7 +154,7 @@ function ProductServiceManage() {
             const res = await apis.DeleteService(id);
             console.log(res);
             if (res.status === 200) {
-                console.log('delete success');
+                toast.success("deleteService success")
                 FetchApi();
             }
         } catch (error) {
@@ -165,6 +168,7 @@ function ProductServiceManage() {
                 await apis.PutService(valueEdit.serviceId, valueEdit).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("Put Service Success")
                         FetchApi();
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
@@ -183,10 +187,11 @@ function ProductServiceManage() {
             const res = await apis.GetServiceById(id);
             console.log(res);
             if (res.status === 200) {
+                // toast.success("GetServiceByIdEdit success")
                 setValueEdit(res.data);
             }
         } catch (error) {
-            console.log(error);
+            toast.error("get Service error")
         }
     }
     async function GetServiceById(id) {
@@ -194,10 +199,11 @@ function ProductServiceManage() {
             const res = await apis.GetServiceById(id);
             console.log(res);
             if (res.status === 200) {
+                // toast.success("GetServiceById success")
                 setServiceId(res.data);
             }
         } catch (error) {
-            console.log(error);
+            toast.error("GetServiceById error")
         }
     }
     async function GetAvailableEmployees(id, RequiredEmployees) {
@@ -205,10 +211,11 @@ function ProductServiceManage() {
             const res = await apis.GetAvailableEmployees(id, RequiredEmployees);
             console.log(res);
             if (res.status === 200) {
+                // toast.success("GetAvailableEmployees success")
                 setServiceId(res.data);
             }
         } catch (error) {
-            console.log(error);
+            toast.error("GetAvailableEmployees error")
         }
     }
 
@@ -744,7 +751,7 @@ function ProductServiceManage() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <label htmlFor="add-user-fullname">Service Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -756,7 +763,7 @@ function ProductServiceManage() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">costPerDay</label>
+                                    <label htmlFor="add-user-fullname">Cost Per Day</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
@@ -800,7 +807,7 @@ function ProductServiceManage() {
                                         value={valueEdit.serviceName}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <label htmlFor="add-user-fullname">Service Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -813,7 +820,7 @@ function ProductServiceManage() {
                                         value={valueEdit.costPerDay}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">costPerDay</label>
+                                    <label htmlFor="add-user-fullname">Cost Per Day</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 {/* <div className="col-12 col-md-6">

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 function AddOrder() {
     const navigate = useNavigate();
     const callId = window.localStorage.getItem("callId")
@@ -31,10 +31,11 @@ function AddOrder() {
             try {
                 const res = await apis.GetAllProduct();
                 if (res.status === 200) {
+                    // toast.success("GetAllProduct success")
                     setProduct(res.data.products);
                 }
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         FetchProduct();
@@ -101,11 +102,12 @@ function AddOrder() {
                 await apis.AddOrderWithDetails(valueAdd).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success("AddOrderWithDetails success")
                         navigate('/order');
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         FetchApi();
@@ -155,7 +157,7 @@ function AddOrder() {
                                                 onChange={handleChange}
                                                 aria-label="Product title"
                                             />
-                                            <label htmlFor="ecommerce-product-name">orderer</label>
+                                            <label htmlFor="ecommerce-product-name">Orderer</label>
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
@@ -167,7 +169,7 @@ function AddOrder() {
                                                 onChange={handleChange}
                                                 aria-label="Product title"
                                             />
-                                            <label htmlFor="ecommerce-product-name">recipientName</label>
+                                            <label htmlFor="ecommerce-product-name">Recipient Name</label>
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
@@ -179,7 +181,7 @@ function AddOrder() {
                                                 onChange={handleChange}
                                                 aria-label="Product title"
                                             />
-                                            <label htmlFor="ecommerce-product-name">recipientPhone</label>
+                                            <label htmlFor="ecommerce-product-name">Recipien tPhone</label>
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
@@ -191,7 +193,7 @@ function AddOrder() {
                                                 onChange={handleChange}
                                                 aria-label="Product title"
                                             />
-                                            <label htmlFor="ecommerce-product-name">recipientAddress</label>
+                                            <label htmlFor="ecommerce-product-name">Recipient Address</label>
                                         </div>
 
                                         {/* Comment */}
@@ -288,7 +290,7 @@ function AddOrder() {
                                                 style={{ width: 420 }}
                                                 aria-label="products"
                                             >
-                                                products
+                                                Products
                                             </th>
                                             <th
                                                 className="sorting_disabled"
@@ -297,7 +299,7 @@ function AddOrder() {
                                                 style={{ width: 96 }}
                                                 aria-label="price"
                                             >
-                                                price
+                                                Price
                                             </th>
                                             <th
                                                 className="sorting_disabled"
@@ -306,7 +308,7 @@ function AddOrder() {
                                                 style={{ width: 77 }}
                                                 aria-label="qty"
                                             >
-                                                qty
+                                                Qty
                                             </th>
                                             <th
                                                 className="sorting_disabled"
@@ -315,7 +317,7 @@ function AddOrder() {
                                                 style={{ width: 115 }}
                                                 aria-label="total"
                                             >
-                                                total
+                                                Total
                                             </th>
                                         </tr>
                                     </thead>

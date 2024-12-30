@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link,useNavigate,useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function CallHistory() {
     const employeeID = window.sessionStorage.getItem('employeeID');
@@ -22,10 +23,11 @@ function CallHistory() {
             try {
                 const res = await apis.GetAllEmployee();
                 if (res.status === 200) {
+                    // toast.success("GetAllEmployee success")
                     setEmployee(res.data.employees);
                 }
             } catch (error) {
-                console.log(error);
+              toast.error(error)
             }
         };
         fetchEmployee();
@@ -35,10 +37,11 @@ function CallHistory() {
             try {
                 const res = await apis.GetAllCallStatus();
                 if (res.status === 200) {
+                    // toast.success("GetAllCallStatus success")
                     setCallStatus(res.data);
                 }
             } catch (error) {
-                console.log(error);
+              toast.error(error)
             }
         };
         fetchCallStatus();
@@ -49,14 +52,15 @@ function CallHistory() {
                 .GetAllCallHistory()
                 .then((res) => {
                     if (res.status === 200) {
+                        // toast.success("GetAllCallHistory success")
                         setCallHistory(res.data);
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                  toast.error(error)
                 });
         } catch (error) {
-            console.log(error);
+          toast.error(error)
         }
     };
     useEffect(() => {
@@ -83,7 +87,7 @@ function CallHistory() {
             try {
                 const res = await apis.AddCallHistory(valueAdd);
                 if (res.status === 200) {
-                   
+                    toast.success('Submission Successful')
                     if (valueAdd.status === 1) {
                         
                         navigate("/addorder")
@@ -99,7 +103,7 @@ function CallHistory() {
                     }
                 }
             } catch (error) {
-                console.error('Error Submitting Data:', error);
+                toast.error('Error Submitting Data:', error)
             }
         };
 
@@ -110,10 +114,11 @@ function CallHistory() {
         try {
             const res = await apis.GetCallHistoryById(id);
             if (res.status === 200) {
+                // toast.success("GetCallHistoryById success")
                 setCallHistoryId(res.data);
             }
         } catch (error) {
-            console.log(error);
+          toast.error(error)
         }
     }
     const handleDelete = async (id) => {
@@ -122,11 +127,11 @@ function CallHistory() {
             const res = await apis.DeleteCallHistory(id);
             console.log(res);
             if (res.status === 200) {
-                console.log('delete success');
+                toast.success('delete success')
                 FetchApi();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error);
         }
     };
     return (
@@ -316,7 +321,7 @@ function CallHistory() {
                                             style={{ width: 99 }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
-                                            callDatetime
+                                            Call Date Time
                                         </th>
                                         <th
                                             className="sorting"
@@ -327,7 +332,7 @@ function CallHistory() {
                                             style={{ width: 99 }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
-                                            phoneNumber
+                                            Phone Number
                                         </th>
                                         <th
                                             className="sorting"
@@ -338,7 +343,7 @@ function CallHistory() {
                                             style={{ width: 99 }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
-                                            status
+                                            Status
                                         </th>
                                         <th
                                             className="sorting"
@@ -349,7 +354,7 @@ function CallHistory() {
                                             style={{ width: 99 }}
                                             aria-label="Plan: activate to sort column ascending"
                                         >
-                                            notes
+                                            Notes
                                         </th>
 
                                         <th
@@ -451,16 +456,7 @@ function CallHistory() {
                                                     >
                                                         <i className="ri-delete-bin-7-line ri-22px" />
                                                     </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record"
-                                                        data-bs-target="#viewUser"
-                                                        title="Preview"
-                                                        data-bs-toggle="modal"
-                                                        onClick={() => GetAllCallHistoryById(res.callId)}
-                                                    >
-                                                        <i className="ri-eye-line ri-22px" />
-                                                    </a>
+                                                   
                                                     <button
                                                         className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
                                                         data-bs-toggle="dropdown"
@@ -468,16 +464,6 @@ function CallHistory() {
                                                         <i className="ri-more-2-line ri-22px" />
                                                     </button>
                                                     <div className="dropdown-menu dropdown-menu-end m-0">
-                                                        <a
-                                                            href="javascript:;"
-                                                            className="dropdown-item view-record"
-                                                            data-bs-target="#viewUser"
-                                                            data-bs-toggle="modal"
-                                                            onClick={() => GetAllCallHistoryById(res?.callId)}
-                                                        >
-                                                            <i className="ri-edit-box-line me-2" />
-                                                            <span>view</span>
-                                                        </a>
                                                         <a
                                                             href="javascript:;"
                                                             id="order-open"
@@ -680,7 +666,7 @@ function CallHistory() {
                                         name="phoneNumber"
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">phoneNumber</label>
+                                    <label htmlFor="add-user-fullname">Phone Number</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
 
@@ -703,7 +689,7 @@ function CallHistory() {
                                                 ))}
                                             </select>
                                         </div>
-                                        <label htmlFor="select2Basic">status</label>
+                                        <label htmlFor="select2Basic">Status</label>
                                     </div>
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -715,7 +701,7 @@ function CallHistory() {
                                         name="notes"
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">notes</label>
+                                    <label htmlFor="add-user-fullname">Notes</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button
@@ -737,179 +723,6 @@ function CallHistory() {
                     </div>
                 </div>
             </div>
-            {/* getbyid */}
-            <div className="modal fade" id="viewUser" tabIndex={-1} style={{ display: 'none'}} aria-hidden="true">
-                <div className="modal-dialog modal-lg modal-simple modal-view-user">
-                    <div className="modal-content">
-                        <div className="modal-body p-0">
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                            <div className="text-center mb-6">
-                                <h4 className="mb-2">details call History</h4>
-                            </div>
-                            <form
-                                id="viewUserForm"
-                                className="row g-5 fv-plugins-bootstrap5 fv-plugins-framework"
-                                noValidate="novalidate"
-                            >
-                                <table
-                                    className="datatables-order table dataTable no-footer dtr-column"
-                                    id="DataTables_Table_0"
-                                    aria-describedby="DataTables_Table_0_info"
-                                    style={{ width: 1384 }}
-                                >
-                                    <thead>
-                                        <tr>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Plan: activate to sort column ascending"
-                                            >
-                                                callId
-                                            </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Plan: activate to sort column ascending"
-                                            >
-                                                employeeId
-                                            </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Plan: activate to sort column ascending"
-                                            >
-                                                callDatetime
-                                            </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Plan: activate to sort column ascending"
-                                            >
-                                                phoneNumber
-                                            </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Plan: activate to sort column ascending"
-                                            >
-                                                status
-                                            </th>
-                                            <th
-                                                className="sorting"
-                                                tabIndex={0}
-                                                aria-controls="DataTables_Table_0"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 99 }}
-                                                aria-label="Plan: activate to sort column ascending"
-                                            >
-                                                notes
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr className="odd">
-                                            <td className="  control" tabIndex={0} style={{ display: 'none' }} />
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">{callHistoryId?.callId}</span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">
-                                                                {callHistoryId?.employeeId}
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">
-                                                                {callHistoryId?.callDatetime}
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">
-                                                                {callHistoryId?.phoneNumber}
-                                                            </span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">{callHistoryId?.status}</span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">{callHistoryId?.notes}</span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div className="col-12 text-center">
-                                    <button
-                                        type="reset"
-                                        className="btn btn-outline-secondary waves-effect"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                                <input type="hidden" />
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {/* getbyid */}
             {/* edit */}
             <div className="modal fade" id="editUser" tabIndex={-1} style={{ display: 'none' }} aria-hidden="true">
                 <div className="modal-dialog modal-lg modal-simple modal-edit-user">
@@ -935,7 +748,7 @@ function CallHistory() {
                                         // value={valueEdit.departmentName}
                                         // onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">orderer</label>
+                                    <label htmlFor="add-user-fullname">Orderer</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -948,7 +761,7 @@ function CallHistory() {
                                         // value={valueEdit.managerId}
                                         // onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">recipientName</label>
+                                    <label htmlFor="add-user-fullname">Recipient Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -961,7 +774,7 @@ function CallHistory() {
                                         // value={valueEdit.managerId}
                                         // onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">recipientPhone</label>
+                                    <label htmlFor="add-user-fullname">Recipient Phone</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -974,7 +787,7 @@ function CallHistory() {
                                         // value={valueEdit.managerId}
                                         // onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">recipientAddress</label>
+                                    <label htmlFor="add-user-fullname">Recipient Address</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="col-12 text-center">

@@ -3,7 +3,7 @@ import * as actions from "../../store/actions"
 import { useSelector,useDispatch } from "react-redux";
 import { useState,useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from "react-toastify";
 
 function LoginClient(){
     const {checklogin} =useSelector(state=>state.app)
@@ -25,6 +25,7 @@ function LoginClient(){
                 await apis.loginClient(formData)
             .then(res =>{
                 if(res.status === 200){
+                    toast.success("loginClient success")
                     console.log(res)
                     window.sessionStorage.setItem('idClient',res.data.userId);
                     window.sessionStorage.setItem('userName',res.data.userName);
@@ -34,7 +35,7 @@ function LoginClient(){
                 }
             })
             } catch (error) {
-                console.log(error)
+                toast.error("loginClient error")
             }
         }
         Login()

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function WorkList() {
     const employeeID = window.sessionStorage.getItem('employeeID'); // Lấy employeeId từ sessionStorage
@@ -18,10 +19,11 @@ function WorkList() {
             try {
                 const response = await apis.WorkList(employeeID); // Gọi API WorkList
                 if (response.status === 200) {
+                    toast.success("WorkList success")
                     setWorkList(response.data); 
                 }
             } catch (error) {
-                console.error('Error fetching work list:', error);
+                toast.error('Error fetching work list:', error)
             }
         };
 

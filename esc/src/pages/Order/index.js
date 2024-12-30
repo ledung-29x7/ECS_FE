@@ -44,7 +44,6 @@ function Order() {
     });
     const handlePageClick = (newPage) => {
         setFilters({
-            
             pageNumber: newPage ,
         });
     };
@@ -88,6 +87,8 @@ function Order() {
                     setOrder(res.data.orders);
                
                     setTotalPage(res.data.totalPages);
+                    toast.success("GetAllOrder success")
+                    setOrder(res.data);
                 }
             });
         } catch (error) {

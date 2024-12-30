@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 function Employee() {
     const [employee, setEmployee] = useState([]);
     // const [employeeProductCategoryAll, setEmployeeProductCategoryAll] = useState([]);
@@ -95,13 +96,14 @@ function Employee() {
                 const response = await apis.GetAllEmployee(debouncedFilters);
                 console.log(response);
                 if (response.status === 200) {
+                    // toast.success("GetAllEmployee success")
                     setCurrentPage(debouncedFilters.pageNumber);
                     setEmployee(response.data.employees);
                     setTotalItem(response.data.totalRecords);
                     setTotalPage(response.data.totalPages);
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                toast.error(error)
             }
         };
 
@@ -120,11 +122,12 @@ function Employee() {
         try {
             await apis.GetAllEmployee().then((res) => {
                 if (res.status === 200) {
+                    // toast.success("GetAllEmployee success")
                     setEmployee(res.data.employees);
                 }
             });
         } catch (error) {
-            console.log(error);
+            toast.error(error)
         }
     };
     useEffect(() => {
@@ -132,10 +135,11 @@ function Employee() {
             try {
                 const res = await apis.GetAllRole();
                 if (res.status === 200) {
+                    // toast.success("GetAllRole success")
                     setRole(res.data);
                 }
             } catch (error) {
-                console.log(error);
+                toast.error(error)
             }
         };
         fetchRole();
@@ -145,10 +149,11 @@ function Employee() {
             try {
                 const res = await apis.GetAllCategory();
                 if (res.status === 200) {
+                    // toast.success("GetAllCategory success")
                     setCategory(res.data);
                 }
             } catch (error) {
-                console.log(error);
+              toast.error(error)
             }
         };
         fetchCategory();
@@ -158,10 +163,11 @@ function Employee() {
             try {
                 const res = await apis.GetAllDepartment();
                 if (res.status === 200) {
+                    // toast.success("GetAllDepartment success")
                     setDepartment(res.data);
                 }
             } catch (error) {
-                console.log(error);
+              toast.error(error)
             }
         };
         fetchDepartment();
@@ -177,7 +183,7 @@ function Employee() {
             const imgUpload = Array.from(files).map((files) => URL.createObjectURL(files));
             setReaderImg(imgUpload);
         } else {
-            console.error('No files selected.');
+            toast.error("No files selected.")
         }
     };
     const handleChange = (event) => {
@@ -201,7 +207,7 @@ function Employee() {
                 formData.append('ImageFiles', selectedImage[i]);
             }
         } else {
-            console.error('No files to upload.');
+            toast.error("No files to upload.")
             return;
         }
         console.log('FormData content:');
@@ -216,7 +222,7 @@ function Employee() {
                 formData.append('CategoryIds', valueAdd.CategoryIds[i]);
             }
         } else {
-            console.error('No files to upload.');
+            toast.error("No files to upload.")
             return;
         }
 
@@ -231,7 +237,7 @@ function Employee() {
                     }
                 }
             } catch (error) {
-                console.error('Lỗi khi gửi API:', error.response?.data || error.message);
+                toast.error('Lỗi khi gửi API:', error.response?.data || error.message)
             }
         };
         fetchData();
@@ -429,7 +435,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 10 }}
+                                            style={{ width: 50 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -441,7 +447,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 30 }}
+                                            style={{ width: 50 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -486,7 +492,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
                                             Category
@@ -497,7 +503,7 @@ function Employee() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 88 }}
+                                            style={{ width: 30 }}
                                             aria-label="qty: activate to sort column ascending"
                                         >
                                             actions
@@ -671,7 +677,7 @@ function Employee() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">FirstName</label>
+                                    <label htmlFor="add-user-fullname">First Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -683,7 +689,7 @@ function Employee() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">LastName</label>
+                                    <label htmlFor="add-user-fullname">Last Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -764,7 +770,7 @@ function Employee() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">PhoneNumber</label>
+                                    <label htmlFor="add-user-fullname">Phone Number</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -846,7 +852,8 @@ function Employee() {
                                             <i className="ri-add-line" />
                                         </button>
                                     </div>
-                                    <ul className="list-unstyled">
+                                </div>
+                                <ul className="list-unstyled">
                                         {valueAdd.CategoryIds.map((categoryId, key) => {
                                             const selectedCategoryObj = category.find(
                                                 (cat) => cat.categoryId === categoryId,
@@ -868,7 +875,6 @@ function Employee() {
                                             ) : null;
                                         })}
                                     </ul>
-                                </div>
                                 <div className="col-12 text-center">
                                     <button
                                         type="submit"
@@ -889,6 +895,7 @@ function Employee() {
                                 <input type="hidden" />
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

@@ -25,6 +25,7 @@ function ServiceManage() {
                 .GetAllService()
                 .then((res) => {
                     if (res.status === 200) {
+                        // toast.success('GetAllService success');
                         console.log(res);
                         setService(res.data);
                     }
@@ -53,11 +54,12 @@ function ServiceManage() {
                 await apis.AddService(valueAdd).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success('AddService success');
                         window.location.reload();
                     }
                 });
             } catch (error) {
-                console.log(error);
+                toast.error('error');
             }
         };
         FetchData();
@@ -68,7 +70,7 @@ function ServiceManage() {
             const res = await apis.DeleteService(id);
             console.log(res);
             if (res.status === 200) {
-                console.log('delete success');
+                toast.success('DeleteService success');
                 FetchApi();
             }
         } catch (error) {
@@ -82,6 +84,7 @@ function ServiceManage() {
                 await apis.PutService(valueEdit.serviceId, valueEdit).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        toast.success('PutService success');
                         FetchApi();
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
@@ -100,10 +103,11 @@ function ServiceManage() {
             const res = await apis.GetServiceById(id);
             console.log(res);
             if (res.status === 200) {
+                // toast.success('GetServiceById success');
                 setValueEdit(res.data);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('error');
         }
     }
     async function GetServiceById(id) {
@@ -111,10 +115,11 @@ function ServiceManage() {
             const res = await apis.GetServiceById(id);
             console.log(res);
             if (res.status === 200) {
+                // toast.success('GetServiceById success');
                 setServiceId(res.data);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('error');
         }
     }
 
@@ -596,7 +601,7 @@ function ServiceManage() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <label htmlFor="add-user-fullname">Service Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -608,7 +613,7 @@ function ServiceManage() {
                                         aria-label=""
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="add-user-fullname">costPerDay</label>
+                                    <label htmlFor="add-user-fullname">Cost Per Day</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
@@ -652,7 +657,7 @@ function ServiceManage() {
                                         value={valueEdit.serviceName}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">serviceName</label>
+                                    <label htmlFor="add-user-fullname">Service Name</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
@@ -665,7 +670,7 @@ function ServiceManage() {
                                         value={valueEdit.costPerDay}
                                         onChange={handleChangeEdit}
                                     />
-                                    <label htmlFor="add-user-fullname">costPerDay</label>
+                                    <label htmlFor="add-user-fullname">Cost Per Day</label>
                                     <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
                                 </div>
                                 {/* <div className="col-12 col-md-6">
@@ -711,7 +716,7 @@ function ServiceManage() {
                         <div className="modal-body p-0">
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                             <div className="text-center mb-6">
-                                <h4 className="mb-2">details despartment</h4>
+                                <h4 className="mb-2">Details despartment</h4>
                             </div>
                             <form
                                 id="viewUserForm"
@@ -736,7 +741,7 @@ function ServiceManage() {
                                                 aria-label="User: activate to sort column ascending"
                                                 aria-sort="descending"
                                             >
-                                                serviceName
+                                                Service Name
                                             </th>
                                             <th
                                                 className="sorting"
@@ -747,7 +752,7 @@ function ServiceManage() {
                                                 style={{ width: 315 }}
                                                 aria-label="Email: activate to sort column ascending"
                                             >
-                                                costPerDay
+                                                Cost Per Day
                                             </th>
                                         </tr>
                                     </thead>

@@ -127,10 +127,12 @@ function AddProducts() {
             try {
                 const res = await apis.GetAllProductCategory();
                 if (res.status === 200) {
+                    // toast.success("GetAllProductCategory success")
                     setCategory(res.data);
                 }
             } catch (error) {
-                console.error('Lỗi khi lấy danh mục:', error);
+                // console.error('Lỗi khi lấy danh mục:', error);
+                toast.error("Lỗi khi lấy danh mục:")
             }
         };
         fetchCategories();
@@ -168,6 +170,7 @@ function AddProducts() {
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
+                        // toast.success("GetAllService success")
                         setService(res.data);
                     }
                 })
@@ -298,7 +301,7 @@ function AddProducts() {
                                                         type="number"
                                                         className="form-control"
                                                         id="ecommerce-product-barcode"
-                                                        placeholder="0123-4567"
+                                                        placeholder=""
                                                         name="Price"
                                                         onChange={handleChange}
                                                         aria-label="Product barcode"
