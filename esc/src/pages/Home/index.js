@@ -1293,15 +1293,6 @@ function Home() {
             <div className="drag-target" />
 
             {/* / Layout wrapper */}
-            <div className="buy-now">
-                <a
-                    href="https://themeselection.com/item/materio-aspnet-core-mvc-admin-template/"
-                    target="_blank"
-                    className="btn btn-danger btn-buy-now"
-                >
-                    Buy Now
-                </a>
-            </div>
         </>
 
     )
