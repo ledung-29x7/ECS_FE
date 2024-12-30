@@ -72,6 +72,8 @@ function Login() {
                             return(navigate("/admin"))
                         case "Service":
                             return(navigate("/worklist"))
+                        case "Logistic": 
+                            return (navigate("/logistic-order"))
                         default:
                             return(navigate("/client"))
                     }

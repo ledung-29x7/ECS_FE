@@ -74,7 +74,7 @@ export const GetOrderDetail = () => new Promise(async(resolve,reject)=>{
 export const GetOrderDetailById = (id) => new Promise(async(resolve,reject)=>{
     try {
         const response=await axios({
-            url:`/OrderDetail/${id}`,
+            url:`/Order/getorderdetailbyorderid/${id}`,
             method:"Get"
         })
         resolve(response)
