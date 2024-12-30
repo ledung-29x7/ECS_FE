@@ -1,65 +1,10 @@
-import {
-    faCoins,
-    faEarthAsia,
-    faEllipsisVertical,
-    faGear,
-    faKeyboard,
-    faQuestionCircle,
-    faSignIn,
-    faSignOut,
-    faUser,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Tippy from '@tippyjs/react';
-import classNames from 'classnames/bind';
-import 'tippy.js/dist/tippy.css';
-import { Link,useNavigate,useLocation } from 'react-router-dom';
-
-import Button from '~/components/Button';
-import { MessageIcon, NotificationIcon, UploadIcon } from '~/components/Icons';
-import Image from '~/components/Image';
-import Menu from '~/components/Popper/Menu';
-import styles from './Header.module.scss';
-import Search from '~/layouts/components/Search';
-import config from '~/config';
+import {useNavigate,useLocation } from 'react-router-dom';
 import * as apis from "../../../apis"
 import * as actions from "../../../store/actions"
 import { useSelector,useDispatch } from "react-redux";
 import { useState,useEffect } from "react";
-const cx = classNames.bind(styles);
 
-const MENU_ITEMS = [
-    {
-        icon: <FontAwesomeIcon icon={faEarthAsia} />,
-        title: 'English',
-        children: {
-            title: 'Language',
-            data: [
-                {
-                    type: 'language',
-                    code: 'en',
-                    title: 'English',
-                },
-                {
-                    type: 'language',
-                    code: 'vi',
-                    title: 'Tiếng Việt',
-                },
-            ],
-        },
-    },
-    {
-        icon: <FontAwesomeIcon icon={faQuestionCircle} />,
-        title: 'Feedback and Help',
-        to: '/feedback',
-    },
-    {
-        icon: <FontAwesomeIcon icon={faKeyboard} />,
-        title: 'Keyboard shortcuts',
-    },
-];
-
-function Header() {
+function HeaderClient () {
     const currentUser = true;
 
     //handleMenuChange logic
@@ -871,5 +816,3 @@ function Header() {
         </header>
     );
 }
-
-export default Header;

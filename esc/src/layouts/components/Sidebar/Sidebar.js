@@ -45,7 +45,7 @@ const Sidebar = (props) => {
     };
     // creates the links that appear in the left menu / Sidebar
     const createLinks = (routes,profession) => {
-        console.log(routes,profession)
+        
         return routes.map((prop, key) => {
            
             if (prop.role === 'admin' && prop?.profession === profession) {

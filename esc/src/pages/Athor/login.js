@@ -29,7 +29,7 @@ function Login() {
          // Hàm để lấy giá trị của một cookie
          function getCookie(name) {
            const cookies = document.cookie.split("; ");
-           console.log(cookies)
+          
            for (let cookie of cookies) {
                const [key, value] = cookie.split("=");
                if (key === name) {
@@ -95,18 +95,61 @@ function Login() {
                  }
                });
              } catch (error) {
+                
                console.error(error);
              }
            };
            FetchData();
          };
-   console.log(checklogin)
+  
     return (
         <>
             {checklogin ? (
-                <div >
-                    <button onClick={()=> handleLogout}>Go to page</button>
-                </div>
+               <div className="misc-wrapper">
+               <h4 className="mb-2 mx-2">Under Maintenance! 🚧</h4>
+               <p className="mb-10 mx-2">
+                 Sorry for the inconvenience but we're performing some maintenance at the
+                 moment
+               </p>
+               <div className="d-flex justify-content-center mt-5">
+                 <img
+                   src="../../assets/img/illustrations/tree-3.png"
+                   alt="misc-tree"
+                   className="img-fluid misc-object d-none d-lg-inline-block"
+                 />
+                 <img
+                   src="../../assets/img/illustrations/tree.png"
+                   alt="misc-tree"
+                   className="img-fluid misc-object-right d-none d-lg-inline-block"
+                 />
+                 <img
+                   src="../../assets/img/illustrations/misc-mask-light.png"
+                   alt="misc-error"
+                   className="scaleX-n1-rtl misc-bg d-none d-lg-inline-block"
+                   height={172}
+                   data-app-light-img="illustrations/misc-mask-light.png"
+                   data-app-dark-img="illustrations/misc-mask-dark.png"
+                 />
+                 <div className="d-flex flex-column align-items-center">
+                   <img
+                     src="../../assets/img/illustrations/misc-under-maintenance.png"
+                     alt="misc-error"
+                     className="img-fluid z-1"
+                     width={780}
+                   />
+                   <div>
+                     <div
+                       
+                       onClick={handleLogout}
+                       className="btn btn-primary text-center my-12 waves-effect waves-light"
+                     >
+                       Logout
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             
             ) : (
                             <div className="authentication-wrapper authentication-cover">
 
