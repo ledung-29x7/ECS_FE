@@ -46,7 +46,7 @@ function ProductServiceManage() {
                 .then((res) => {
                     if (res.status === 200) {
                         console.log(res);
-                        setproductService(res.data);
+                        setproductService(res.data.productServices);
                     }
                 })
                 .catch((error) => {
@@ -424,7 +424,7 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 272 }}
+                                            style={{ width: 50 }}
                                             aria-label="User: activate to sort column ascending"
                                             aria-sort="descending"
                                         >
@@ -436,7 +436,7 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 315 }}
+                                            style={{ width: 50 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
                                             Product Name
@@ -447,7 +447,7 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 315 }}
+                                            style={{ width: 40 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
                                             Start Date
@@ -458,7 +458,7 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 315 }}
+                                            style={{ width: 40 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
                                             End Date
@@ -469,7 +469,7 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 315 }}
+                                            style={{ width: 30 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
                                             Person
@@ -478,7 +478,7 @@ function ProductServiceManage() {
                                             className="sorting_disabled"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 145 }}
+                                            style={{ width: 30 }}
                                             aria-label="Actions"
                                         >
                                             Actions

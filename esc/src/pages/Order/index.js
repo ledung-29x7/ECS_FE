@@ -10,12 +10,84 @@ function Order() {
     const [product,setProduct] = useState([])
     const [orderDetail,setOrderDetail] = useState();
     const navigate = useNavigate()
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const renderPageNumbers = () => {
+        const pages = [];
+        if(totalPage > 0){
+            for (let i = 1; i <= totalPage; i++) {
+                pages.push(
+                    <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                        <a
+                            href="#"
+                            aria-controls="DataTables_Table_0"
+                            role="link"
+                            aria-current="page"
+                            data-dt-idx={0}
+                            tabIndex={0}
+                            className="page-link"
+                            onClick={()=>
+                                handlePageClick(i)
+                            }
+                        >
+                            {i}
+                        </a>
+                    </li>,
+                );
+            }
+        }
+        return pages;
+    };
+    const [filters, setFilters] = useState({
+        pageNumber: 1,
+       
+    });
+    const handlePageClick = (newPage) => {
+        setFilters({
+            
+            pageNumber: newPage ,
+        });
+    };
+        // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+     const [debouncedFilters, setDebouncedFilters] = useState(filters);
+    
+        // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedFilters(filters);
+            }, 500); // 1 giây
+    
+            return () => {
+                clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+            };
+        }, [filters]);
+    
+        // Gọi API khi `debouncedFilters` thay đổi
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const response = await apis.GetAllEmployee(debouncedFilters);
+                    console.log(response);
+                    if (response.status === 200) {
+                        setCurrentPage(debouncedFilters.pageNumber);
+                        setOrder(response.data.orders);
+                        setTotalPage(response.data.totalPages);
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+    
+            fetchData();
+        }, [debouncedFilters]);
 
     const FetchApi = async () => {
         try {
             await apis.GetAllOrder().then((res) => {
                 if (res.status === 200) {
-                    setOrder(res.data);
+                    setOrder(res.data.orders);
+               
+                    setTotalPage(res.data.totalPages);
                 }
             });
         } catch (error) {
@@ -307,7 +379,7 @@ function Order() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {order.map((res) => (
+                                    {order?.map((res) => (
                                         <tr className="odd">
                                             <td
                                                 className="control dtr-hidden"
@@ -387,123 +459,54 @@ function Order() {
                                         className="dataTables_paginate paging_simple_numbers"
                                         id="DataTables_Table_0_paginate"
                                     >
-                                        <ul className="pagination">
-                                            <li
-                                                className="paginate_button page-item previous disabled"
-                                                id="DataTables_Table_0_previous"
-                                            >
-                                                <a
-                                                    aria-controls="DataTables_Table_0"
-                                                    aria-disabled="true"
-                                                    role="link"
-                                                    data-dt-idx="previous"
-                                                    tabIndex={-1}
-                                                    className="page-link"
+                                            <ul className="pagination">
+                                                <li
+                                                    className={`paginate_button page-item previous ${
+                                                        currentPage === 1 ? 'disabled' : ''
+                                                    }`}
+                                                    id="DataTables_Table_0_previous"
                                                 >
-                                                    <i className="ri-arrow-left-s-line" />
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item active">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    aria-current="page"
-                                                    data-dt-idx={0}
-                                                    tabIndex={0}
-                                                    className="page-link"
+                                                    <a
+                                                        aria-controls="DataTables_Table_0"
+                                                        aria-disabled="true"
+                                                        role="link"
+                                                        data-dt-idx="previous"
+                                                        tabIndex={-1}
+                                                        className="page-link"
+                                                        onClick={() => {
+                                                            
+                                                            if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                        }}
+                                                    >
+                                                        <i className="ri-arrow-left-s-line" />
+                                                    </a>
+                                                </li>
+
+                                                {renderPageNumbers()}
+
+                                                <li
+                                                    className={`paginate_button page-item next ${
+                                                        currentPage === totalPage ? 'disabled' : ''
+                                                    }`}
+                                                    id="DataTables_Table_0_next"
                                                 >
-                                                    1
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={1}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    2
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={2}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    3
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={3}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    4
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={4}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    5
-                                                </a>
-                                            </li>
-                                            <li
-                                                className="paginate_button page-item disabled"
-                                                id="DataTables_Table_0_ellipsis"
-                                            >
-                                                <a
-                                                    aria-controls="DataTables_Table_0"
-                                                    aria-disabled="true"
-                                                    role="link"
-                                                    data-dt-idx="ellipsis"
-                                                    tabIndex={-1}
-                                                    className="page-link"
-                                                >
-                                                    …
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={9}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    10
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx="next"
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    <i className="ri-arrow-right-s-line" />
-                                                </a>
-                                            </li>
-                                        </ul>
+                                                    <a
+                                                        href="#"
+                                                        aria-controls="DataTables_Table_0"
+                                                        role="link"
+                                                        data-dt-idx="next"
+                                                        tabIndex={0}
+                                                        className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage < totalPage)
+                                                                handlePageClick(currentPage + 1);
+                                                        }}
+                                                    >
+                                                        <i className="ri-arrow-right-s-line" />
+                                                    </a>
+                                                </li>
+                                            </ul>
                                     </div>
                                 </div>
                             </div>

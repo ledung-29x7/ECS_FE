@@ -1,10 +1,11 @@
 import { ExploreIcon } from "~/components/Icons";
 import axios from "../axios";
-export const GetAllOrder=()=>new Promise(async(resoleve,reject)=>{
+export const GetAllOrder=(params)=>new Promise(async(resoleve,reject)=>{
     try {
         const response=await axios({
             url:"/Order",
-            method:'get'
+            method:'get',
+            params:params
         })
         resoleve(response)
     } catch (error) {

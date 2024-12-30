@@ -67,7 +67,7 @@ function HeaderClient () {
         
         const FetchData = async () => {
           try {
-            await apis.logout().then((res) => {
+            await apis.logoutClient().then((res) => {
               if (res.status === 200) {
                 deleteCookie("token");
                 checkLoggedIn();

@@ -54,6 +54,22 @@ export const logout = () =>
             reject(error);
         }
     });
+export const logoutClient = () =>
+    new Promise(async (resolve, reject) => {
+        try {
+            const response = await axios({
+                url: `/Client/logout`,
+                method: "post",
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+                },
+            });
+            resolve(response);
+        } catch (error) {
+            reject(error);
+        }
+    });
 
 export const changePassword = (data) => new Promise(async (resolve,reject) =>{
     try {

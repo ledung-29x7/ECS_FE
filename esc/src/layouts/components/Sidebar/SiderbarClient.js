@@ -63,7 +63,7 @@ const SidebarClient = (props) => {
     return (
         <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
             <div className="app-brand demo">
-                <a href="index.html" className="app-brand-link">
+                <a href="/product" className="app-brand-link">
                     <span className="app-brand-logo demo me-1">
                         <span style={{ color: 'var(--bs-primary)' }}>
                             <svg

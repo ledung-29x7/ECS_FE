@@ -97,6 +97,15 @@ export const publicRoutes = [
         name: "Department"
     },
     { 
+        path: config.routes.WorkList, 
+        component: WorkList,
+        role: "employee",
+        icon: "ri-suitcase-line",
+        profession: "WorkList",
+        name: "Work List",
+        layout: EmployeeLayout
+    },
+    { 
         path: config.routes.order, 
         component: Order,
         role: "employee",
@@ -139,15 +148,6 @@ export const publicRoutes = [
         icon: "ri-phone-line",
         profession: "manageEmployee",
         name: "History Call",
-        layout: EmployeeLayout
-    },
-    { 
-        path: config.routes.WorkList, 
-        component: WorkList,
-        role: "employee",
-        icon: "ri-suitcase-line",
-        profession: "WorkList",
-        name: "Work List",
         layout: EmployeeLayout
     },
     { 

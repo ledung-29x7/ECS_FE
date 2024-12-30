@@ -69,7 +69,7 @@ function Login() {
                             console.log(res.data.role)
                             return(navigate("/admin"))
                         case "Service":
-                            return(navigate("/callhistory"))
+                            return(navigate("/worklist"))
                         default:
                             return(navigate("/client"))
                     }
@@ -87,15 +87,16 @@ function Login() {
            const FetchData = async () => {
              try {
                await apis.logout().then((res) => {
-                   deleteCookie("token");
-                 if (res.status === 200) {
+                   if (res.status === 200) {
+                     deleteCookie("token");
                    checkLoggedIn();
                    dispatch(actions.checkLogin(false));
                    
                  }
                });
              } catch (error) {
-                
+                deleteCookie("token");
+                window.location.reload()
                console.error(error);
              }
            };
@@ -183,10 +184,8 @@ function Login() {
                                 {/* Login */}
                                 <div className="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg position-relative py-sm-5 px-12 py-4">
                                     <div className="w-px-400 mx-auto pt-5 pt-lg-0">
-                                        <h4 className="mb-1">Welcome to Materio! 👋🏻</h4>
-                                        <p className="mb-5">
-                                            Please sign-in to your account and start the adventure
-                                        </p>
+                                        <h4 className="mb-1 mb-5">Welcome to ECS! 👋🏻</h4>
+                                       
                                         <form
                                             id="formAuthentication"
                                             onSubmit={handleSubmit}
