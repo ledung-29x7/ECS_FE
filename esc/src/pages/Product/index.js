@@ -140,9 +140,6 @@ function Product() {
         }
     };
 
-    const handleAddService = () => {
-        
-    };
 
     const handleShowEdit = (pram) => {
         const FetchData = async () => {
@@ -471,7 +468,7 @@ function Product() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 446 }}
+                                            style={{ width: 200 }}
                                             aria-label="product: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -603,19 +600,7 @@ function Product() {
                                                         <i className="ri-more-2-line ri-22px" />
                                                     </button>
                                                     <div className="dropdown-menu dropdown-menu-end m-0">
-                                                        <div className="add-new">
-                                                            <button
-                                                                
-                                                                className=" waves-effect waves-light"
-                                                                data-bs-toggle="offcanvas"
-                                                                data-bs-target="#offcanvasAddUser"
-                                                            >
-                                                                <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                                <span className="d-none d-sm-inline-block">
-                                                                    Choose Service
-                                                                </span>
-                                                            </button>
-                                                        </div>
+                                                        
                                                         <a href="javascript:0;" className="dropdown-item">
                                                             Suspend
                                                         </a>

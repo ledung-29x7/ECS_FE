@@ -10,14 +10,14 @@ function CallHistory() {
     const [employee, setEmployee] = useState([]);
     const [callStatus, setCallStatus] = useState([]);
     const navigate = useNavigate();
-
-    const [callHistoryId, setCallHistoryId] =useState ({});
-    const [valueAdd, setValueAdd] = useState({
+    const getDefaultValueAdd = () => ({
         employeeId: employeeID,
         phoneNumber: '',
         status: 0,
         notes: '',
     });
+    const [callHistoryId, setCallHistoryId] =useState ({});
+    const [valueAdd, setValueAdd] = useState(getDefaultValueAdd());
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
@@ -83,24 +83,24 @@ function CallHistory() {
         //     statusId: parseInt(valueAdd.statusId, 10), // Chuyển statusId thành số nếu cần
         // };
 
-        console.log(valueAdd);
-
         const FetchData = async () => {
             try {
                 const res = await apis.AddCallHistory(valueAdd);
                 if (res.status === 200) {
                     toast.success('Submission Successful')
                     if (valueAdd.status === 1) {
-                        // console.log('1');
-                        // const closeButton = document.querySelector('#order #order-open');
-                        // console.log(closeButton);
-                        // if (closeButton) {
-                        //     closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
-                        // }
+                        
                         navigate("/addorder")
                         window.localStorage.setItem("callId",res.data.callId)
                     }
-                    // window.location.reload();
+                    else{
+                        FetchApi();
+                        const closeButton = document.querySelector('#offcanvasAddUser .btn-cancel');
+                        if (closeButton) {
+                            closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
+                        }
+                        
+                    }
                 }
             } catch (error) {
                 toast.error('Error Submitting Data:', error)
@@ -655,49 +655,7 @@ function CallHistory() {
                                 onsubmit="return false"
                                 noValidate="novalidate"
                             >
-                                {/* <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                <div className="form-floating form-floating-outline form-floating-select2">
-                                    <div className="position-relative">
-                                        <select
-                                            id="select2Basic"
-                                            className=" form-select"
-                                            name="employeeId"
-                                            value={valueAdd.employeeId} // Gắn giá trị hiện tại
-                                            onChange={handleChange} // Gọi hàm xử lý sự kiện
-                                            aria-hidden="true"
-                                        >
-                                            <option value="" data-select2-id={2}>
-                                            employeeId
-                                            </option>
-                                            {employee.map((res,key)=>
-                                                <option key={key} value={res.employeeId}>
-                                                    {res.employeeId}
-                                                </option>
-                                            )}
-                                        </select>
-                                    </div>
-                                    <label htmlFor="select2Basic">employeeId</label>
-                                </div>
-                            </div> */}
-                                {/* <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                            <div className=" me-4 d-flex flex-column">
-                                <label className="text-sm-start" htmlFor="alignment-birthdate">
-                                callDatetime
-                                </label>
-                                <div className="">
-                                    <input
-                                        type="text"
-                                        id='alignment-birthdate'
-                                        name='callDatetime'
-                                        onChange={handleChange}
-                                        className="form-control dob-picker flatpickr-input"
-                                        placeholder="YYYY-MM-DD"
-                                        readOnly
-                                        ref={datePickerRef}
-                                    />
-                                </div>
-                            </div>
-                            </div> */}
+                           
                                 <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
                                     <input
                                         type="text"
@@ -754,7 +712,7 @@ function CallHistory() {
                                 </button>
                                 <button
                                     type="reset"
-                                    className="btn btn-outline-danger waves-effect"
+                                    className="btn btn-cancel btn-outline-danger waves-effect"
                                     data-bs-dismiss="offcanvas"
                                 >
                                     Cancel
@@ -838,7 +796,7 @@ function CallHistory() {
                                     </button>
                                     <button
                                         type="reset"
-                                        className="btn btn-outline-secondary waves-effect"
+                                        className="btn btn-cancel btn-outline-secondary waves-effect"
                                         data-bs-dismiss="modal"
                                         aria-label="Close"
                                     >

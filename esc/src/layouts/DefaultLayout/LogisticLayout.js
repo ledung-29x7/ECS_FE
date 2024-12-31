@@ -1,15 +1,13 @@
-import SidebarEmployee from "../components/Sidebar/SiderbarEmployee"
-import PropTypes from 'prop-types';
-import classNames from 'classnames/bind';
+
 import Header from '~/layouts/components/Header';
-import styles from './DefaultLayout.module.scss';
 import { publicRoutes } from '~/routes';
 import { Link } from "react-router-dom";
 import { useSelector,useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import * as actions from "../../store/actions"
+import SidebarLogistic from "../components/Sidebar/SiderbarLogistic";
 
-function EmployeeLayout ({children}){
+function LogisticLayout ({children}){
   var role = window.sessionStorage.getItem("role")
   const {checklogin} = useSelector(state => state.app)
   const dispatch = useDispatch();
@@ -17,7 +15,7 @@ function EmployeeLayout ({children}){
   useEffect(() => {
           checkLoggedIn();
         }, [checklogin]);
-      
+    
         // Hàm để lấy giá trị của một cookie
         function getCookie(name) {
           const cookies = document.cookie.split("; ");
@@ -29,7 +27,7 @@ function EmployeeLayout ({children}){
               }
           }
           return undefined;
-      }
+        }
       
         // check xem người dùng đã đăng nhập chưa
         function checkLoggedIn() {
@@ -42,12 +40,13 @@ function EmployeeLayout ({children}){
             dispatch(actions.checkLogin(false))
           }
         }
+
     return(
         <>
-        {checklogin && role === "Service" || role === "Logistic" ? (
+        {checklogin && role === "Logistic" ? (
             <div className="layout-wrapper layout-content-navbar">
                 <div className="layout-container">
-                    <SidebarEmployee routes={publicRoutes} />
+                    <SidebarLogistic routes={publicRoutes} />
                     <div class="layout-page">
                         <Header />
                         <div className="">
@@ -107,4 +106,4 @@ function EmployeeLayout ({children}){
     </>
     )
 }
-export default EmployeeLayout
+export default LogisticLayout

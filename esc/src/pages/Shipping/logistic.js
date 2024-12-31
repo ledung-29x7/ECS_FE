@@ -5,10 +5,10 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Order() {
+function LogisticOrder() {
     const [order, setOrder] = useState([]);
     const [product,setProduct] = useState([])
-    const [orderDetail,setOrderDetail] = useState([]);
+    const [orderDetail,setOrderDetail] = useState();
     const navigate = useNavigate()
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -65,7 +65,7 @@ function Order() {
         useEffect(() => {
             const fetchData = async () => {
                 try {
-                    const response = await apis.GetAllOrder(debouncedFilters);
+                    const response = await apis.GetAllEmployee(debouncedFilters);
                     console.log(response);
                     if (response.status === 200) {
                         setCurrentPage(debouncedFilters.pageNumber);
@@ -88,7 +88,7 @@ function Order() {
                
                     setTotalPage(res.data.totalPages);
                     toast.success("GetAllOrder success")
-                    
+                  
                 }
             });
         } catch (error) {
@@ -429,7 +429,7 @@ function Order() {
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
-                                                            onClick={()=>handleViewOrderDetail(res?.orderId)}
+                                                            onClick={()=>handleViewOrderDetail(res.orderId)}
                                                             
                                                         >
                                                             View
@@ -602,4 +602,4 @@ function Order() {
         </div>
     );
 }
-export default Order;
+export default  LogisticOrder;

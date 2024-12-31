@@ -46,7 +46,7 @@ const Sidebar = (props) => {
     };
     // creates the links that appear in the left menu / Sidebar
     const createLinks = (routes,profession) => {
-        console.log(routes,profession)
+        
         return routes.map((prop, key) => {
            
             if (prop.role === 'admin' && prop?.profession === profession) {
@@ -82,7 +82,7 @@ const Sidebar = (props) => {
     return (
         <aside id="layout-menu" className="layout-menu menu-vertical menu bg-menu-theme">
             <div className="app-brand demo">
-                <a href="index.html" className="app-brand-link">
+                <a href="/admin" className="app-brand-link">
                     <span className="app-brand-logo demo me-1">
                         <span style={{ color: 'var(--bs-primary)' }}>
                             <svg

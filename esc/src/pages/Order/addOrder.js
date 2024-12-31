@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import * as apis from '../../apis';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 function AddOrder() {
@@ -41,7 +40,7 @@ function AddOrder() {
         };
         FetchProduct();
     }, []);
-
+    
     const handleAddService = () => {
         if (!valueAddOrderDetails.productId) {
             alert('Please select a product!');

@@ -32,6 +32,8 @@ import Thank from '~/pages/Contact/Thanks';
 import Category from '~/pages/Category';
 import ProductAdminWithClient from '~/pages/Product/productAdminWithClient';
 import { icon } from '@fortawesome/fontawesome-svg-core';
+import LogisticOrder from '~/pages/Shipping/logistic';
+import LogisticLayout from '~/layouts/DefaultLayout/LogisticLayout';
 
 // Public routes
 export const publicRoutes = [
@@ -97,6 +99,15 @@ export const publicRoutes = [
         name: "Department"
     },
     { 
+        path: config.routes.WorkList, 
+        component: WorkList,
+        role: "employee",
+        icon: "ri-suitcase-line",
+        profession: "WorkList",
+        name: "Work List",
+        layout: EmployeeLayout
+    },
+    { 
         path: config.routes.order, 
         component: Order,
         role: "employee",
@@ -149,15 +160,6 @@ export const publicRoutes = [
         layout: EmployeeLayout
     },
     { 
-        path: config.routes.WorkList, 
-        component: WorkList,
-        role: "employee",
-        icon: "ri-suitcase-line",
-        profession: "WorkList",
-        name: "Work List",
-        layout: EmployeeLayout
-    },
-    { 
         path: config.routes.role, 
         component: Role,
         role: "admin",
@@ -199,6 +201,14 @@ export const publicRoutes = [
         role:"admin",
         name: "Product of Client",
         performance: "manageClient"
+    }, 
+    {
+        path:config.routes.logisticOrder,
+        component: LogisticOrder,
+        role:"logistic",
+        name: "Order",
+        icon:"ri-truck-line",
+        layout: LogisticLayout
     }, 
 ];
 

@@ -83,16 +83,7 @@ function WorkList() {
                                             </div>{' '}
                                         </div>
                                     </div>
-                                    <div className="add-new">
-                                        <button
-                                            className="btn btn-primary waves-effect waves-light"
-                                            data-bs-toggle="offcanvas"
-                                            data-bs-target="#offcanvasAddUser"
-                                        >
-                                            <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                            <span className="d-none d-sm-inline-block"> Add New User </span>
-                                        </button>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <table
@@ -156,7 +147,7 @@ function WorkList() {
                             <td colSpan="9" style={{ textAlign: 'center' }}>No work data found</td>
                         </tr>
                     ) : (
-                        workList.map((work, index) => (
+                        workList?.map((work, index) => (
                             
                                         <tr className="odd" key={index}>
                                             <td className="  control" tabIndex={0} style={{ display: 'none' }} />

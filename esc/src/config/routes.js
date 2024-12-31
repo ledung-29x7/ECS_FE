@@ -33,5 +33,6 @@ const routes = {
     productService : "/productService",
     productAdminWithClient: "/product-admin-with-client",
     WorkList: "/worklist",
+    logisticOrder: "/logistic-order"
 };
 export default routes;

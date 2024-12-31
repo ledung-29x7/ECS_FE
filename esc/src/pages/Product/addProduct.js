@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
 
 function AddProducts() {
     const navigate = useNavigate();
@@ -13,12 +15,14 @@ function AddProducts() {
     const [service, setService] = useState([]);
     const [category, setCategory] = useState([]);
     const [totalCost, setTotalCost] = useState(0);
+    const date = new Date();
+    var setDateout = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + 1);
     const [addService, setAddService] = useState({
         ServiceId: 0,
         ClientId: idClient,
-        StartDate: '',
-        EndDate: '',
-        RequiredEmployees: "",
+        StartDate: new Date(),
+        EndDate: setDateout,
+        RequiredEmployees: '',
     });
 
     const [valueAdd, setValueAdd] = useState({
@@ -36,16 +40,47 @@ function AddProducts() {
         inputElement.current.click();
     };
 
-    useEffect(() => {
-        if (window.flatpickr && datePickerRef.current) {
-            window.flatpickr(datePickerRef.current, {
-                dateFormat: 'Y-m-d', // Định dạng ngày
-                defaultDate: new Date(), // Ngày mặc định
-                enableTime: false, // Nếu không cần thời gian
-            });
-        }
-    }, []);
+    const { RangePicker } = DatePicker;
+    const disabledDate = (current) => {
+        // Không thể chọn ngày trước ngày hiện tại
+        return current && current < dayjs().endOf('day');
+    };
 
+    // xử lý lấy định dạng ngày
+    const dateFormatAux = (date) => {
+        let d = new Date(date);
+        var month = '' + (d.getMonth() + 1);
+        var day = '' + d.getDate();
+        var year = d.getFullYear();
+
+        if (day.length < 2) {
+            day = '0' + day;
+        }
+        if (month.length < 2) {
+            month = '0' + month;
+        }
+
+        return [year, month, day].join('-');
+    };
+
+    // xử lý ngày tháng
+    useEffect(() => {
+        const date = new Date();
+        var setDatein = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+        setAddService({
+            ...addService,
+            StartDate: dateFormatAux(setDatein),
+            EndDate: dateFormatAux(setDateout),
+        });
+    }, []);
+    // xử lý khi thay đổi ngày
+    const handleinDate = (dates, dateStrings) => {
+        setAddService({
+            ...addService,
+            StartDate: dateFormatAux(dateStrings[0]) && dateFormatAux(dates[0]),
+            EndDate: dateFormatAux(dateStrings[1] && dateFormatAux(dates[1])),
+        });
+    };
     const handleChangeProductService = (event) => {
         const { name, value } = event.target;
         console.log(value);
@@ -61,10 +96,10 @@ function AddProducts() {
             alert('Please select a service!');
             return;
         }
-         // Tính số ngày
+        // Tính số ngày
         const startDate = new Date(addService.StartDate);
         const endDate = new Date(addService.EndDate);
-        const days = Math.max(1, (endDate - startDate) / (1000 * 60 * 60 * 24)); 
+        const days = Math.max(1, (endDate - startDate) / (1000 * 60 * 60 * 24));
 
         // Lấy giá dịch vụ
         const selectedService = service.find((s) => s.serviceId === addService.ServiceId);
@@ -110,7 +145,7 @@ function AddProducts() {
             setSelectedImage(files); // Lưu file vào state
             // Tạo danh sách URL ảnh từ danh sách file
             const imgUpload = Array.from(files).map((file) => URL.createObjectURL(file));
-            
+
             // Cập nhật `readerImg` là một mảng
             setReaderImg((prev) => [...prev, ...imgUpload]);
         } else {
@@ -126,7 +161,6 @@ function AddProducts() {
             [name]: ['CategoryId', 'Price', 'InitialQuantity'].includes(name) ? Number(value) : value,
         }));
     };
-
 
     // get service
     const FetchService = async () => {
@@ -204,7 +238,12 @@ function AddProducts() {
                             <p className="mb-0">Orders placed across your store</p>
                         </div>
                         <div className="d-flex align-content-center flex-wrap gap-4">
-                            <button onClick={()=>navigate("/product")} className="btn btn-outline-secondary waves-effect">Discard</button>
+                            <button
+                                onClick={() => navigate('/product')}
+                                className="btn btn-outline-secondary waves-effect"
+                            >
+                                Discard
+                            </button>
                             <button className="btn btn-outline-primary waves-effect">Save draft</button>
                             <button onClick={handleSumbit} className="btn btn-primary waves-effect waves-light">
                                 Publish product
@@ -293,15 +332,14 @@ function AddProducts() {
                                                     className="comment-editor border-0 pb-1 ql-container ql-snow"
                                                     id="ecommerce-category-description"
                                                 >
-                                                      <textarea 
+                                                    <textarea
                                                         type="text"
                                                         name="Description"
                                                         onChange={handleChange}
-                                                        class="form-control" 
-                                                        id="exampleFormControlTextarea1" 
-                                                        rows="3">  
-
-                                                        </textarea>
+                                                        class="form-control"
+                                                        id="exampleFormControlTextarea1"
+                                                        rows="3"
+                                                    ></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -388,7 +426,11 @@ function AddProducts() {
                                                         <strong>1.6</strong> MB
                                                     </div>
                                                 </div>
-                                                <button className="dz-remove border-none " onClick={()=>img} data-dz-remove="">
+                                                <button
+                                                    className="dz-remove border-none "
+                                                    onClick={() => img}
+                                                    data-dz-remove=""
+                                                >
                                                     Remove file
                                                 </button>
                                             </div>
@@ -403,154 +445,139 @@ function AddProducts() {
                         <div className="col-12 col-lg-4">
                             {/* Organize Card */}
                             <div>
+                                {/* Form chung */}
                                 <div className="card mb-6">
-                                    {/* Form chung */}
-                                    <div className="card mb-6">
-                                        <h5 className="card-header">Form Label Alignment</h5>
-                                        <form className="card-body">
-                                            <div className="me-4 d-flex flex-column">
-                                                <label className="text-sm-start" htmlFor="alignment-birthdate">
-                                                    Start Date
-                                                </label>
-                                                <div>
-                                                    <input
-                                                        type="date"
-                                                        id="alignment-birthdate"
-                                                        name="StartDate"
-                                                        value={addService.StartDate}
-                                                        onChange={handleChangeProductService}
-                                                        className="form-control dob-picker flatpickr-input"
-                                                        placeholder="YYYY-MM-DD"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="me-4 d-flex flex-column">
-                                                <label className="text-sm-start" htmlFor="alignment-birthdate">
-                                                    End Date
-                                                </label>
-                                                <div>
-                                                    <input
-                                                        type="date"
-                                                        id="alignment-birthdate"
-                                                        name="EndDate"
-                                                        value={addService.EndDate}
-                                                        onChange={handleChangeProductService}
-                                                        className="form-control dob-picker flatpickr-input"
-                                                        placeholder="YYYY-MM-DD"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="d-flex flex-column">
-                                                <label className="text-sm-start" htmlFor="alignment-phone">
-                                                    Number Employee
-                                                </label>
-                                                <div>
-                                                    <input
-                                                        type="number"
-                                                        id="alignment-phone"
-                                                        className="form-control phone-mask"
-                                                        name="RequiredEmployees"
-                                                        value={addService.RequiredEmployees}
-                                                        min={1}
-                                                        onChange={handleChangeProductService}
-                                                        placeholder="Number Employee"
-                                                        aria-label="658 799 8941"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div className="card-header">
-                                        <h5 className="card-title mb-0">Pricing</h5>
-                                    </div>
+                                    <h5 className="card-header">Choose Service</h5>
                                     <div className="card-body">
-                                        <div className="position-relative mb-5 col ecommerce-select2-dropdown d-flex justify-content-between align-items-center">
-                                            <div className="w-100 me-4">
-                                                <select
-                                                    id="alignment-country"
-                                                    typeof="number"
-                                                    className="select2 form-select form-select-sm"
-                                                    name="ServiceId"
-                                                    value={addService.ServiceId}
-                                                    onChange={handleChangeProductService}
-                                                >
-                                                    <option value="">Select Service</option>
-                                                    {service?.map((res) => (
-                                                        <option key={res.serviceId} value={Number(res.serviceId)}>
-                                                            {res.serviceName}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                        <div className="d-flex row flex-column">
+                                            <label className="text-sm-start col-12" htmlFor="date">
+                                                Date
+                                            </label>
+                                            <div className="col-md-4 col-xl-10">
+                                                <RangePicker
+                                                    id={'date'}
+                                                    placeholder={''}
+                                                    className=""
+                                                    onChange={handleinDate}
+                                                    defaultValue={[
+                                                        dayjs(addService.StartDate),
+                                                        dayjs(addService.EndDate),
+                                                    ]}
+                                                    disabledDate={disabledDate}
+                                                    format={'DD/MM/YYYY'}
+                                                />
                                             </div>
-                                            <div>
-                                                <button
-                                                    className="btn btn-outline-primary btn-icon waves-effect"
-                                                    onClick={handleAddService}
-                                                >
-                                                    <i className="ri-add-line" />
-                                                </button>
+                                        </div>
+                                        <div className="d-flex mt-3 row flex-column">
+                                            <label className="text-sm-start col-12" htmlFor="alignment-phone">
+                                                Number Employee
+                                            </label>
+                                            <div className="col-md-4 col-xl-10">
+                                                <input
+                                                    type="number"
+                                                    id="alignment-phone"
+                                                    className="form-control py-1 col-4 phone-mask"
+                                                    name="RequiredEmployees"
+                                                    value={addService.RequiredEmployees}
+                                                    min={1}
+                                                    onChange={handleChangeProductService}
+                                                    placeholder="Number Employee"
+                                                    aria-label="658 799 8941"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="d-flex mt-4 row flex-column">
+                                            <label className="text-sm-start col-12" htmlFor="alignment-country">
+                                                Service
+                                            </label>
+                                            <div className="position-relative mb-5 col-xl-12 col-md-5 ecommerce-select2-dropdown d-flex  align-items-center">
+                                                <div className="w-100 me-4">
+                                                    <select
+                                                        id="alignment-country"
+                                                        typeof="number"
+                                                        className="select2 form-select py-1 form-select-sm"
+                                                        name="ServiceId"
+                                                        value={addService.ServiceId}
+                                                        onChange={handleChangeProductService}
+                                                    >
+                                                        <option value="">Select Service</option>
+                                                        {service?.map((res) => (
+                                                            <option key={res.serviceId} value={Number(res.serviceId)}>
+                                                                {res.serviceName}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        className="btn btn-outline-primary btn-icon waves-effect"
+                                                        onClick={handleAddService}
+                                                    >
+                                                        <i className="ri-add-line" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div className="card mb-6">
                                     <div className="border rounded p-5 mb-4">
-                                            {/* Estimated Delivery */}
-                                            <h6>Estimated Delivery Date</h6>
-                                            <ul className="list-unstyled">
-                                                {valueAdd.productServicesJson.map((serv, key) => (
-                                                    <li key={key} className="d-flex gap-4 mb-4">
-                                                
-                                                        <div className="flex-shrink-0">
-                                                            {
-                                                                service.find((r) => r.serviceId === serv.ServiceId)
-                                                                    ?.serviceName
-                                                            }
-                                                        </div>
-                                                        <div className="flex-grow-1">
-                                                            <p className="mb-0">
-                                                                <a className="text-body" href="javascript:void(0)">
-                                                                    {serv.RequiredEmployees}
-                                                                </a>
-                                                            </p>
-                                                            <p className="fw-medium mb-3">{serv.StartDate}</p>
-                                                            <p className="fw-medium mb-3">{serv.EndDate}</p>
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            <hr className="mx-n5 mt-2" />
-                                            {/* Price Details */}
-                                            <h6>Price Details</h6>
-                                            <dl className="row mb-0">
-                                                <dt className="col-6 fw-normal text-heading">Order Total</dt>
-                                                <dd className="col-6 text-end">${totalCost}</dd>
-                                                <dt className="col-6 fw-normal text-heading">Delivery Charges</dt>
-                                                <dd className="col-6 text-end">
-                                                    <s className="text-muted">$5.00</s>{' '}
-                                                    <span className="badge bg-label-success rounded-pill text-uppercase">
-                                                        Free
-                                                    </span>
-                                                </dd>
-                                            </dl>
-                                            <hr className="mx-n5 my-5" />
-                                            <dl className="row mb-0">
-                                                <dt className="col-6 text-heading">Total</dt>
-                                                <dd className="col-6 fw-medium text-heading text-end mb-0">${totalCost.toFixed(2)}</dd>
-                                            </dl>
-                                        </div>
-                                      
+                                        {/* Estimated Delivery */}
+                                        <h6>Estimated Delivery Date</h6>
+                                        <ul className="list-unstyled">
+                                            {valueAdd.productServicesJson.map((serv, key) => (
+                                                <li key={key} className="d-flex gap-4 mb-4">
+                                                    <div className="flex-shrink-0">
+                                                        {
+                                                            service.find((r) => r.serviceId === serv.ServiceId)
+                                                                ?.serviceName
+                                                        }
+                                                    </div>
+                                                    <div className="flex-grow-1">
+                                                        <p className="mb-0">
+                                                            <a className="text-body" href="javascript:void(0)">
+                                                                {serv.RequiredEmployees}
+                                                            </a>
+                                                        </p>
+                                                        <p className="fw-medium mb-3">{serv.StartDate}</p>
+                                                        <p className="fw-medium mb-3">{serv.EndDate}</p>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <hr className="mx-n5 mt-2" />
+                                        {/* Price Details */}
+                                        <h6>Price Details</h6>
+                                        <dl className="row mb-0">
+                                            <dt className="col-6 fw-normal text-heading">Order Total</dt>
+                                            <dd className="col-6 text-end">${totalCost}</dd>
+                                            <dt className="col-6 fw-normal text-heading">Delivery Charges</dt>
+                                            <dd className="col-6 text-end">
+                                                <s className="text-muted">$5.00</s>{' '}
+                                                <span className="badge bg-label-success rounded-pill text-uppercase">
+                                                    Free
+                                                </span>
+                                            </dd>
+                                        </dl>
+                                        <hr className="mx-n5 my-5" />
+                                        <dl className="row mb-0">
+                                            <dt className="col-6 text-heading">Total</dt>
+                                            <dd className="col-6 fw-medium text-heading text-end mb-0">
+                                                ${totalCost.toFixed(2)}
+                                            </dd>
+                                        </dl>
+                                    </div>
                                 </div>
                             </div>
                             {/* /Organize Card */}
                         </div>
-                                   
-                            
-                                   
+
                         {/* /Second column */}
                     </div>
                 </div>
             </div>
             {/* / Content */}
-            <div className="content-backdrop fade" />
+           
         </div>
     );
 }
