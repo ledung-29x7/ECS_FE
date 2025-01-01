@@ -56,7 +56,7 @@ function Client() {
                         marginLeft: '10px',
                         cursor: 'pointer',
                     }}
-                    to={'/loginClient'}
+                    to={'/login'}
                     className="btn text-white"
                 >
                     Login

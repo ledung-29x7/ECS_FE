@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function LogisticOrder() {
-    const employeeID = window.sessionStorage.getItem('employeeID');
+    const employeeID = window.localStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
     const [product,setProduct] = useState([])
     const [orderDetail,setOrderDetail] = useState();

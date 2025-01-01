@@ -10,7 +10,7 @@ function Product() {
 
     const [product, setProduct] = useState([]);
     const [image, setImage] = useState([]);
-    const idClient = window.sessionStorage.getItem('idClient');
+    const idClient = window.localStorage.getItem('idClient');
     const [selectedImage, setSelectedImage] = useState(null);
     const [readerImg, setReaderImg] = useState([]);
     const [service, setService] = useState([]);

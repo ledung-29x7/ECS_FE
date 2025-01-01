@@ -6,7 +6,7 @@ export const addClient = (name)=>new Promise(async(resolve,reject)=>{
             method:"post",
             data:name,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("tokent")}`
+                Authorization:`Bearer ${window.localStorage.getItem("tokent")}`
             }
         })
         resolve(response)

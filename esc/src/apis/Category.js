@@ -18,7 +18,7 @@ export const AddCategory = (name)=> new Promise(async(resolve,reject)=>{
             method:"post",
             data:name,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`,
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`,
                 "Content-Type": "application/json",
             }
         })
@@ -45,7 +45,7 @@ export const PutCategory = (id,name)=>new Promise(async(resolve,reject)=>{
             method:"put",
             data:name,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`
             }
         })
         resolve(response)
@@ -59,7 +59,7 @@ export const DeleteCategory = (id)=>new Promise(async(resolve,reject)=>{
             url:`/ProductCategory/${id}`,
             method:"delete",
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`
             }
         })
         resolve(response)

@@ -57,7 +57,7 @@ export const AddEmployeeProductCategory=(name)=>new Promise(async(resolve,reject
             method:"post",
             data:name,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`,
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`,
                     "Content-Type": "application/json",            
             }
         })

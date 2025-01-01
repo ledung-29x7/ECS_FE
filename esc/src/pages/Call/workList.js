@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 function WorkList() {
-    const employeeID = window.sessionStorage.getItem('employeeID'); // Lấy employeeId từ sessionStorage
+    const employeeID = window.localStorage.getItem('employeeID'); // Lấy employeeId từ localStorage
     const [workList, setWorkList] = useState([]); // State lưu dữ liệu công việc
     const navigate = useNavigate();
 

@@ -24,7 +24,7 @@ function HeaderClient () {
     const {checklogin} = useSelector(state => state.app)
     const [isChecking, setIsChecking] = useState(false);
     const [search,setSearch] = useState("")
-    const username = window.sessionStorage.getItem("userName")
+    const username = window.localStorage.getItem("userName")
     
     useEffect(() => {
         checkLoggedIn();

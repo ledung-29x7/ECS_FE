@@ -46,7 +46,7 @@ export const logout = () =>
                 method: "post",
                 withCredentials: true,
                 headers: {
-                    Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+                    Authorization: `Bearer ${window.localStorage.getItem("token")}`,
                 },
             });
             resolve(response);
@@ -62,7 +62,7 @@ export const logoutClient = () =>
                 method: "post",
                 withCredentials: true,
                 headers: {
-                    Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+                    Authorization: `Bearer ${window.localStorage.getItem("token")}`,
                 },
             });
             resolve(response);
@@ -78,7 +78,7 @@ export const changePassword = (data) => new Promise(async (resolve,reject) =>{
             method:"post",
             withCredentials:true,
             headers: {
-                Authorization: `Bearer ${window.sessionStorage.getItem("token")}`,
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             }
         })
         resolve(response)

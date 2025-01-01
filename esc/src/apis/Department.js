@@ -28,7 +28,7 @@ export const AddDepartment = (name)=>new Promise(async(resolve,reject)=>{
             method:"post",
             data:name,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("tokent")}`
+                Authorization:`Bearer ${window.localStorage.getItem("tokent")}`
             }
         })
         resolve(response)
@@ -43,7 +43,7 @@ export const PutDepartment=(name,id)=> new Promise(async(resolve,reject)=>{
             method:"put",
             data:name,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("tokent")}`
+                Authorization:`Bearer ${window.localStorage.getItem("tokent")}`
             }
         })
         resolve(response)
@@ -58,7 +58,7 @@ export const DeleteDepartment=(id)=>new Promise(async(resolve,reject)=>{
             method:"delete",
             withCredentials: true,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("tokent")}`
+                Authorization:`Bearer ${window.localStorage.getItem("tokent")}`
             }
         })
         resolve(response)

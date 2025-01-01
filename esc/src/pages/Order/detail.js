@@ -10,7 +10,7 @@ function OrderDetail() {
         const [product, setProduct] = useState([]);
         const [orderDetail,setOrderDetail] = useState([]);
         const [image, setImage] = useState([]);
-        const idClient = window.sessionStorage.getItem('idClient');
+        const idClient = window.localStorage.getItem('idClient');
     const FetchApi = async () => {
         try {
             await apis

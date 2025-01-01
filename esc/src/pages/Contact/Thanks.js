@@ -6,7 +6,7 @@ import { publicRoutes } from '~/routes';
 import SidebarClient from '../../layouts/components/Sidebar/SiderbarClient';
 const cx = classNames.bind(styles);
 function Thank({ children }) {
-    const idClient = window.sessionStorage.getItem('idClient');
+    const idClient = window.localStorage.getItem('idClient');
     return (
         <>
               {idClient !== null ? (

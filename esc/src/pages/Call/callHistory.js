@@ -5,7 +5,7 @@ import { Link,useNavigate,useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 function CallHistory() {
-    const employeeID = window.sessionStorage.getItem('employeeID');
+    const employeeID = window.localStorage.getItem('employeeID');
     const [callHistory, setCallHistory] = useState([]);
     const [employee, setEmployee] = useState([]);
     const [callStatus, setCallStatus] = useState([]);

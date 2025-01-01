@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 function ProductCategory() {
-    const idClient = window.sessionStorage.getItem('idClient');
+    const idClient = window.localStorage.getItem('idClient');
     const [productService, setProductService] = useState([]);
     const [showAddService, setShowAddService] = useState(false);
     const [product, setProduct] = useState([]);

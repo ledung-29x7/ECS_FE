@@ -20,7 +20,7 @@ export const GetAllContact = ()=> new Promise(async(resolve,reject)=>{
             url:"/Contact",
             method:"Get",
             headers: {
-                Authorization:`Bearer ${window.sessionStorage.getItem("tokent")}`
+                Authorization:`Bearer ${window.localStorage.getItem("tokent")}`
             },
         })
         resolve(response)

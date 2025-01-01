@@ -8,7 +8,7 @@ import * as actions from "../../store/actions"
 import SidebarLogistic from "../components/Sidebar/SiderbarLogistic";
 
 function LogisticLayout ({children}){
-  var role = window.sessionStorage.getItem("role")
+  var role = window.localStorage.getItem("role")
   const {checklogin} = useSelector(state => state.app)
   const dispatch = useDispatch();
 

@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import * as actions from "../../store/actions"
 
 function EmployeeLayout ({children}){
-  var role = window.sessionStorage.getItem("role")
+  var role = window.localStorage.getItem("role")
   const {checklogin} = useSelector(state => state.app)
   const dispatch = useDispatch();
 

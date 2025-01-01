@@ -18,7 +18,7 @@ export const AddService=(name)=>new Promise(async(resolve,reject)=>{
             data:name,
             withCredentials:true,
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`
             }
         })
         resolve(response)
@@ -32,7 +32,7 @@ export const DeleteService=(id)=>new Promise(async(resolve,reject)=>{
             url:`/service/${id}`,
             method:"delete",
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`
             }
         })
         resolve(response)
@@ -47,7 +47,7 @@ export const PutService=(id,name)=>new Promise(async(resolve,reject)=>{
             method:"put",
             data:name,
             // headers:{
-            //     Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+            //     Authorization:`Bearer ${window.localStorage.getItem("token")}`
             // }
         })
         resolve(response)
@@ -62,7 +62,7 @@ export const GetServiceById=(id)=>new Promise(async(resolve,reject)=>{
             url:`/service/${id}`,
             method:"get",
             headers:{
-                Authorization:`Bearer ${window.sessionStorage.getItem("token")}`
+                Authorization:`Bearer ${window.localStorage.getItem("token")}`
             }
         })
         resolve(response)

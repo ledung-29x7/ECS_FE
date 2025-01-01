@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 
 function AddProducts() {
     const navigate = useNavigate();
-    const idClient = window.sessionStorage.getItem('idClient');
+    const idClient = window.localStorage.getItem('idClient');
     const [selectedImage, setSelectedImage] = useState(null);
     const [readerImg, setReaderImg] = useState([]);
     const [service, setService] = useState([]);

@@ -12,7 +12,7 @@ import * as actions from "../../store/actions"
 const cx = classNames.bind(styles);
 
 function DefaultLayout({ children }) {
-    var role = window.sessionStorage.getItem("role")
+    var role = window.localStorage.getItem("role")
     const {checklogin} = useSelector(state => state.app)
     const dispatch = useDispatch();
 

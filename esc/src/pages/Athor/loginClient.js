@@ -27,9 +27,9 @@ function LoginClient(){
                 if(res.status === 200){
                     toast.success("loginClient success")
                     console.log(res)
-                    window.sessionStorage.setItem('idClient',res.data.userId);
-                    window.sessionStorage.setItem('userName',res.data.userName);
-                    window.sessionStorage.setItem("token",res.data.token)
+                    window.localStorage.setItem('idClient',res.data.userId);
+                    window.localStorage.setItem('userName',res.data.userName);
+                    window.localStorage.setItem("token",res.data.token)
                     dispatch(actions.checkLogin(true))
                     navigate("/product")
                 }

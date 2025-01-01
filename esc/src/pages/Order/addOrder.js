@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 function AddOrder() {
     const navigate = useNavigate();
-    const employeeID = window.sessionStorage.getItem('employeeID');
+    const employeeID = window.localStorage.getItem('employeeID');
     const callId = window.localStorage.getItem("callId")
     const [workList, setWorkList] = useState([]);
     const [valueAdd, setValueAdd] = useState({

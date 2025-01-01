@@ -11,7 +11,7 @@ import * as actions from "../../store/actions"
 const cx = classNames.bind(styles);
 
 function ClientLayout({ children }) {
-    const idClient = window.sessionStorage.getItem('idClient');
+    const idClient = window.localStorage.getItem('idClient');
     const {checklogin} = useSelector(state => state.app)
     const dispatch = useDispatch();
     console.log(checklogin)
