@@ -1,11 +1,12 @@
 import axios from "../axios";
 
 // service
-export const GetAllProductService= () => new Promise(async (resolve, reject) =>{
+export const GetAllProductService= (param) => new Promise(async (resolve, reject) =>{
     try {
         const response = await axios({
             url:"/ProductService",
-            method: "get"
+            method: "get",
+            params: param
         })
         resolve(response)
     } catch (error) {
@@ -18,6 +19,7 @@ export const GetProductServiceById = (id) =>new Promise(async (resolve,reject) =
         const response = await axios({
             url: `/ProductService/Client/${id}`,
             method: "get",
+            withCredentials:true
         })
         resolve(response)
     } catch (error) {

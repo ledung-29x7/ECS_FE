@@ -12,6 +12,18 @@ export const GetAllOrder=(params)=>new Promise(async(resoleve,reject)=>{
         reject(error)
     }
 })
+export const GetOrderByEmloyeeId=(idEmloyee)=>new Promise(async(resoleve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/Order/employee/${idEmloyee}`,
+            method:'get',
+            withCredentials: true
+        })
+        resoleve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
 export const AddOrderWithDetails=(name)=>new Promise(async(resolve,reject)=>{
     try {
         const response= await axios({

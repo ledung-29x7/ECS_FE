@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Order() {
+    const employeeID = window.sessionStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
     const [product,setProduct] = useState([])
     const [orderDetail,setOrderDetail] = useState([]);
@@ -61,39 +62,19 @@ function Order() {
             };
         }, [filters]);
     
-        // Gọi API khi `debouncedFilters` thay đổi
-        useEffect(() => {
-            const fetchData = async () => {
-                try {
-                    const response = await apis.GetAllOrder(debouncedFilters);
-                    console.log(response);
-                    if (response.status === 200) {
-                        setCurrentPage(debouncedFilters.pageNumber);
-                        setOrder(response.data.orders);
-                        setTotalPage(response.data.totalPages);
-                    }
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-            };
-    
-            fetchData();
-        }, [debouncedFilters]);
+        
 
     const FetchApi = async () => {
         try {
-            await apis.GetAllOrder().then((res) => {
+            await apis.GetOrderByEmloyeeId(employeeID).then((res) => {
                 if (res.status === 200) {
-                    setOrder(res.data.orders);
-               
-                    setTotalPage(res.data.totalPages);
-                    toast.success("GetAllOrder success")
+                    setOrder(res.data);
                     
                 }
             });
         } catch (error) {
             console.log(error);
-            toast.error(error.message)
+            
         }
     };
     const FetchProduct = async () => {
@@ -101,7 +82,6 @@ function Order() {
             await apis
                 .GetProduct()
                 .then((res) => {
-                    console.log(res);
                     if (res.status === 200) {
                         setProduct(res.data);
                     }
@@ -380,68 +360,77 @@ function Order() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {order?.map((res) => (
-                                        <tr className="odd">
-                                            <td
-                                                className="control dtr-hidden"
-                                                tabIndex={0}
-                                                style={{ display: 'none' }}
-                                            />
-                                            <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
-                                                <span>{res?.orderer}</span>
-                                            </td>
-                                            <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
-                                                <span className="text-nowrap">{res?.recipient_Name}</span>
-                                            </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
-                                                <span className="text-nowrap">{res?.recipient_Phone}</span>
-                                            </td>
-
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Address}>
-                                                <span className="text-nowrap">{res?.recipient_Address}</span>
-                                            </td>
-                                            <td>
-                                                <span
-                                                    className="badge px-2 rounded-pill bg-label-success"
-                                                    text-capitalized=""
-                                                    data-toggle="tooltip" data-placement="top" title={res?.orderStatus}
-                                                >
-                                                    {res?.orderStatus}
-                                                </span>
-                                            </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.orderDate}>
-                                                <span className="text-nowrap" >{res?.orderDate}</span>
-                                            </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.totalAmount}>
-                                                <span className="text-nowrap">{res?.totalAmount}$</span>
-                                            </td>
-                                            <td className="" style={{}}>
-                                                <div>
-                                                    <button
-                                                        className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                        data-bs-toggle="dropdown"
+                                    {order.length > 0 ?
+                                        <>
+                                        {order?.map((res) => (
+                                            <tr className="odd">
+                                                <td
+                                                    className="control dtr-hidden"
+                                                    tabIndex={0}
+                                                    style={{ display: 'none' }}
+                                                />
+                                                <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
+                                                    <span>{res?.orderer}</span>
+                                                </td>
+                                                <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
+                                                    <span className="text-nowrap">{res?.recipient_Name}</span>
+                                                </td>
+                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
+                                                    <span className="text-nowrap">{res?.recipient_Phone}</span>
+                                                </td>
+    
+                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Address}>
+                                                    <span className="text-nowrap">{res?.recipient_Address}</span>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        className="badge px-2 rounded-pill bg-label-success"
+                                                        text-capitalized=""
+                                                        data-toggle="tooltip" data-placement="top" title={res?.orderStatus}
                                                     >
-                                                        <i className="ri-more-2-line" />
-                                                    </button>
-                                                    <div className="dropdown-menu dropdown-menu-end m-0">
-                                                        <a
-                                                            href="#"
-                                                            className="dropdown-item delete-record"
-                                                            data-bs-target="#editUser"
-                                                            data-bs-toggle="modal"
-                                                            onClick={()=>handleViewOrderDetail(res?.orderId)}
-                                                            
+                                                        {res?.orderStatus}
+                                                    </span>
+                                                </td>
+                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.orderDate}>
+                                                    <span className="text-nowrap" >{res?.orderDate}</span>
+                                                </td>
+                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.totalAmount}>
+                                                    <span className="text-nowrap">{res?.totalAmount}$</span>
+                                                </td>
+                                                <td className="" style={{}}>
+                                                    <div>
+                                                        <button
+                                                            className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
+                                                            data-bs-toggle="dropdown"
                                                         >
-                                                            View
-                                                        </a>
-                                                        <a href="javascript:0;" className="dropdown-item delete-record">
-                                                            Delete
-                                                        </a>
+                                                            <i className="ri-more-2-line" />
+                                                        </button>
+                                                        <div className="dropdown-menu dropdown-menu-end m-0">
+                                                            <a
+                                                                href="#"
+                                                                className="dropdown-item delete-record"
+                                                                data-bs-target="#editUser"
+                                                                data-bs-toggle="modal"
+                                                                onClick={()=>handleViewOrderDetail(res?.orderId)}
+                                                                
+                                                            >
+                                                                View
+                                                            </a>
+                                                            <a href="javascript:0;" className="dropdown-item delete-record">
+                                                                Delete
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    
+                                        </>
+                                       :
+                                       <div>
+                                            No data
+                                       </div>
+                                    }
                                 </tbody>
                             </table>
                             <div className="row mx-1">

@@ -187,7 +187,8 @@ export const publicRoutes = [
         path:config.routes.category,
         component:Category,
         role:"admin",
-        name:"Category"
+        name:"Category",
+        profession: "User"
     },
     {
         path:config.routes.thank,

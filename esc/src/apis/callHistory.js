@@ -13,6 +13,18 @@ export const GetAllCallHistory = () => new Promise(async (resolve,reject)=>{
     }
 
 })
+export const GetCallHistoryByEmployeeId = (idEmployee) => new Promise(async (resolve,reject)=>{
+    try {
+        const responsive = await axios({
+            url:`/CallHistory/employee/${idEmployee}`,
+            method: "get"
+        })
+        resolve(responsive)
+    } catch (error) {
+        reject(error)
+    }
+})
+
 export const GetAllCallStatus = ()=>new Promise(async(resolve,reject)=>{
     try {
         const response = await axios({
@@ -24,18 +36,7 @@ export const GetAllCallStatus = ()=>new Promise(async(resolve,reject)=>{
         reject(error)
     }
 })
-export const GetAllEmployee=(param)=>new Promise(async(resolve,reject)=>{
-    try {
-       const responsive =await axios({
-        url:"/Employee/GetAll",
-        method:"get",
-        params:param    
-       })
-       resolve(responsive)
-    } catch (error) {
-        reject(error)
-    }
-})
+
 export const GetCallHistoryById = (id)=> new Promise(async (resolve,reject)=>{
     try {
         const responsive = await axios({

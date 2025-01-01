@@ -410,30 +410,14 @@ function ProductAdmin() {
                                 >
                                     <thead>
                                         <tr>
-                                            <th
-                                                className="control sorting_disabled dtr-hidden"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 0, display: 'none' }}
-                                                aria-label=""
-                                            />
-                                            <th
-                                                className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                                rowSpan={1}
-                                                colSpan={1}
-                                                style={{ width: 18 }}
-                                                data-col={1}
-                                                aria-label=""
-                                            >
-                                                <input type="checkbox" className="form-check-input" />
-                                            </th>
+                                           
                                             <th
                                                 className="sorting sorting_asc"
                                                 tabIndex={0}
                                                 aria-controls="DataTables_Table_0"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 446 }}
+                                                style={{ width: 300 }}
                                                 aria-label="product: activate to sort column descending"
                                                 aria-sort="ascending"
                                             >
@@ -445,7 +429,7 @@ function ProductAdmin() {
                                                 aria-controls="DataTables_Table_0"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 139 }}
+                                                style={{ width: 70 }}
                                                 aria-label="category: activate to sort column ascending"
                                             >
                                                 Category
@@ -454,7 +438,7 @@ function ProductAdmin() {
                                                 className="sorting_disabled"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 55 }}
+                                                style={{ width: 75 }}
                                                 aria-label="stock"
                                             >
                                                 Status
@@ -465,7 +449,7 @@ function ProductAdmin() {
                                                 aria-controls="DataTables_Table_0"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 46 }}
+                                                style={{ width: 30 }}
                                                 aria-label="sku: activate to sort column ascending"
                                             >
                                                 InitialQuantity
@@ -476,7 +460,7 @@ function ProductAdmin() {
                                                 aria-controls="DataTables_Table_0"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 76 }}
+                                                style={{ width: 30 }}
                                                 aria-label="price: activate to sort column ascending"
                                             >
                                                 Price
@@ -487,7 +471,7 @@ function ProductAdmin() {
                                                 aria-controls="DataTables_Table_0"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 36 }}
+                                                style={{ width: 20 }}
                                                 aria-label="qty: activate to sort column ascending"
                                             >
                                                 Active
@@ -497,7 +481,7 @@ function ProductAdmin() {
                                                 className="sorting_disabled"
                                                 rowSpan={1}
                                                 colSpan={1}
-                                                style={{ width: 88 }}
+                                                style={{ width: 40 }}
                                                 aria-label="Actions"
                                             >
                                                 Actions
@@ -507,10 +491,7 @@ function ProductAdmin() {
                                     <tbody>
                                         {product.map((res, key) => (
                                             <tr key={key} className="odd">
-                                                <td className="  control" tabIndex={0} style={{ display: 'none' }} />
-                                                <td className="  dt-checkboxes-cell">
-                                                    <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                                </td>
+                                                
                                                 <td className="sorting_1">
                                                     <div className="d-flex justify-content-start align-items-center product-name">
                                                         <div className="avatar-wrapper me-4">

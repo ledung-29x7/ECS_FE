@@ -1,10 +1,14 @@
 import axios from "../axios";
 
-export const GetAllProductByClient =  (idClient) => new Promise(async (resolve, reject) =>{
+export const GetAllProductByClient =  (idClient,pram) => new Promise(async (resolve, reject) =>{
     try {
         const response = await axios({
-            url:`/Product/client/${idClient}`,
-            method: "get"
+            url:`/Product/clients/${idClient}`,
+            method: "get",
+            params: pram,
+            headers:{
+
+            }
         })
         resolve(response)
     } catch (error) {
@@ -18,7 +22,10 @@ export const GetAllProduct = (param) => new Promise(async (resolve, reject) =>{
             url:"/Product/GetAll",
             method: "get",
             params:param,
-            
+            withCredentials:true,
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
         })
         resolve(response)
     } catch (error) {

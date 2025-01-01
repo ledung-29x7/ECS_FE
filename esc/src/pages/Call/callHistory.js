@@ -49,7 +49,7 @@ function CallHistory() {
     const FetchApi = async () => {
         try {
             await apis
-                .GetAllCallHistory()
+                .GetCallHistoryByEmployeeId(employeeID)
                 .then((res) => {
                     if (res.status === 200) {
                         // toast.success("GetAllCallHistory success")

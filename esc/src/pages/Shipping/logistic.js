@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function LogisticOrder() {
+    const employeeID = window.sessionStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
     const [product,setProduct] = useState([])
     const [orderDetail,setOrderDetail] = useState();
@@ -65,7 +66,7 @@ function LogisticOrder() {
         useEffect(() => {
             const fetchData = async () => {
                 try {
-                    const response = await apis.GetAllEmployee(debouncedFilters);
+                    const response = await apis.GetAllOrder(debouncedFilters);
                     console.log(response);
                     if (response.status === 200) {
                         setCurrentPage(debouncedFilters.pageNumber);
@@ -85,15 +86,12 @@ function LogisticOrder() {
             await apis.GetAllOrder().then((res) => {
                 if (res.status === 200) {
                     setOrder(res.data.orders);
-               
-                    setTotalPage(res.data.totalPages);
-                    toast.success("GetAllOrder success")
-                  
+                    
                 }
             });
         } catch (error) {
             console.log(error);
-            toast.error(error.message)
+            
         }
     };
     const FetchProduct = async () => {

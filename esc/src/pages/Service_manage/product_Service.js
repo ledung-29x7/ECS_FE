@@ -10,7 +10,8 @@ function ProductServiceManage() {
     const [productService, setproductService] = useState([]);
     const [serviceId, setServiceId] = useState({});
     const [idService, setIdService] = useState(0);
-    const [service, setService] = useState({});
+    const [productServiceId,setProductServiceId] = useState(0);
+    const [service, setService] = useState([]);
     const [product, setProduct] = useState([]);
     const [client, setClient] = useState([]);
     
@@ -38,7 +39,90 @@ function ProductServiceManage() {
             day: 'numeric',
         });
     };
-
+        const [totalItem, setTotalItem] = useState([]);
+        const [totalPage, setTotalPage] = useState(0);
+        const [currentPage, setCurrentPage] = useState(1);
+    
+        const renderPageNumbers = () => {
+            const pages = [];
+            for (let i = 1; i <= totalPage; i++) {
+                pages.push(
+                    <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                        <a
+                            href="#"
+                            aria-controls="DataTables_Table_0"
+                            role="link"
+                            aria-current="page"
+                            data-dt-idx={0}
+                            tabIndex={0}
+                            className="page-link"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handlePageClick(i);
+                            }}
+                        >
+                            {i}
+                        </a>
+                    </li>,
+                );
+            }
+            return pages;
+        };
+    
+        const [filters, setFilters] = useState({
+            pageNumber: 1,
+           
+        });
+    
+        const [debouncedFilters, setDebouncedFilters] = useState(filters);
+    
+        const handlePriceRangeChange = (event) => {
+            const { name, value, type, checked } = event.target;
+    
+            setFilters((prev) => ({
+              ...prev,
+              [name]: type === "checkbox" ? checked : value,
+            }));
+        };
+        // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedFilters({ ...filters }); // Sử dụng bản sao mới nhất của filters
+            }, 2000); // 2 giây
+        
+            return () => {
+                clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+            };
+        }, [filters]);
+     
+        // Gọi API khi `debouncedFilters` thay đổi
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const response = await apis.GetAllProductService(debouncedFilters);
+                    console.log(response);
+                    if (response.status === 200) {
+                        setCurrentPage(debouncedFilters.pageNumber);
+                        setproductService(response.data.productServices);
+                        setTotalItem(response.data.totalRecords);
+                        setTotalPage(response.data.totalPages);
+                    }
+                } catch (error) {
+                    toast.error('Error fetching data:',error)
+                }
+            };
+    
+            fetchData();
+        }, [debouncedFilters]);
+    
+        // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+        const handlePageClick = (newPage, newSearchTerm = '') => {
+            setFilters((prev) => ({
+                ...prev,
+                pageNumber: newPage || prev.pageNumber,
+                searchTerm: newSearchTerm, // Cập nhật chính xác giá trị rỗng nếu người dùng xóa
+            }));
+        };
     const FetchApi = async () => {
         try {
             await apis
@@ -47,6 +131,8 @@ function ProductServiceManage() {
                     if (res.status === 200) {
                         console.log(res);
                         setproductService(res.data.productServices);
+                        setTotalItem(res.data.totalRecords);
+                        setTotalPage(res.data.totalPages);
                     }
                 })
                 .catch((error) => {
@@ -111,17 +197,17 @@ function ProductServiceManage() {
         };
         FetchData();
     };
-    const handleGetRequiredEmployees = async (productId, requiredEmployees,serviceId) => {
+    const handleGetRequiredEmployees = async (productId, requiredEmployees,PSId) => {
         try {
             const params = { productId, requiredEmployees };
             const response = await apis.GetAvailableEmployees(params);
 
             console.log('API Response:', response);
-            toast.success('Lấy dữ liệu thành công!');
+           
 
             if (Array.isArray(response)) {
                 setServiceId(response);
-                setIdService(serviceId);
+                setProductServiceId(PSId)
             } else {
                 console.error('Response is not an array:', response);
                 toast.error('Dữ liệu trả về không đúng định dạng!');
@@ -132,12 +218,13 @@ function ProductServiceManage() {
         }
     };
 
-    const handleAddToService = async (employeeId, serviceId) => {
+    const handleAddToService = async (employeeId,productServiceId) => {
         try {
             const payload = {
                 employeeServiceId: 0, 
                 employeeId,
-                serviceId,
+                productServiceId,
+
             };
             const res = await apis.AddEmployeeService(payload);
             toast.success(`Employee ${employeeId} assigned to Service ${serviceId}!`);
@@ -223,132 +310,10 @@ function ProductServiceManage() {
         <div className="content-wrapper">
             {/* Content */}
             <div className="container-xxl flex-grow-1 container-p-y">
-                <div className="row g-6 mb-6">
-                    <div className="col-sm-6 col-xl-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between">
-                                    <div className="me-1">
-                                        <p className="text-heading mb-1">Session</p>
-                                        <div className="d-flex align-items-center">
-                                            <h4 className="mb-1 me-2">21,459</h4>
-                                            <p className="text-success mb-1">(+29%)</p>
-                                        </div>
-                                        <small className="mb-0">Total Users</small>
-                                    </div>
-                                    <div className="avatar">
-                                        <div className="avatar-initial bg-label-primary rounded">
-                                            <div className="ri-group-line ri-26px" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-6 col-xl-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between">
-                                    <div className="me-1">
-                                        <p className="text-heading mb-1">Paid Users</p>
-                                        <div className="d-flex align-items-center">
-                                            <h4 className="mb-1 me-2">4,567</h4>
-                                            <p className="text-success mb-1">(+18%)</p>
-                                        </div>
-                                        <small className="mb-0">Last week analytics</small>
-                                    </div>
-                                    <div className="avatar">
-                                        <div className="avatar-initial bg-label-danger rounded">
-                                            <div className="ri-user-add-line ri-26px scaleX-n1" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-6 col-xl-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between">
-                                    <div className="me-1">
-                                        <p className="text-heading mb-1">Active Users</p>
-                                        <div className="d-flex align-items-center">
-                                            <h4 className="mb-1 me-2">19,860</h4>
-                                            <p className="text-danger mb-1">(-14%)</p>
-                                        </div>
-                                        <small className="mb-0">Last week analytics</small>
-                                    </div>
-                                    <div className="avatar">
-                                        <div className="avatar-initial bg-label-success rounded">
-                                            <div className="ri-user-follow-line ri-26px" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-6 col-xl-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <div className="d-flex justify-content-between">
-                                    <div className="me-1">
-                                        <p className="text-heading mb-1">Pending Users</p>
-                                        <div className="d-flex align-items-center">
-                                            <h4 className="mb-1 me-2">237</h4>
-                                            <p className="text-success mb-1">(+42%)</p>
-                                        </div>
-                                        <small className="mb-0">Last week analytics</small>
-                                    </div>
-                                    <div className="avatar">
-                                        <div className="avatar-initial bg-label-warning rounded">
-                                            <div className="ri-user-search-line ri-26px" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              
                 {/* Users List Table */}
                 <div className="card">
-                    <div className="card-header border-bottom">
-                        <h6 className="card-title mb-0">Filters</h6>
-                        <div className="d-flex justify-content-between align-items-center row pt-4 pb-2 gap-4 gap-md-0 gx-5">
-                            <div className="col-md-4 user_role">
-                                <select id="UserRole" className="form-select text-capitalize">
-                                    <option value=""> Select Role </option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Author">Author</option>
-                                    <option value="Editor">Editor</option>
-                                    <option value="Maintainer">Maintainer</option>
-                                    <option value="Subscriber">Subscriber</option>
-                                </select>
-                            </div>
-                            <div className="col-md-4 user_plan">
-                                <select id="UserPlan" className="form-select text-capitalize">
-                                    <option value=""> Select Plan </option>
-                                    <option value="Basic">Basic</option>
-                                    <option value="Company">Company</option>
-                                    <option value="Enterprise">Enterprise</option>
-                                    <option value="Team">Team</option>
-                                </select>
-                            </div>
-                            <div className="col-md-4 user_status">
-                                <select id="FilterTransaction" className="form-select text-capitalize">
-                                    <option value=""> Select Status </option>
-                                    <option value="Pending" className="text-capitalize">
-                                        Pending
-                                    </option>
-                                    <option value="Active" className="text-capitalize">
-                                        Active
-                                    </option>
-                                    <option value="Inactive" className="text-capitalize">
-                                        Inactive
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div className="card-datatable table-responsive">
                         <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                             <div className="row mx-1">
@@ -356,19 +321,7 @@ function ProductServiceManage() {
                                     <div className="dt-action-buttons mt-4 mt-md-0">
                                         <div className="dt-buttons btn-group flex-wrap">
                                             <div className="btn-group">
-                                                <button
-                                                    className="btn btn-secondary buttons-collection dropdown-toggle btn-outline-secondary me-4 waves-effect waves-light"
-                                                    tabIndex={0}
-                                                    aria-controls="DataTables_Table_0"
-                                                    type="button"
-                                                    aria-haspopup="dialog"
-                                                    aria-expanded="false"
-                                                >
-                                                    <span>
-                                                        <i className="ri-download-line ri-16px me-1" />{' '}
-                                                        <span className="d-none d-sm-inline-block">Export</span>
-                                                    </span>
-                                                </button>
+                                                
                                             </div>{' '}
                                         </div>
                                     </div>
@@ -387,16 +340,7 @@ function ProductServiceManage() {
                                                 </label>
                                             </div>
                                         </div>
-                                        <div className="add-new">
-                                            <button
-                                                className="btn btn-primary waves-effect waves-light"
-                                                data-bs-toggle="offcanvas"
-                                                data-bs-target="#offcanvasAddUser"
-                                            >
-                                                <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                                <span className="d-none d-sm-inline-block"> New Service </span>
-                                            </button>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -408,30 +352,14 @@ function ProductServiceManage() {
                             >
                                 <thead>
                                     <tr>
-                                        <th
-                                            className="control sorting_disabled dtr-hidden"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 0, display: 'none' }}
-                                            aria-label=""
-                                        />
-                                        <th
-                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 18 }}
-                                            data-col={1}
-                                            aria-label=""
-                                        >
-                                            <input type="checkbox" className="form-check-input" />
-                                        </th>
+                                       
                                         <th
                                             className="sorting sorting_desc"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 50 }}
+                                            style={{ width: 90 }}
                                             aria-label="User: activate to sort column ascending"
                                             aria-sort="descending"
                                         >
@@ -443,7 +371,7 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 50 }}
+                                            style={{ width: 90 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
                                             Product Name
@@ -476,10 +404,21 @@ function ProductServiceManage() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 30 }}
+                                            style={{ width: 20 }}
                                             aria-label="Email: activate to sort column ascending"
                                         >
                                             Person
+                                        </th>
+                                        <th
+                                            className="sorting"
+                                            tabIndex={0}
+                                            aria-controls="DataTables_Table_0"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 30 }}
+                                            aria-label="Email: activate to sort column ascending"
+                                        >
+                                            Status
                                         </th>
                                         <th
                                             className="sorting_disabled"
@@ -495,19 +434,12 @@ function ProductServiceManage() {
                                 <tbody>
                                     {productService.map((res) => (
                                         <tr className="odd">
-                                            <td
-                                                className="control dtr-hidden"
-                                                tabIndex={0}
-                                                style={{ display: 'none' }}
-                                            />
-                                            <td className="  dt-checkboxes-cell">
-                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
+                                            
+                                            <td>
+                                                <span> {service?.find((r) => r.serviceId === res?.serviceId)?.serviceName}</span>
                                             </td>
                                             <td>
-                                                <span> {service.find((r) => r.serviceId === res?.serviceId)?.serviceName}</span>
-                                            </td>
-                                            <td>
-                                                <span> {product.find((r) => r.productId === res?.productId)?.productName}</span>
+                                                <span> {product?.find((r) => r.productId === res?.productId)?.productName}</span>
                                             </td>
                                             <td className="sorting_1">
                                                 <div className="d-flex justify-content-start align-items-center user-name">
@@ -539,38 +471,36 @@ function ProductServiceManage() {
                                                     </div>
                                                 </div>
                                             </td>
+                                            <td>
+                                                <span>
+                                                    {res?.employeeStatus}
+                                                </span>
+                                            </td>
                                             <td className="" style={{}}>
                                                 <div className="d-flex align-items-center">
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect delete-record"
-                                                        data-bs-toggle="tooltip"
-                                                        title="Delete Invoice"
-                                                        onClick={() => handleDelete(res.serviceId)}
-                                                    >
-                                                        <i className="ri-delete-bin-7-line ri-22px" />
-                                                    </a>
-                                                    <a
-                                                        href="javascript:;"
-                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record"
+                                                   
+                                                    <button
+                                                        
+                                                        className={`btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record ${res?.employeeStatus === "Assigned" ? "disabled": ""} `}
                                                         data-bs-target="#viewUser"
                                                         title="Preview"
                                                         data-bs-toggle="modal"
-                                                        onClick={() => handleGetRequiredEmployees(res.productId, res.requiredEmployees,res.serviceId)}
+                                                        onClick={() => handleGetRequiredEmployees(res.productId, res.requiredEmployees,res.productServiceId)}
 
 
                                                     >
                                                         <i className="ri-eye-line ri-22px" />
-                                                    </a>
+                                                    </button>
                                                     <button
-                                                        className="btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow"
+                                                       
+                                                        className={`btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-toggle hide-arrow ${res?.employeeStatus === "Assigned" ? "disabled": ""} `}
                                                         data-bs-toggle="dropdown"
                                                     >
                                                         <i className="ri-more-2-line ri-22px" />
                                                     </button>
-                                                    <div className="dropdown-menu dropdown-menu-end m-0">
+                                                    <div className="dropdown-menu dis dropdown-menu-end m-0">
                                                         <a
-                                                            href="javascript:;"
+                                                            
                                                             className="dropdown-item view-record"
                                                             data-bs-target="#viewUser"
                                                             data-bs-toggle="modal"
@@ -614,7 +544,7 @@ function ProductServiceManage() {
                                         role="status"
                                         aria-live="polite"
                                     >
-                                        Showing 1 to 10 of 50 entries
+                                       
                                     </div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
@@ -622,164 +552,61 @@ function ProductServiceManage() {
                                         className="dataTables_paginate paging_simple_numbers"
                                         id="DataTables_Table_0_paginate"
                                     >
-                                        <ul className="pagination">
-                                            <li
-                                                className="paginate_button page-item previous disabled"
-                                                id="DataTables_Table_0_previous"
-                                            >
-                                                <a
-                                                    aria-controls="DataTables_Table_0"
-                                                    aria-disabled="true"
-                                                    role="link"
-                                                    data-dt-idx="previous"
-                                                    tabIndex={-1}
-                                                    className="page-link"
+                                            <ul className="pagination">
+                                                <li
+                                                    className={`paginate_button page-item previous ${
+                                                        currentPage === 1 ? 'disabled' : ''
+                                                    }`}
+                                                    id="DataTables_Table_0_previous"
                                                 >
-                                                    <i className="ri-arrow-left-s-line" />
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item active">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    aria-current="page"
-                                                    data-dt-idx={0}
-                                                    tabIndex={0}
-                                                    className="page-link"
+                                                    <a
+                                                        aria-controls="DataTables_Table_0"
+                                                        aria-disabled="true"
+                                                        role="link"
+                                                        data-dt-idx="previous"
+                                                        tabIndex={-1}
+                                                        className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                        }}
+                                                    >
+                                                        <i className="ri-arrow-left-s-line" />
+                                                    </a>
+                                                </li>
+
+                                                {renderPageNumbers()}
+
+                                                <li
+                                                    className={`paginate_button page-item next ${
+                                                        currentPage === totalPage ? 'disabled' : ''
+                                                    }`}
+                                                    id="DataTables_Table_0_next"
                                                 >
-                                                    1
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={1}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    2
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={2}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    3
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={3}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    4
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item ">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx={4}
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    5
-                                                </a>
-                                            </li>
-                                            <li className="paginate_button page-item next" id="DataTables_Table_0_next">
-                                                <a
-                                                    href="#"
-                                                    aria-controls="DataTables_Table_0"
-                                                    role="link"
-                                                    data-dt-idx="next"
-                                                    tabIndex={0}
-                                                    className="page-link"
-                                                >
-                                                    <i className="ri-arrow-right-s-line" />
-                                                </a>
-                                            </li>
-                                        </ul>
+                                                    <a
+                                                        href="#"
+                                                        aria-controls="DataTables_Table_0"
+                                                        role="link"
+                                                        data-dt-idx="next"
+                                                        tabIndex={0}
+                                                        className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage < totalPage)
+                                                                handlePageClick(currentPage + 1);
+                                                        }}
+                                                    >
+                                                        <i className="ri-arrow-right-s-line" />
+                                                    </a>
+                                                </li>
+                                            </ul>
                                     </div>
                                 </div>
                             </div>
                             <div style={{ width: '1%' }} />
                         </div>
                     </div>
-                    {/* Offcanvas to add new user */}
-                    <div
-                        className="offcanvas offcanvas-end"
-                        tabIndex={-1}
-                        id="offcanvasAddUser"
-                        aria-labelledby="offcanvasAddUserLabel"
-                    >
-                        <div className="offcanvas-header border-bottom">
-                            <h5 id="offcanvasAddUserLabel" className="offcanvas-title">
-                                Add Service
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close text-reset"
-                                data-bs-dismiss="offcanvas"
-                                aria-label="Close"
-                            />
-                        </div>
-                        <div className="offcanvas-body mx-0 flex-grow-0 h-100">
-                            <form
-                                onSubmit={handleSumbit}
-                                className=" pt-0 fv-plugins-bootstrap5 fv-plugins-framework"
-                                noValidate="novalidate"
-                            >
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder=""
-                                        name="serviceName"
-                                        aria-label=""
-                                        onChange={handleChange}
-                                    />
-                                    <label htmlFor="add-user-fullname">Service Name</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-                                <div className="form-floating form-floating-outline mb-5 fv-plugins-icon-container">
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        placeholder=""
-                                        name="costPerDay"
-                                        aria-label=""
-                                        onChange={handleChange}
-                                    />
-                                    <label htmlFor="add-user-fullname">Cost Per Day</label>
-                                    <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
-                                </div>
-                                <button type="submit" className="btn btn-primary me-sm-3 me-1 waves-effect waves-light">
-                                    Submit
-                                </button>
-                                <button
-                                    type="reset"
-                                    className="btn btn-outline-danger waves-effect"
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    Cancel
-                                </button>
-                                <input type="hidden" />
-                            </form>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
             {/* edit */}
@@ -896,7 +723,7 @@ function ProductServiceManage() {
                                     <td>{employee.lastName}</td>
                                     <td>
                                         <button
-                                            onClick={() => handleAddToService(employee.employeeId, idService)}
+                                            onClick={() => handleAddToService(employee.employeeId,productServiceId)}
                                         >
                                          +
                                         </button>
@@ -929,47 +756,7 @@ function ProductServiceManage() {
             {/* getbyid */}
 
             {/* / Content */}
-            {/* Footer */}
-            <footer className="content-footer footer bg-footer-theme">
-                <div className="container-xxl">
-                    <div className="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                        <div className="text-body mb-2 mb-md-0">
-                            © 2024, made with{' '}
-                            <span className="text-danger">
-                                <i className="tf-icons ri-heart-fill" />
-                            </span>{' '}
-                            by{' '}
-                            <a href="https://themeselection.com" target="_blank" className="footer-link">
-                                ThemeSelection
-                            </a>
-                        </div>
-                        <div className="d-none d-lg-inline-block">
-                            <a href="https://themeselection.com/license/" className="footer-link me-4" target="_blank">
-                                License
-                            </a>
-                            <a href="https://themeselection.com/" target="_blank" className="footer-link me-4">
-                                More Themes
-                            </a>
-                            <a
-                                href="https://demos.themeselection.com/materio-bootstrap-html-admin-template/documentation/net-core-mvc-introduction.html"
-                                target="_blank"
-                                className="footer-link me-4"
-                            >
-                                Documentation
-                            </a>
-                            <a
-                                href="https://themeselection.com/support/"
-                                target="_blank"
-                                className="footer-link d-none d-sm-inline-block"
-                            >
-                                Support
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            {/* / Footer */}
-            <div className="content-backdrop fade" />
+           
         </div>
     );
 }

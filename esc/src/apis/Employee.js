@@ -77,3 +77,16 @@ export const GetAllEmployeeProductCategory=()=>new Promise(async(resolve,reject)
         reject(error)
     }
 })
+
+export const GetAllEmployee=(param)=>new Promise(async(resolve,reject)=>{
+    try {
+       const responsive =await axios({
+        url:"/Employee/GetAll",
+        method:"get",
+        params:param    
+       })
+       resolve(responsive)
+    } catch (error) {
+        reject(error)
+    }
+})

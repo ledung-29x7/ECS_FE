@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 function AddOrder() {
     const navigate = useNavigate();
+    const employeeID = window.sessionStorage.getItem('employeeID');
     const callId = window.localStorage.getItem("callId")
+    const [workList, setWorkList] = useState([]);
     const [valueAdd, setValueAdd] = useState({
         order: {
             callId: callId,
@@ -41,6 +43,27 @@ function AddOrder() {
         FetchProduct();
     }, []);
     
+    useEffect(() => {
+        if (!employeeID) {
+            console.error('Employee ID not found in session storage');
+            return;
+        }
+
+        const fetchWorkList = async () => {
+            try {
+                const response = await apis.WorkList(employeeID); // Gọi API WorkList
+                if (response.status === 200) {
+                    toast.success("WorkList success")
+                    setWorkList(response.data); 
+                }
+            } catch (error) {
+                toast.error('Error fetching work list:', error)
+            }
+        };
+
+        fetchWorkList();
+    }, [employeeID]);
+
     const handleAddService = () => {
         if (!valueAddOrderDetails.productId) {
             alert('Please select a product!');
@@ -181,7 +204,7 @@ function AddOrder() {
                                                 onChange={handleChange}
                                                 aria-label="Product title"
                                             />
-                                            <label htmlFor="ecommerce-product-name">Recipien tPhone</label>
+                                            <label htmlFor="ecommerce-product-name">Recipient Phone</label>
                                         </div>
                                         <div className="form-floating form-floating-outline mb-5">
                                             <input
@@ -245,7 +268,7 @@ function AddOrder() {
                                             >
                                                 <option value="">Select product</option>
 
-                                                {product?.map((res, key) => (
+                                                {workList?.map((res, key) => (
                                                     <option key={key} value={res.productId}>
                                                         {res.productName}
                                                     </option>

@@ -17,6 +17,8 @@ function Product() {
     const [category, setCategory] = useState([]);
     const [productStatus, setProductStatus] = useState([]);
     const [isShowEdit, setIsShowEdit] = useState(false);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [addImage, setAddImage] = useState({
         productImageId: 0,
         productId: '',
@@ -36,7 +38,89 @@ function Product() {
         createdAt: '',
         images: [],
     });
-
+    
+        const renderPageNumbers = () => {
+            const pages = [];
+            for (let i = 1; i <= totalPage; i++) {
+                pages.push(
+                    <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
+                        <a
+                            href="#"
+                            aria-controls="DataTables_Table_0"
+                            role="link"
+                            aria-current="page"
+                            data-dt-idx={0}
+                            tabIndex={0}
+                            className="page-link"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handlePageClick(i);
+                            }}
+                        >
+                            {i}
+                        </a>
+                    </li>,
+                );
+            }
+            return pages;
+        };
+    
+        const [filters, setFilters] = useState({
+            pageNumber: 1,
+            searchTerm: '',
+            isActive: null,
+            startDate:null,
+            endDate:null
+        });
+    
+        const [debouncedFilters, setDebouncedFilters] = useState(filters);
+    
+        const handlePriceRangeChange = (event) => {
+            const { name, value, type, checked } = event.target;
+    
+            setFilters((prev) => ({
+              ...prev,
+              [name]: type === "checkbox" ? checked : value,
+            }));
+        };
+        // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebouncedFilters({ ...filters }); // Sử dụng bản sao mới nhất của filters
+            }, 2000); // 2 giây
+        
+            return () => {
+                clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+            };
+        }, [filters]);
+     
+        // Gọi API khi `debouncedFilters` thay đổi
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const response = await apis.GetAllProductByClient(idClient,debouncedFilters);
+                    console.log(response);
+                    if (response.status === 200) {
+                        setCurrentPage(debouncedFilters.pageNumber);
+                        setProduct(response.data.products);
+                        setTotalPage(response.data.totalPages);
+                    }
+                } catch (error) {
+                    toast.error('Error fetching data:',error)
+                }
+            };
+    
+            fetchData();
+        }, [debouncedFilters]);
+    
+        // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+        const handlePageClick = (newPage, newSearchTerm = '') => {
+            setFilters((prev) => ({
+                ...prev,
+                pageNumber: newPage || prev.pageNumber,
+                searchTerm: newSearchTerm, // Cập nhật chính xác giá trị rỗng nếu người dùng xóa
+            }));
+        };
     useEffect(() => {
         FetchApi();
         FetApiProductStatus();
@@ -46,7 +130,7 @@ function Product() {
     const FetchApi = async () => {
         try {
             await apis
-                .GetAllProductByClient(idClient)
+                .GetAllProductByClient(idClient,filters)
                 .then((res) => {
                     console.log(res);
                     if (res.status === 200) {
@@ -480,11 +564,12 @@ function Product() {
                                             aria-controls="DataTables_Table_0"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 139 }}
+                                            style={{ width: 100 }}
                                             aria-label="category: activate to sort column ascending"
                                         >
                                             category
                                         </th>
+
                                         <th
                                             className="sorting_disabled"
                                             rowSpan={1}
@@ -494,7 +579,6 @@ function Product() {
                                         >
                                             active
                                         </th>
-                                   
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -506,18 +590,43 @@ function Product() {
                                         >
                                             price
                                         </th>
-                                  
                                         <th
-                                            className="sorting"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
+                                            className="sorting_disabled"
                                             rowSpan={1}
                                             colSpan={1}
-                                            style={{ width: 99 }}
-                                            aria-label="status: activate to sort column ascending"
+                                            style={{ width: 55 }}
+                                            aria-label="stock"
                                         >
-                                            status
+                                            Sold
                                         </th>
+                                        <th
+                                            className="sorting_disabled"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 55 }}
+                                            aria-label="stock"
+                                        >
+                                           Stock Available
+                                        </th>
+                                            <th
+                                            className="sorting_disabled"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 100 }}
+                                            aria-label="stock"
+                                        >
+                                            Status
+                                        </th>
+                                        <th
+                                            className="sorting_disabled"
+                                            rowSpan={1}
+                                            colSpan={1}
+                                            style={{ width: 55 }}
+                                            aria-label="stock"
+                                        >
+                                            Revenue
+                                        </th>
+                                       
                                         <th
                                             className="sorting_disabled"
                                             rowSpan={1}
@@ -571,23 +680,22 @@ function Product() {
                                                         />
                                                     </div>
                                             </td>
-                                            
-                    
                                             <td>
                                                 <span>${res?.price}</span>
                                             </td>
+                                            <td>{res?.totalSold}</td>
+                                            <td>{res?.stockAvailable}</td>
 
                                             <td>
                                                 <span
                                                     className="badge rounded-pill bg-label-danger"
                                                     text-capitalized=""
-                                                >
-                                                                                             {
-                                                            productStatus.find((r) => r.statusId === res?.status)
-                                                                ?.statusName
-                                                        }
+                                                    >
+                                                    {res?.statusName}
+                                                        
                                                 </span>
                                             </td>
+                                            <td>{res?.totalRevenue}</td>
                                             <td>
                                                 <div className="d-inline-block text-nowrap">
                                                     <button onClick={()=>handleShowEdit(res?.productId)} className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
