@@ -79,8 +79,8 @@ function Header() {
     const {checklogin} = useSelector(state => state.app)
     const [isChecking, setIsChecking] = useState(false);
     const [search,setSearch] = useState("")
-    const username = window.localStorage.getItem("userName")
-    
+    const username = window.localStorage.getItem("name")
+    const role = window.localStorage.getItem('role')
     useEffect(() => {
         checkLoggedIn();
       }, [checklogin]);
@@ -783,7 +783,7 @@ function Header() {
                                             </div>
                                             <div className="flex-grow-1">
                                                 <h6 className="mb-0 small">{username}</h6>
-                                                <small className="text-muted">Admin</small>
+                                                <small className="text-muted">{role}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -794,7 +794,7 @@ function Header() {
                                 <li>
                                     <a className="dropdown-item" 
                                         href="#"
-                                        onClick={()=> navigate("")}
+                                        onClick={()=> navigate("/information-employee")}
                                     >
                                         <i className="ri-user-3-line ri-22px me-2" />
                                         <span className="align-middle">My Profile</span>
@@ -809,42 +809,13 @@ function Header() {
                                         <span className="align-middle">Settings</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a
-                                        className="dropdown-item"
-                                        href="pages-account-settings-billing.html"
-                                    >
-                                        <span className="d-flex align-items-center align-middle">
-                                            <i className="flex-shrink-0 ri-file-text-line ri-22px me-2" />
-                                            <span className="flex-grow-1 align-middle">Billing</span>
-                                            <span className="flex-shrink-0 badge badge-center rounded-pill bg-danger h-px-20 d-flex align-items-center justify-content-center">
-                                                4
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <div className="dropdown-divider" />
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="pages-pricing.html">
-                                        <i className="ri-money-dollar-circle-line ri-22px me-2" />
-                                        <span className="align-middle">Pricing</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="pages-faq.html">
-                                        <i className="ri-question-line ri-22px me-2" />
-                                        <span className="align-middle">FAQ</span>
-                                    </a>
-                                </li>
+                               
                                 <li>
                                     <div className="d-grid px-4 pt-2 pb-1">
                                         <a
                                             className="btn btn-danger d-flex"
                                             href="#"
                                             onClick={handleLogout}
-                                            
                                         >
                                             <small className="align-middle">Logout</small>
                                             <i className="ri-logout-box-r-line ms-2 ri-16px" />

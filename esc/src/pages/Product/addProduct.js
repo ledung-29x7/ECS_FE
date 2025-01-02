@@ -244,7 +244,7 @@ function AddProducts() {
                             >
                                 Discard
                             </button>
-                            <button className="btn btn-outline-primary waves-effect">Save draft</button>
+                            
                             <button onClick={handleSumbit} className="btn btn-primary waves-effect waves-light">
                                 Publish product
                             </button>
@@ -551,13 +551,7 @@ function AddProducts() {
                                         <dl className="row mb-0">
                                             <dt className="col-6 fw-normal text-heading">Order Total</dt>
                                             <dd className="col-6 text-end">${totalCost}</dd>
-                                            <dt className="col-6 fw-normal text-heading">Delivery Charges</dt>
-                                            <dd className="col-6 text-end">
-                                                <s className="text-muted">$5.00</s>{' '}
-                                                <span className="badge bg-label-success rounded-pill text-uppercase">
-                                                    Free
-                                                </span>
-                                            </dd>
+                                            
                                         </dl>
                                         <hr className="mx-n5 my-5" />
                                         <dl className="row mb-0">

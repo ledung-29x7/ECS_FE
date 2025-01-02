@@ -77,6 +77,24 @@ export const changePassword = (data) => new Promise(async (resolve,reject) =>{
             url: "/Authentication/change-password",
             method:"post",
             withCredentials:true,
+            data: data,
+            headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            }
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const ClientChangePassWord = (data) => new Promise(async (resolve,reject) =>{
+    try {
+        const response = await axios({
+            url: "/Client/change-password",
+            method:"post",
+            withCredentials:true,
+            data:data,
             headers: {
                 Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             }

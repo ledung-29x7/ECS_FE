@@ -9,6 +9,7 @@ function ProductCategory() {
     const [showAddService, setShowAddService] = useState(false);
     const [product, setProduct] = useState([]);
     const [service, setService] = useState([]);
+    const [security, setSecurity] = useState(false);
     const [addProductService, setAddProductService] = useState({
         productServiceId: 0,
         serviceId: 0,
@@ -18,18 +19,32 @@ function ProductCategory() {
         endDate: '',
         requiredEmployees: 0,
     });
+    const [changePassword, setChangepassword] = useState({
+        oldPassword: '',
+        newPassword: '',
+    });
+    const [passwordVisibility, setPasswordVisibility] = useState({
+        oldPassword: false,
+        newPassword: false,
+    });
+
+    const togglePasswordVisibility = (field) => {
+        setPasswordVisibility((prevState) => ({
+            ...prevState,
+            [field]: !prevState[field], // Đảo ngược trạng thái của trường được chỉ định
+        }));
+    };
     const datePickerRef = useRef(null); // Tạo ref để gắn input
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setAddProductService((prev) => ({
+        setChangepassword((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
 
     useEffect(() => {
-        
         if (window.flatpickr && datePickerRef.current) {
             window.flatpickr(datePickerRef.current, {
                 dateFormat: 'Y-m-d', // Định dạng ngày
@@ -74,17 +89,16 @@ function ProductCategory() {
             await apis
                 .GetProductServiceById(idClient)
                 .then((res) => {
-                    
                     if (res.status === 200) {
                         // toast.success("GetProductServiceById success")
-                        setProductService(res.data.productServices);
+                        setProductService(res.data);
                     }
                 })
                 .catch((error) => {
-                    toast.error(error)
+                    toast.error(error);
                 });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -101,10 +115,10 @@ function ProductCategory() {
                     }
                 })
                 .catch((error) => {
-                   toast.error(error)
+                    toast.error(error);
                 });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
     // get product
@@ -120,10 +134,10 @@ function ProductCategory() {
                     }
                 })
                 .catch((error) => {
-                    toast.error(error)
+                    toast.error(error);
                 });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -133,7 +147,6 @@ function ProductCategory() {
     }, []);
 
     const handleShowAdd = (id) => {
-        
         setAddProductService((prev) => ({
             ...prev,
             serviceId: id,
@@ -141,10 +154,31 @@ function ProductCategory() {
         setShowAddService(true);
         FetchProduct();
     };
-    
+
+    const handleShowSecurity = () => {
+        setSecurity(true);
+    };
+
+    const handleChangePassword = (e) => {
+        e.preventDefault()
+        const FetchChangePassWord = async () => {
+            try {
+                await apis.ClientChangePassWord(changePassword).then((res) => {
+                    console.log(res)
+                    if (res.status === 200) {
+                        toast.success('Change Password success');
+                        setSecurity(false);
+                    }
+                });
+            } catch (error) {
+                toast.error(error.message);
+            }
+        };
+        FetchChangePassWord()
+    };
+
     return (
         <>
-        
             <div className="content-wrapper">
                 {/* Content */}
                 <div className="container-xxl flex-grow-1 container-p-y">
@@ -188,10 +222,11 @@ function ProductCategory() {
                                             </div>
                                             <a
                                                 href="javascript:void(0)"
+                                                onClick={handleShowSecurity}
                                                 className="btn btn-primary waves-effect waves-light"
                                             >
                                                 <i className="ri-user-follow-line ri-16px me-1_5" />
-                                                Connected
+                                                Security
                                             </a>
                                         </div>
                                     </div>
@@ -212,8 +247,7 @@ function ProductCategory() {
                                         <ul className="list-unstyled my-3 py-1">
                                             <li className="d-flex align-items-center mb-4">
                                                 <i className="ri-user-3-line ri-24px" />
-                                                <span className="fw-medium mx-2">Full Name:</span>{' '}
-                                                <span>John Doe</span>
+                                                <span className="fw-medium mx-2">Full Name:</span> <span>John Doe</span>
                                             </li>
                                             <li className="d-flex align-items-center mb-4">
                                                 <i className="ri-check-line ri-24px" />
@@ -229,13 +263,10 @@ function ProductCategory() {
                                             </li>
                                             <li className="d-flex align-items-center mb-2">
                                                 <i className="ri-translate-2 ri-24px" />
-                                                <span className="fw-medium mx-2">Languages:</span>{' '}
-                                                <span>English</span>
+                                                <span className="fw-medium mx-2">Languages:</span> <span>English</span>
                                             </li>
                                         </ul>
-                                        <small className="card-text text-uppercase text-muted small">
-                                            Contacts
-                                        </small>
+                                        <small className="card-text text-uppercase text-muted small">Contacts</small>
                                         <ul className="list-unstyled my-3 py-1">
                                             <li className="d-flex align-items-center mb-4">
                                                 <i className="ri-phone-line ri-24px" />
@@ -272,1377 +303,1042 @@ function ProductCategory() {
                                     </div>
                                 </div>
                                 {/*/ About User */}
-                                {/* Profile Overview */}
-                                <div className="card mb-6">
-                                    <div className="card-body">
-                                        <small className="card-text text-uppercase text-muted small">
-                                            Overview
-                                        </small>
-                                        <ul className="list-unstyled mb-0 mt-3 pt-1">
-                                            <li className="d-flex align-items-center mb-4">
-                                                <i className="ri-check-line ri-24px" />
-                                                <span className="fw-medium mx-2">Task Compiled:</span>{' '}
-                                                <span>13.5k</span>
-                                            </li>
-                                            <li className="d-flex align-items-center mb-4">
-                                                <i className="ri-user-3-line ri-24px" />
-                                                <span className="fw-medium mx-2">Projects Compiled:</span>{' '}
-                                                <span>146</span>
-                                            </li>
-                                            <li className="d-flex align-items-center">
-                                                <i className="ri-star-smile-line ri-24px" />
-                                                <span className="fw-medium mx-2">Connections:</span>{' '}
-                                                <span>897</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                {/*/ Profile Overview */}
                             </div>
                             <div className="col-xl-8 col-lg-7 col-md-7">
-                                {/* Project table */}
-                                <div className="card mb-4">
-                                    <h5 className="card-header">Project List</h5>
-                                    <div className="card-datatable table-responsive pb-0 mb-n4">
-                                        <div
-                                            id="DataTables_Table_0_wrapper"
-                                            className="dataTables_wrapper dt-bootstrap5 no-footer"
-                                        >
-                                            <table
-                                                className="table datatable-project table-border-bottom-0 dataTable no-footer dtr-column collapsed"
-                                                id="DataTables_Table_0"
-                                                style={{ width: 736 }}
+                                {security ? (
+                                    <div className="card mb-6">
+                                        <h5 className="card-header">Change Password</h5>
+                                        <div className="card-body">
+                                            <form
+                                                id="formChangePassword"
+                                                
+                                                onSubmit={handleChangePassword}
+                                                className="fv-plugins-bootstrap5 fv-plugins-framework"
+                                                noValidate="novalidate"
                                             >
-                                                <thead>
-                                                    <tr>
-                                                        <th
-                                                            className="control sorting_disabled"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 10 }}
-                                                            aria-label=""
-                                                        />
-                                                        <th
-                                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 18 }}
-                                                            data-col={1}
-                                                            aria-label=""
-                                                        >
-                                                            <input type="checkbox" className="form-check-input" />
-                                                        </th>
-                                                        <th
-                                                            className="sorting sorting_desc"
-                                                            tabIndex={0}
-                                                            aria-controls="DataTables_Table_0"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 271 }}
-                                                            aria-label="Project: activate to sort column ascending"
-                                                            aria-sort="descending"
-                                                        >
-                                                            Project
-                                                        </th>
-                                                        <th
-                                                            className="sorting"
-                                                            tabIndex={0}
-                                                            aria-controls="DataTables_Table_0"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 91 }}
-                                                            aria-label="leader: activate to sort column ascending"
-                                                        >
-                                                            leader
-                                                        </th>
-                                                        <th
-                                                            className="sorting"
-                                                            tabIndex={0}
-                                                            aria-controls="DataTables_Table_0"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 128 }}
-                                                            aria-label="teams: activate to sort column ascending"
-                                                        >
-                                                            teams
-                                                        </th>
-                                                        <th
-                                                            className="sorting dtr-hidden"
-                                                            tabIndex={0}
-                                                            aria-controls="DataTables_Table_0"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 0, display: 'none' }}
-                                                            aria-label="Progress: activate to sort column ascending"
-                                                        >
-                                                            Progress
-                                                        </th>
-                                                        <th
-                                                            className="sorting_disabled dtr-hidden"
-                                                            rowSpan={1}
-                                                            colSpan={1}
-                                                            style={{ width: 0, display: 'none' }}
-                                                            aria-label="Actions"
-                                                        >
-                                                            Actions
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr className="odd">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/vue.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Vue Admin template
-                                                                    </span>
-                                                                    <small>Vuejs Project</small>
-                                                                </div>
+                                                <div className="alert alert-warning alert-dismissible" role="alert">
+                                                    <h5 className="alert-heading mb-1">
+                                                        Ensure that these requirements are met
+                                                    </h5>
+                                                    <span>Minimum 8 characters long, uppercase &amp; symbol</span>
+                                                    <button
+                                                        type="button"
+                                                        className="btn-close"
+                                                        data-bs-dismiss="alert"
+                                                        aria-label="Close"
+                                                    />
+                                                </div>
+                                                <div className="row gx-5">
+                                                    {/* Old Password */}
+                                                    <div className="mb-4 col-12 col-sm-6 form-password-toggle fv-plugins-icon-container">
+                                                        <div className="input-group input-group-merge">
+                                                            <div className="form-floating form-floating-outline">
+                                                                <input
+                                                                    className="form-control"
+                                                                    type={
+                                                                        passwordVisibility.oldPassword
+                                                                            ? 'text'
+                                                                            : 'password'
+                                                                    } // Đổi type dựa trên trạng thái
+                                                                    id="oldPassword"
+                                                                    name="oldPassword"
+                                                                    onChange={handleChange}
+                                                                    placeholder="············"
+                                                                />
+                                                                <label htmlFor="oldPassword">Old Password</label>
                                                             </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Georgie</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/18.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/13.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/17.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                </ul>
+                                                            <span
+                                                                className="input-group-text cursor-pointer"
+                                                                onClick={() => togglePasswordVisibility('oldPassword')} // Xác định trường cần thay đổi
+                                                            >
+                                                                <i
+                                                                    className={`ri-${
+                                                                        passwordVisibility.oldPassword
+                                                                            ? 'eye-line'
+                                                                            : 'eye-off-line'
+                                                                    } ri-20px`}
+                                                                />
+                                                            </span>
+                                                        </div>
+                                                        <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                                    </div>
+
+                                                    {/* New Password */}
+                                                    <div className="mb-4 col-12 col-sm-6 form-password-toggle fv-plugins-icon-container">
+                                                        <div className="input-group input-group-merge">
+                                                            <div className="form-floating form-floating-outline">
+                                                                <input
+                                                                    className="form-control"
+                                                                    type={
+                                                                        passwordVisibility.newPassword
+                                                                            ? 'text'
+                                                                            : 'password'
+                                                                    } // Đổi type dựa trên trạng thái
+                                                                    id="newPassword"
+                                                                    onChange={handleChange}
+                                                                    name="newPassword"
+                                                                    placeholder="············"
+                                                                />
+                                                                <label htmlFor="newPassword">New Password</label>
                                                             </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '26%' }}
-                                                                        aria-valuenow={26}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">26%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="even">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/xamarin.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Hoffman Website
-                                                                    </span>
-                                                                    <small>HTML Project</small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Jarvis</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/1.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/5.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '24%' }}
-                                                                        aria-valuenow={24}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">24%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="odd">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/python.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Foodista Mobile App
-                                                                    </span>
-                                                                    <small>Xamarin Project</small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Michelina</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/15.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/16.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/14.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '53%' }}
-                                                                        aria-valuenow={53}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">53%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="even">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/sketch-label.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Foodista mobile app
-                                                                    </span>
-                                                                    <small>iPhone Project</small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Merline</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/1.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/5.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/7.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li className="avatar avatar-sm">
-                                                                        <span
-                                                                            className="avatar-initial rounded-circle pull-up text-heading"
-                                                                            data-bs-toggle="tooltip"
-                                                                            data-bs-placement="top"
-                                                                            title="6 more"
-                                                                        >
-                                                                            +6
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '64%' }}
-                                                                        aria-valuenow={64}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">64%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="odd">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/xd-label.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Falcon Logo Design
-                                                                    </span>
-                                                                    <small>UI/UX Project</small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Owen</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/1.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/5.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '80%' }}
-                                                                        aria-valuenow={80}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">80%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="even">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/react-info.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Dojo React Project
-                                                                    </span>
-                                                                    <small>React Project</small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Harmonia</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/1.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/5.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/7.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li className="avatar avatar-sm">
-                                                                        <span
-                                                                            className="avatar-initial rounded-circle pull-up text-heading"
-                                                                            data-bs-toggle="tooltip"
-                                                                            data-bs-placement="top"
-                                                                            title="5 more"
-                                                                        >
-                                                                            +5
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '10%' }}
-                                                                        aria-valuenow={10}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">10%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr className="odd">
-                                                        <td className="control" tabIndex={0} style={{}} />
-                                                        <td className="dt-checkboxes-cell" style={{}}>
-                                                            <input
-                                                                type="checkbox"
-                                                                className="dt-checkboxes form-check-input"
-                                                            />
-                                                        </td>
-                                                        <td className="sorting_1" style={{}}>
-                                                            <div className="d-flex justify-content-left align-items-center">
-                                                                <div className="avatar-wrapper">
-                                                                    <div className="avatar avatar-sm me-3">
-                                                                        <img
-                                                                            src="../../assets/img/icons/brands/figma-label-info.png"
-                                                                            alt="Project Image"
-                                                                            className="rounded-circle"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="d-flex flex-column">
-                                                                    <span className="text-truncate fw-medium text-heading">
-                                                                        Dashboard Design
-                                                                    </span>
-                                                                    <small>Vuejs Project</small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <span className="text-heading">Keith</span>
-                                                        </td>
-                                                        <td className="" style={{}}>
-                                                            <div className="d-flex align-items-center">
-                                                                <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/1.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/8.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                    <li
-                                                                        data-bs-toggle="tooltip"
-                                                                        data-popup="tooltip-custom"
-                                                                        data-bs-placement="top"
-                                                                        title="Kim Karlos"
-                                                                        className="avatar avatar-sm pull-up"
-                                                                    >
-                                                                        <img
-                                                                            className="rounded-circle"
-                                                                            src="../../assets/img/avatars/9.png"
-                                                                            alt="Avatar"
-                                                                        />
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div className="d-flex align-items-center">
-                                                                <div
-                                                                    div=""
-                                                                    className="progress rounded-pill w-px-75"
-                                                                    style={{ height: 8 }}
-                                                                >
-                                                                    <div
-                                                                        className="progress-bar"
-                                                                        role="progressbar"
-                                                                        style={{ width: '47%' }}
-                                                                        aria-valuenow={47}
-                                                                        aria-valuemin={0}
-                                                                        aria-valuemax={100}
-                                                                    />
-                                                                </div>
-                                                                <div className="text-heading ms-2">47%</div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="dtr-hidden" style={{ display: 'none' }}>
-                                                            <div>
-                                                                <div className="dropdown">
-                                                                    <a
-                                                                        href="javascript:;"
-                                                                        className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
-                                                                        data-bs-toggle="dropdown"
-                                                                    >
-                                                                        <i className="ri-more-2-line ri-22px" />
-                                                                    </a>
-                                                                    <div className="dropdown-menu dropdown-menu-end">
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Download
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            Delete
-                                                                        </a>
-                                                                        <a
-                                                                            href="javascript:;"
-                                                                            className="dropdown-item"
-                                                                        >
-                                                                            View
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <div style={{ width: '1%' }} />
-                                            <div style={{ width: '1%' }} />
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* /Project table */}
-                                <div className="row">
-                                    {/* Connections */}
-                                    <div className="col-lg-12 col-xl-6">
-                                        <div className="card card-action mb-6">
-                                            <div className="card-header align-items-center">
-                                                <h5 className="card-action-title mb-0">Connections</h5>
-                                                <div className="card-action-element">
-                                                    <div className="dropdown">
+                                                            <span
+                                                                className="input-group-text cursor-pointer"
+                                                                onClick={() => togglePasswordVisibility('newPassword')} // Xác định trường cần thay đổi
+                                                            >
+                                                                <i
+                                                                    className={`ri-${
+                                                                        passwordVisibility.newPassword
+                                                                            ? 'eye-line'
+                                                                            : 'eye-off-line'
+                                                                    } ri-20px`}
+                                                                />
+                                                            </span>
+                                                        </div>
+                                                        <div className="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback" />
+                                                    </div>
+                                                    <div className="col-12 text-end">
                                                         <button
-                                                            type="button"
-                                                            className="btn dropdown-toggle hide-arrow p-0"
-                                                            data-bs-toggle="dropdown"
-                                                            aria-expanded="false"
+                                                            type="submit"
+                                                            className="btn btn-primary me-2 waves-effect waves-light"
                                                         >
-                                                            <i className="ri-more-2-line ri-22px text-muted" />
+                                                            Change Password
                                                         </button>
-                                                        <ul className="dropdown-menu dropdown-menu-end">
-                                                            <li>
-                                                                <a
-                                                                    className="dropdown-item waves-effect"
-                                                                    href="javascript:void(0);"
-                                                                >
-                                                                    Share connections
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a
-                                                                    className="dropdown-item waves-effect"
-                                                                    href="javascript:void(0);"
-                                                                >
-                                                                    Suggest edits
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <hr className="dropdown-divider" />
-                                                            </li>
-                                                            <li>
-                                                                <a
-                                                                    className="dropdown-item waves-effect"
-                                                                    href="javascript:void(0);"
-                                                                >
-                                                                    Report bug
-                                                                </a>
-                                                            </li>
-                                                        </ul>
+                                                        <button
+                                                            type="reset"
+                                                            className="btn btn-outline-secondary waves-effect "
+                                                            onClick={() => setSecurity(false)}
+                                                        >
+                                                            Cancel
+                                                        </button>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/avatars/2.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
+                                                
+                                            </form>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    /* Project table */
+                                    <div className="card mb-4">
+                                        <h5 className="card-header">Product Service</h5>
+                                        <div className="card-datatable table-responsive pb-0 mb-n4">
+                                            <div
+                                                id="DataTables_Table_0_wrapper"
+                                                className="dataTables_wrapper dt-bootstrap5 no-footer"
+                                            >
+                                                <table
+                                                    className="table datatable-project table-border-bottom-0 dataTable no-footer dtr-column collapsed"
+                                                    id="DataTables_Table_0"
+                                                    style={{ width: 736 }}
+                                                >
+                                                    <thead>
+                                                        <tr>
+                                                            <th
+                                                                className="sorting sorting_desc"
+                                                                tabIndex={0}
+                                                                aria-controls="DataTables_Table_0"
+                                                                rowSpan={1}
+                                                                colSpan={1}
+                                                                style={{ width: 271 }}
+                                                                aria-label="Project: activate to sort column ascending"
+                                                                aria-sort="descending"
+                                                            >
+                                                                Service
+                                                            </th>
+                                                            <th
+                                                                className="sorting"
+                                                                tabIndex={0}
+                                                                aria-controls="DataTables_Table_0"
+                                                                rowSpan={1}
+                                                                colSpan={1}
+                                                                style={{ width: 91 }}
+                                                                aria-label="leader: activate to sort column ascending"
+                                                            >
+                                                                leader
+                                                            </th>
+                                                            <th
+                                                                className="sorting"
+                                                                tabIndex={0}
+                                                                aria-controls="DataTables_Table_0"
+                                                                rowSpan={1}
+                                                                colSpan={1}
+                                                                style={{ width: 128 }}
+                                                                aria-label="teams: activate to sort column ascending"
+                                                            >
+                                                                teams
+                                                            </th>
+                                                            <th
+                                                                className="sorting dtr-hidden"
+                                                                tabIndex={0}
+                                                                aria-controls="DataTables_Table_0"
+                                                                rowSpan={1}
+                                                                colSpan={1}
+                                                                style={{ width: 0, display: 'none' }}
+                                                                aria-label="Progress: activate to sort column ascending"
+                                                            >
+                                                                Progress
+                                                            </th>
+                                                            <th
+                                                                className="sorting_disabled dtr-hidden"
+                                                                rowSpan={1}
+                                                                colSpan={1}
+                                                                style={{ width: 0, display: 'none' }}
+                                                                aria-label="Actions"
+                                                            >
+                                                                Actions
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr className="odd">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/vue.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Vue Admin template
+                                                                        </span>
+                                                                        <small>Vuejs Project</small>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Cecilia Payne</h6>
-                                                                    <small>45 Connections</small>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Georgie</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/18.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/13.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/17.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                    </ul>
                                                                 </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <button className="btn btn-outline-primary btn-icon waves-effect">
-                                                                    <i className="ri-user-add-line ri-22px" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/avatars/3.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '26%' }}
+                                                                            aria-valuenow={26}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">26%</div>
                                                                 </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Curtis Fletcher</h6>
-                                                                    <small>1.32k Connections</small>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <button className="btn btn-primary btn-icon waves-effect waves-light">
-                                                                    <i className="ri-user-3-line ri-22px" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/avatars/12.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="even">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/xamarin.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Hoffman Website
+                                                                        </span>
+                                                                        <small>HTML Project</small>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Alice Stone</h6>
-                                                                    <small>125 Connections</small>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Jarvis</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/1.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/5.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                    </ul>
                                                                 </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <button className="btn btn-primary btn-icon waves-effect waves-light">
-                                                                    <i className="ri-user-3-line ri-22px" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/avatars/7.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '24%' }}
+                                                                            aria-valuenow={24}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">24%</div>
                                                                 </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Darrell Barnes</h6>
-                                                                    <small>456 Connections</small>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <button className="btn btn-outline-primary btn-icon waves-effect">
-                                                                    <i className="ri-user-add-line ri-22px" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/avatars/8.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="odd">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/python.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Foodista Mobile App
+                                                                        </span>
+                                                                        <small>Xamarin Project</small>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Eugenia Moore</h6>
-                                                                    <small>1.2k Connections</small>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Michelina</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/15.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/16.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/14.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                    </ul>
                                                                 </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <button className="btn btn-outline-primary btn-icon waves-effect">
-                                                                    <i className="ri-user-add-line ri-22px" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="text-center">
-                                                        <a
-                                                            href="javascript:;"
-                                                            className="btn btn-text-primary waves-effect"
-                                                        >
-                                                            View all connections
-                                                        </a>
-                                                    </li>
-                                                </ul>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '53%' }}
+                                                                            aria-valuenow={53}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">53%</div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="even">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/sketch-label.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Foodista mobile app
+                                                                        </span>
+                                                                        <small>iPhone Project</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Merline</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/1.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/5.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/7.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li className="avatar avatar-sm">
+                                                                            <span
+                                                                                className="avatar-initial rounded-circle pull-up text-heading"
+                                                                                data-bs-toggle="tooltip"
+                                                                                data-bs-placement="top"
+                                                                                title="6 more"
+                                                                            >
+                                                                                +6
+                                                                            </span>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '64%' }}
+                                                                            aria-valuenow={64}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">64%</div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="odd">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/xd-label.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Falcon Logo Design
+                                                                        </span>
+                                                                        <small>UI/UX Project</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Owen</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/1.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/5.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '80%' }}
+                                                                            aria-valuenow={80}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">80%</div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="even">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/react-info.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Dojo React Project
+                                                                        </span>
+                                                                        <small>React Project</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Harmonia</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/1.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/5.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/7.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li className="avatar avatar-sm">
+                                                                            <span
+                                                                                className="avatar-initial rounded-circle pull-up text-heading"
+                                                                                data-bs-toggle="tooltip"
+                                                                                data-bs-placement="top"
+                                                                                title="5 more"
+                                                                            >
+                                                                                +5
+                                                                            </span>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '10%' }}
+                                                                            aria-valuenow={10}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">10%</div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="odd">
+                                                            <td className="sorting_1" style={{}}>
+                                                                <div className="d-flex justify-content-left align-items-center">
+                                                                    <div className="avatar-wrapper">
+                                                                        <div className="avatar avatar-sm me-3">
+                                                                            <img
+                                                                                src="../../assets/img/icons/brands/figma-label-info.png"
+                                                                                alt="Project Image"
+                                                                                className="rounded-circle"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="d-flex flex-column">
+                                                                        <span className="text-truncate fw-medium text-heading">
+                                                                            Dashboard Design
+                                                                        </span>
+                                                                        <small>Vuejs Project</small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <span className="text-heading">Keith</span>
+                                                            </td>
+                                                            <td className="" style={{}}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <ul className="list-unstyled d-flex align-items-center avatar-group mb-0 z-2">
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/1.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/8.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                        <li
+                                                                            data-bs-toggle="tooltip"
+                                                                            data-popup="tooltip-custom"
+                                                                            data-bs-placement="top"
+                                                                            title="Kim Karlos"
+                                                                            className="avatar avatar-sm pull-up"
+                                                                        >
+                                                                            <img
+                                                                                className="rounded-circle"
+                                                                                src="../../assets/img/avatars/9.png"
+                                                                                alt="Avatar"
+                                                                            />
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div className="d-flex align-items-center">
+                                                                    <div
+                                                                        div=""
+                                                                        className="progress rounded-pill w-px-75"
+                                                                        style={{ height: 8 }}
+                                                                    >
+                                                                        <div
+                                                                            className="progress-bar"
+                                                                            role="progressbar"
+                                                                            style={{ width: '47%' }}
+                                                                            aria-valuenow={47}
+                                                                            aria-valuemin={0}
+                                                                            aria-valuemax={100}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="text-heading ms-2">47%</div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="dtr-hidden" style={{ display: 'none' }}>
+                                                                <div>
+                                                                    <div className="dropdown">
+                                                                        <a
+                                                                            href="javascript:;"
+                                                                            className="btn btn-sm btn-icon btn-text-secondary dropdown-toggle hide-arrow rounded-pill waves-effect"
+                                                                            data-bs-toggle="dropdown"
+                                                                        >
+                                                                            <i className="ri-more-2-line ri-22px" />
+                                                                        </a>
+                                                                        <div className="dropdown-menu dropdown-menu-end">
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Download
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                Delete
+                                                                            </a>
+                                                                            <a
+                                                                                href="javascript:;"
+                                                                                className="dropdown-item"
+                                                                            >
+                                                                                View
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <div style={{ width: '1%' }} />
+                                                <div style={{ width: '1%' }} />
                                             </div>
                                         </div>
                                     </div>
-                                    {/*/ Connections */}
-                                    {/* Teams */}
-                                    <div className="col-lg-12 col-xl-6">
-                                        <div className="card card-action mb-6">
-                                            <div className="card-header align-items-center">
-                                                <h5 className="card-action-title mb-0">Teams</h5>
-                                                <div className="card-action-element">
-                                                    <div className="dropdown">
-                                                        <button
-                                                            type="button"
-                                                            className="btn dropdown-toggle hide-arrow p-0"
-                                                            data-bs-toggle="dropdown"
-                                                            aria-expanded="false"
-                                                        >
-                                                            <i className="ri-more-2-line ri-22px text-muted" />
-                                                        </button>
-                                                        <ul className="dropdown-menu dropdown-menu-end">
-                                                            <li>
-                                                                <a
-                                                                    className="dropdown-item waves-effect"
-                                                                    href="javascript:void(0);"
-                                                                >
-                                                                    Share teams
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a
-                                                                    className="dropdown-item waves-effect"
-                                                                    href="javascript:void(0);"
-                                                                >
-                                                                    Suggest edits
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <hr className="dropdown-divider" />
-                                                            </li>
-                                                            <li>
-                                                                <a
-                                                                    className="dropdown-item waves-effect"
-                                                                    href="javascript:void(0);"
-                                                                >
-                                                                    Report bug
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/icons/brands/react-label.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
-                                                                </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">React Developers</h6>
-                                                                    <small>72 Members</small>
-                                                                </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <a href="javascript:;">
-                                                                    <span className="badge bg-label-danger rounded-pill">
-                                                                        Developer
-                                                                    </span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/icons/brands/support-label.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
-                                                                </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Support Team</h6>
-                                                                    <small>122 Members</small>
-                                                                </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <a href="javascript:;">
-                                                                    <span className="badge bg-label-primary rounded-pill">
-                                                                        Support
-                                                                    </span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/icons/brands/figma-label.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
-                                                                </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">UI Designers</h6>
-                                                                    <small>7 Members</small>
-                                                                </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <a href="javascript:;">
-                                                                    <span className="badge bg-label-info rounded-pill">
-                                                                        Designer
-                                                                    </span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/icons/brands/vue-label.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
-                                                                </div>
-                                                                <div className="me-2">
-                                                                    <h6 className="mb-1">Vue.js Developers</h6>
-                                                                    <small>289 Members</small>
-                                                                </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <a href="javascript:;">
-                                                                    <span className="badge bg-label-danger rounded-pill">
-                                                                        Developer
-                                                                    </span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="mb-4">
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="d-flex align-items-center">
-                                                                <div className="avatar me-2">
-                                                                    <img
-                                                                        src="../../assets/img/icons/brands/twitter-label.png"
-                                                                        alt="Avatar"
-                                                                        className="rounded-circle"
-                                                                    />
-                                                                </div>
-                                                                <div className="me-w">
-                                                                    <h6 className="mb-1">Digital Marketing</h6>
-                                                                    <small>24 Members</small>
-                                                                </div>
-                                                            </div>
-                                                            <div className="ms-auto">
-                                                                <a href="javascript:;">
-                                                                    <span className="badge bg-label-secondary rounded-pill">
-                                                                        Marketing
-                                                                    </span>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li className="text-center">
-                                                        <a
-                                                            href="javascript:;"
-                                                            className="btn btn-text-primary waves-effect"
-                                                        >
-                                                            View all teams
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/*/ Teams */}
-                                </div>
+                                    /* /Project table */
+                                )}
                             </div>
                         </div>
                     ) : (
@@ -1655,14 +1351,12 @@ function ProductCategory() {
                                         <div className="container py-12">
                                             <h3 className="text-center mb-2 mt-0 mt-md-4">Pricing Plans</h3>
                                             <p className="text-center mb-2">
-                                                All plans include 40+ advanced tools and features to boost your
-                                                product. Choose the best plan to fit your needs.
+                                                All plans include 40+ advanced tools and features to boost your product.
+                                                Choose the best plan to fit your needs.
                                             </p>
                                             <div className="d-flex align-items-center justify-content-center flex-wrap gap-2 pt-5 mb-6">
                                                 <label className="switch switch-sm ms-sm-5 ps-sm-5 me-0">
-                                                    <span className="switch-label fw-medium text-body">
-                                                        Monthly
-                                                    </span>
+                                                    <span className="switch-label fw-medium text-body">Monthly</span>
                                                     <input
                                                         type="checkbox"
                                                         className="switch-input price-duration-toggler"
@@ -1739,9 +1433,7 @@ function ProductCategory() {
                     {/*/ User Profile Content */}
                 </div>
                 {/* / Content */}
-                
             </div>
-            
         </>
     );
 }

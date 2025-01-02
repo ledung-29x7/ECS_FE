@@ -16,6 +16,8 @@ function ProductAdmin() {
     const [totalItem, setTotalItem] = useState([]);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(12000);
 
     const renderPageNumbers = () => {
         const pages = [];
@@ -56,22 +58,36 @@ function ProductAdmin() {
     const handlePriceRangeChange = (event) => {
         const { name, value, type, checked } = event.target;
 
-        setFilters((prev) => ({
-          ...prev,
-          [name]: type === "checkbox" ? checked : value,
-        }));
+        if (name === 'minPrice') {
+            setMinPrice(value);
+            setFilters((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        } else if (name === 'maxPrice') {
+            setMaxPrice(value);
+            setFilters((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        } else if (type === 'checkbox') {
+            setFilters((prev) => ({
+                ...prev,
+                [name]: checked,
+            }));
+        }
     };
     // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedFilters({ ...filters }); // Sử dụng bản sao mới nhất của filters
         }, 2000); // 2 giây
-    
+
         return () => {
             clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
         };
     }, [filters]);
- 
+
     // Gọi API khi `debouncedFilters` thay đổi
     useEffect(() => {
         const fetchData = async () => {
@@ -85,7 +101,7 @@ function ProductAdmin() {
                     setTotalPage(response.data.totalPages);
                 }
             } catch (error) {
-                toast.error('Error fetching data:',error)
+                toast.error('Error fetching data:', error);
             }
         };
 
@@ -118,7 +134,7 @@ function ProductAdmin() {
                 }
             });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -131,7 +147,7 @@ function ProductAdmin() {
                 }
             });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -144,7 +160,7 @@ function ProductAdmin() {
                 }
             });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -157,7 +173,7 @@ function ProductAdmin() {
                 }
             });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
     const FetApiProductStatus = async () => {
@@ -169,7 +185,7 @@ function ProductAdmin() {
                 }
             });
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
     const handleActive = async (productId) => {
@@ -198,154 +214,17 @@ function ProductAdmin() {
             <div className="content-wrapper">
                 {/* Content */}
                 <div className="container-xxl flex-grow-1 container-p-y">
-                    {/* Product List Widget */}
-                    <div className="card mb-6">
-                        <div className="card-widget-separator-wrapper">
-                            <div className="card-body card-widget-separator">
-                                <div className="row gy-4 gy-sm-1">
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
-                                            <div>
-                                                <p className="mb-1">In-store Sales</p>
-                                                <h4 className="mb-1">$5,345.43</h4>
-                                                <p className="mb-0">
-                                                    <span className="me-2">5k orders</span>
-                                                    <span className="badge rounded-pill bg-label-success">+5.7%</span>
-                                                </p>
-                                            </div>
-                                            <div className="avatar me-sm-6">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-home-6-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <hr className="d-none d-sm-block d-lg-none me-6" />
-                                    </div>
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-                                            <div>
-                                                <p className="mb-1">Website Sales</p>
-                                                <h4 className="mb-1">$674,347.12</h4>
-                                                <p className="mb-0">
-                                                    <span className="me-2">21k orders</span>
-                                                    <span className="badge rounded-pill bg-label-success">+12.4%</span>
-                                                </p>
-                                            </div>
-                                            <div className="avatar me-lg-6">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-computer-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <hr className="d-none d-sm-block d-lg-none" />
-                                    </div>
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
-                                            <div>
-                                                <p className="mb-1">Discount</p>
-                                                <h4 className="mb-1">$14,235.12</h4>
-                                                <p className="mb-0">6k orders</p>
-                                            </div>
-                                            <div className="avatar me-sm-6">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-gift-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <p className="mb-1">Affiliate</p>
-                                                <h4 className="mb-1">$8,345.23</h4>
-                                                <p className="mb-0">
-                                                    <span className="me-2">150 orders</span>
-                                                    <span className="badge rounded-pill bg-label-danger">-3.5%</span>
-                                                </p>
-                                            </div>
-                                            <div className="avatar">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-money-dollar-circle-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* Product List Table */}
                     <div className="card">
-                        <div className="card-header">
-                            <h5 className="mb-0">Filter</h5>
-                            <div className="d-flex justify-content-between align-items-center row pt-4 gap-4 gap-md-0">
-                                <div className="col-md-4 product_status">
-                                    <select id="ProductStatus" className="form-select text-capitalize">
-                                        <option value="">Select Status</option>
-                                        <option value="Scheduled">Scheduled</option>
-                                        <option value="Publish">Publish</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-
-                                <div className="col-md-4">
-                                    <div className="slider-track">
-                                        <div className="d-flex justify-content-between mb-4p">
-                                            <h5 style={{ color: 'black' }}>{filters.minPrice}</h5>
-                                            <h5 style={{ color: 'black' }}>{filters.maxPrice}</h5>
-                                        </div>
-                                        <input
-                                            type="range"
-                                            name="minPrice"
-                                            min="0"
-                                            max={filters.maxPrice}
-                                            value={filters.minPrice}
-                                            onChange={handlePriceRangeChange}
-                                            style={{
-                                                width: '100%',
-                                                background: 'rgb(60, 188, 28)',
-                                                cursor: 'pointer',
-                                            }}
-                                        />
-                                        <input
-                                            type="range"
-                                            name="maxPrice"
-                                            min="0"
-                                            max={filters.maxPrice}
-                                            value={filters.maxPrice}
-                                            onChange={handlePriceRangeChange}
-                                            style={{
-                                                width: '100%',
-                                                color: 'rgb(60, 188, 28)',
-                                                cursor: 'pointer',
-                                            }}
-                                        />
-                                        <div className="d-flex justify-content-between mt-2">
-                                            <span style={{ color: 'rgb(60, 188, 28)' }}>MIN</span>
-                                            <span style={{ color: 'rgb(60, 188, 28)' }}>MAX</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-4">
-                                    <input
-                                        type="checkbox"
-                                        name="isActive" 
-                                        checked={filters.isActive || false} 
-                                        onChange={handlePriceRangeChange}
-                                    />
-                                    <label>Active</label>
-                                </div>
-                            </div>
-                        </div>
+                       
                         <div className="card-datatable table-responsive">
                             <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
-                                <div className="card-header d-flex border-top rounded-0 flex-wrap py-0 pb-5 pb-md-0">
-                                    <div className="me-5 ms-n2">
-                                        <div id="DataTables_Table_0_filter" className="dataTables_filter">
-                                            <label>
+                                <div className="card-header row d-flex border-top rounded-0 flex-wrap py-0 pb-5 pb-md-0">
+                                    <div className=" col-4">
+                                        <div id="DataTables_Table_0_filter" className="">
+                                            <label className='w-75'>
                                                 <input
                                                     type="search"
-                                                    className="form-control form-control-sm"
+                                                    className="form-control w-100 form-control-sm"
                                                     placeholder="Search"
                                                     onChange={(e) => handlePageClick(1, e.target.value)}
                                                     aria-controls="DataTables_Table_0"
@@ -353,40 +232,63 @@ function ProductAdmin() {
                                             </label>
                                         </div>
                                     </div>
-                                    <div className="d-flex justify-content-start justify-content-md-end align-items-baseline">
+                                    <div className="d-flex col-8 row justify-content-start justify-content-md-end align-items-baseline">
                                         <div className="dt-action-buttons d-flex align-items-start align-items-md-center justify-content-sm-center gap-4 pt-0">
-                                            <div className="dataTables_length my-0" id="DataTables_Table_0_length">
-                                                <label>
-                                                    <select
-                                                        name="DataTables_Table_0_length"
-                                                        aria-controls="DataTables_Table_0"
-                                                        className="form-select form-select-sm"
-                                                    >
-                                                        <option value={7}>7</option>
-                                                        <option value={10}>10</option>
-                                                        <option value={20}>20</option>
-                                                        <option value={50}>50</option>
-                                                        <option value={70}>70</option>
-                                                        <option value={100}>100</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-                                            <div className="dt-buttons btn-group flex-wrap d-flex">
-                                                <div className="btn-group">
-                                                    <button
-                                                        className="btn btn-secondary buttons-collection dropdown-toggle btn-outline-secondary me-4 waves-effect waves-light"
-                                                        tabIndex={0}
-                                                        aria-controls="DataTables_Table_0"
-                                                        type="button"
-                                                        aria-haspopup="dialog"
-                                                        aria-expanded="false"
-                                                    >
-                                                        <span>
-                                                            <i className="ri-download-line ri-16px me-2" />
-                                                            <span className="d-none d-sm-inline-block">Export </span>
-                                                        </span>
-                                                    </button>
+                                            <div className="col-md-6">
+                                                <div className="slider-track">
+                                                    <div className="d-flex justify-content-between ">
+                                                        <h5 style={{ color: 'black' }}>{minPrice}</h5>
+                                                        <h5 style={{ color: 'black' }}>{maxPrice}</h5>
+                                                    </div>
+                                                    <input
+                                                        type="range"
+                                                        name="minPrice"
+                                                        min="0"
+                                                        max={12000} // max của minPrice là maxPrice - 1
+                                                        value={minPrice}
+                                                        onChange={handlePriceRangeChange}
+                                                        style={{
+                                                            width: '100%',
+                                                            background: 'rgb(60, 188, 28)',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="range"
+                                                        name="maxPrice"
+                                                        min={0} // min của maxPrice là minPrice + 1
+                                                        max={12000}
+                                                        value={maxPrice}
+                                                        onChange={handlePriceRangeChange}
+                                                        style={{
+                                                            width: '100%',
+                                                            background: 'rgb(60, 188, 28)',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    />
+                                                    <div className="d-flex justify-content-between mb-2">
+                                                        <span style={{ color: 'rgb(60, 188, 28)' }}>min</span>
+                                                        <span style={{ color: 'rgb(60, 188, 28)' }}>max</span>
+                                                    </div>
                                                 </div>
+                                            </div>
+                                            <div className="col-md-2">
+                                                <div class="form-check form-switch">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        id="flexSwitchCheckChecked"
+                                                        name="isActive"
+                                                        checked={filters.isActive || false}
+                                                        onChange={handlePriceRangeChange}
+                                                    />
+                                                    <label class="form-check-label" for="flexSwitchCheckChecked">
+                                                        Active
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="dt-buttons btn-group flex-wrap d-flex">
                                                 <button
                                                     className="btn btn-secondary btn-primary waves-effect waves-light"
                                                     tabIndex={0}
@@ -410,7 +312,6 @@ function ProductAdmin() {
                                 >
                                     <thead>
                                         <tr>
-                                           
                                             <th
                                                 className="sorting sorting_asc"
                                                 tabIndex={0}
@@ -491,7 +392,6 @@ function ProductAdmin() {
                                     <tbody>
                                         {product.map((res, key) => (
                                             <tr key={key} className="odd">
-                                                
                                                 <td className="sorting_1">
                                                     <div className="d-flex justify-content-start align-items-center product-name">
                                                         <div className="avatar-wrapper me-4">
@@ -562,7 +462,6 @@ function ProductAdmin() {
                                                         >
                                                             active
                                                         </button>
-                                                      
                                                     </div>
                                                 </td>
                                             </tr>
@@ -570,16 +469,7 @@ function ProductAdmin() {
                                     </tbody>
                                 </table>
                                 <div className="row mx-1">
-                                    <div className="col-sm-12 col-md-6">
-                                        <div
-                                            className="dataTables_info"
-                                            id="DataTables_Table_0_info"
-                                            role="status"
-                                            aria-live="polite"
-                                        >
-                                            Displaying 1 to 7 of 100 entries
-                                        </div>
-                                    </div>
+                                    <div className="col-sm-12 col-md-6"></div>
                                     <div className="col-sm-12 col-md-6">
                                         <div
                                             className="dataTables_paginate paging_simple_numbers"

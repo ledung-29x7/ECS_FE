@@ -15,7 +15,6 @@ function ProductAdminWithClient() {
     const [readerImg, setReaderImg] = useState([]);
     const [service, setService] = useState([]);
     const [category, setCategory] = useState([]);
-    const [productStatus, setProductStatus] = useState([]);
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [addImage, setAddImage] = useState({
         productImageId: 0,
@@ -39,7 +38,7 @@ function ProductAdminWithClient() {
 
     useEffect(() => {
         FetchApi();
-        FetApiProductStatus();
+     
     }, []);
 
     const FetchApi = async () => {
@@ -60,18 +59,7 @@ function ProductAdminWithClient() {
            toast.error(error)
         }
     };
-    const FetApiProductStatus = async () => {
-        try {
-            await apis.GetProductStatus().then((res) => {
-                if (res.status === 200) {
-                    // toast.success("GetProductStatus success")
-                    setProductStatus(res.data);
-                }
-            });
-        } catch (error) {
-           toast.error(error)
-        }
-    };
+
     // Fetch danh mục sản phẩm
     useEffect(() => {
         const fetchCategories = async () => {
@@ -138,7 +126,19 @@ function ProductAdminWithClient() {
         }
     };
 
-    const handleAddService = () => {};
+        const handleActive = async (productId) => {
+            try {
+                await apis.ActiveProduct(productId).then((res) => {
+                    if (res.status === 200) {
+                        toast.success('Active success');
+                        FetchApi();
+                    }
+                });
+            } catch (error) {
+                toast.error('active fail');
+                console.log(error);
+            }
+        };
 
     const handleShowEdit = (pram) => {
         const FetchData = async () => {
@@ -181,7 +181,7 @@ function ProductAdminWithClient() {
                         toast.success("UpdateProduct success")
                         setIsShowEdit(false);
                         FetchApi();
-                        FetApiProductStatus();
+                        
                     }
                 });
             } catch (error) {
@@ -387,79 +387,7 @@ function ProductAdminWithClient() {
                 <div className="container-xxl flex-grow-1 container-p-y">
                     {/* Product List Widget */}
                     <div className="card mb-6">
-                        <div className="card-widget-separator-wrapper">
-                            <div className="card-body card-widget-separator">
-                                <div className="row gy-4 gy-sm-1">
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
-                                            <div>
-                                                <p className="mb-1">In-store Sales</p>
-                                                <h4 className="mb-1">$5,345.43</h4>
-                                                <p className="mb-0">
-                                                    <span className="me-2">5k orders</span>
-                                                    <span className="badge rounded-pill bg-label-success">+5.7%</span>
-                                                </p>
-                                            </div>
-                                            <div className="avatar me-sm-6">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-home-6-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <hr className="d-none d-sm-block d-lg-none me-6" />
-                                    </div>
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-                                            <div>
-                                                <p className="mb-1">Website Sales</p>
-                                                <h4 className="mb-1">$674,347.12</h4>
-                                                <p className="mb-0">
-                                                    <span className="me-2">21k orders</span>
-                                                    <span className="badge rounded-pill bg-label-success">+12.4%</span>
-                                                </p>
-                                            </div>
-                                            <div className="avatar me-lg-6">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-computer-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <hr className="d-none d-sm-block d-lg-none" />
-                                    </div>
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
-                                            <div>
-                                                <p className="mb-1">Discount</p>
-                                                <h4 className="mb-1">$14,235.12</h4>
-                                                <p className="mb-0">6k orders</p>
-                                            </div>
-                                            <div className="avatar me-sm-6">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-gift-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-sm-6 col-lg-3">
-                                        <div className="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <p className="mb-1">Affiliate</p>
-                                                <h4 className="mb-1">$8,345.23</h4>
-                                                <p className="mb-0">
-                                                    <span className="me-2">150 orders</span>
-                                                    <span className="badge rounded-pill bg-label-danger">-3.5%</span>
-                                                </p>
-                                            </div>
-                                            <div className="avatar">
-                                                <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                    <i className="ri-money-dollar-circle-line ri-24px" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                         <div className="card-datatable table-responsive">
                             <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                                 <div className="card-header d-flex border-top rounded-0 flex-wrap py-0 pb-5 pb-md-0">
@@ -654,19 +582,16 @@ function ProductAdminWithClient() {
                                                         className="badge rounded-pill bg-label-danger"
                                                         text-capitalized=""
                                                     >
-                                                        {
-                                                            productStatus.find((r) => r.statusId === res?.status)
-                                                                ?.statusName
-                                                        }
+                                                        {res?.statusName}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <div className="d-inline-block text-nowrap">
                                                         <button
-                                                            onClick={() => handleShowEdit(res?.productId)}
-                                                            className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1"
+                                                            className="btn btn-sm btn-success btn-text-white waves-effect rounded-pill text-body me-1"
+                                                            onClick={() => handleActive(res?.productId)}
                                                         >
-                                                            <i className="ri-edit-box-line ri-22px" />
+                                                            active
                                                         </button>
                                                         <button
                                                             className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body dropdown-toggle hide-arrow"

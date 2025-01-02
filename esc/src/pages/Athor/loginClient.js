@@ -18,29 +18,6 @@ function LoginClient(){
    }
    
 
-   const handleSubmit =(e) =>{
-        e.preventDefault();
-        const Login = async() =>{
-            try {
-                await apis.loginClient(formData)
-            .then(res =>{
-                if(res.status === 200){
-                    toast.success("loginClient success")
-                    console.log(res)
-                    window.localStorage.setItem('idClient',res.data.userId);
-                    window.localStorage.setItem('userName',res.data.userName);
-                    window.localStorage.setItem("token",res.data.token)
-                    dispatch(actions.checkLogin(true))
-                    navigate("/product")
-                }
-            })
-            } catch (error) {
-                toast.error("loginClient error")
-            }
-        }
-        Login()
-   }    
-   console.log(checklogin)
     return (
         <>
             <div className="authentication-wrapper authentication-cover">
@@ -81,7 +58,7 @@ function LoginClient(){
                             
                             <form
                                 id="formAuthentication"
-                                onSubmit={handleSubmit}
+                                
                                 className="mb-5"
                                 action="https://demos.themeselection.com/materio-aspnet-core-mvc-admin-template/html/vertical-menu-template/index.html"
                                 method="GET"

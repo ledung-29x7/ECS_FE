@@ -136,6 +136,7 @@ function Product() {
                     if (res.status === 200) {
                         // toast.success("GetAllProductByClient success")
                         setProduct(res.data.products);
+                        setTotalPage(res.data.totalPages);
                     }
                 })
                 .catch((error) => {
@@ -353,7 +354,7 @@ function Product() {
                                                 id="ecommerce-product-barcode"
                                                 placeholder="0123-4567"
                                                 name="initialQuantity"
-                                                value={valueEdit.initialQuantity}
+                                                value={valueEdit?.initialQuantity}
                                                 onChange={handleChangeEdit}
                                                 aria-label="Product barcode"
                                             />
@@ -424,7 +425,7 @@ function Product() {
                                     onChange={handleFileChange}
                                     accept=".jpg,.jpeg,.png,.gif"
                                 />
-                                {valueEdit.images.map((img, key) => (
+                                {valueEdit?.images.map((img, key) => (
                                     <div
                                         key={key}
                                         className="dz-preview dz-processing dz-image-preview dz-success dz-complete"
@@ -698,9 +699,11 @@ function Product() {
                                             <td>{res?.totalRevenue}</td>
                                             <td>
                                                 <div className="d-inline-block text-nowrap">
-                                                    <button onClick={()=>handleShowEdit(res?.productId)} className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
+                                                    {/* <button 
+                                                    // onClick={()=>handleShowEdit(res?.productId)} 
+                                                    className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body me-1">
                                                         <i className="ri-edit-box-line ri-22px" />
-                                                    </button>
+                                                    </button> */}
                                                     <button
                                                         className="btn btn-sm btn-icon btn-text-secondary waves-effect rounded-pill text-body dropdown-toggle hide-arrow"
                                                         data-bs-toggle="dropdown"
@@ -719,7 +722,73 @@ function Product() {
                                     ))}
                                 </tbody>
                             </table>
-                            
+                            <div className="row mx-1">
+                                    <div className="col-sm-12 col-md-6">
+                                        <div
+                                            className="dataTables_info"
+                                            id="DataTables_Table_0_info"
+                                            role="status"
+                                            aria-live="polite"
+                                        >
+                                            Displaying 1 to 7 of 100 entries
+                                        </div>
+                                    </div>
+                                    <div className="col-sm-12 col-md-6">
+                                        <div
+                                            className="dataTables_paginate paging_simple_numbers"
+                                            id="DataTables_Table_0_paginate"
+                                        >
+                                            <ul className="pagination">
+                                                <li
+                                                    className={`paginate_button page-item previous ${
+                                                        currentPage === 1 ? 'disabled' : ''
+                                                    }`}
+                                                    id="DataTables_Table_0_previous"
+                                                >
+                                                    <a
+                                                        aria-controls="DataTables_Table_0"
+                                                        aria-disabled="true"
+                                                        role="link"
+                                                        data-dt-idx="previous"
+                                                        tabIndex={-1}
+                                                        className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                        }}
+                                                    >
+                                                        <i className="ri-arrow-left-s-line" />
+                                                    </a>
+                                                </li>
+
+                                                {renderPageNumbers()}
+
+                                                <li
+                                                    className={`paginate_button page-item next ${
+                                                        currentPage === totalPage ? 'disabled' : ''
+                                                    }`}
+                                                    id="DataTables_Table_0_next"
+                                                >
+                                                    <a
+                                                        href="#"
+                                                        aria-controls="DataTables_Table_0"
+                                                        role="link"
+                                                        data-dt-idx="next"
+                                                        tabIndex={0}
+                                                        className="page-link"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (currentPage < totalPage)
+                                                                handlePageClick(currentPage + 1);
+                                                        }}
+                                                    >
+                                                        <i className="ri-arrow-right-s-line" />
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -727,7 +796,7 @@ function Product() {
             )}
             {/* / Content */}
      
-            <div className="content-backdrop fade" />
+
         </div>
     );
 }

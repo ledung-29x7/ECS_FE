@@ -94,3 +94,28 @@ export const GetOrderDetailById = (id) => new Promise(async(resolve,reject)=>{
         reject(error)
     }
 })
+
+export const UpdateOrderStatus = (idStatus,idOrder) =>new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/Order/orderstatus/${idOrder}`,
+            method:"Put",
+            params: idStatus
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const GetOrderStatus = () => new Promise(async(resolve,reject)=>{
+    try {
+        const response=await axios({
+            url:`/OrderStatus`,
+            method:"Get"
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})

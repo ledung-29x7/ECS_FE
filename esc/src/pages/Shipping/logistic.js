@@ -8,11 +8,20 @@ import { useNavigate } from 'react-router-dom';
 function LogisticOrder() {
     const employeeID = window.localStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
+    const [oderStatus,setOrderStatus] = useState([])
     const [product,setProduct] = useState([])
     const [orderDetail,setOrderDetail] = useState();
     const navigate = useNavigate()
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+    };
     const renderPageNumbers = () => {
         const pages = [];
         if(totalPage > 0){
@@ -130,8 +139,48 @@ function LogisticOrder() {
         FetchDetailOrder()
     }
 
+    const handleChangeStatusOrder = (e,orderId) =>{
+        const {value} = e.target;
+        console.log(value)
+        const payload = {
+            statusid:value
+        };
+        const UpdateOrder = async() =>{
+            try {
+                await apis.UpdateOrderStatus(payload,orderId)
+                .then(res => {
+                    if(res.status === 200)
+                    {
+                        FetchApi();
+                        toast.success("Order updated successfully.")
+                    }
+                })
+            } catch (error) {
+                toast.error(error.message)
+            }
+        }
+        UpdateOrder();
+    }
+
+    const FetchOrderStatus = async() =>{
+
+        try {
+            await apis.GetOrderStatus()
+            .then(res => {
+                if(res.status === 200)
+                {
+                    setOrderStatus(res.data)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+            toast.error("Get not order status")
+        }
+    }
+
     useEffect(() => {
         FetchApi();
+        FetchOrderStatus()
     }, []);
 
     return (
@@ -139,70 +188,7 @@ function LogisticOrder() {
         <div className="content-wrapper">
             {/* Content */}
             <div className="container-xxl flex-grow-1 container-p-y">
-                {/* Order List Widget */}
-                <div className="card mb-6">
-                    <div className="card-widget-separator-wrapper">
-                        <div className="card-body card-widget-separator">
-                            <div className="row gy-4 gy-sm-1">
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
-                                        <div>
-                                            <h4 className="mb-0">56</h4>
-                                            <p className="mb-0">Pending Payment</p>
-                                        </div>
-                                        <div className="avatar me-sm-6">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-calendar-2-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <hr className="d-none d-sm-block d-lg-none me-6" />
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
-                                        <div>
-                                            <h4 className="mb-0">12,689</h4>
-                                            <p className="mb-0">Completed</p>
-                                        </div>
-                                        <div className="avatar me-lg-6">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-check-double-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <hr className="d-none d-sm-block d-lg-none" />
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
-                                        <div>
-                                            <h4 className="mb-0">124</h4>
-                                            <p className="mb-0">Refunded</p>
-                                        </div>
-                                        <div className="avatar me-sm-6">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-wallet-3-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-sm-6 col-lg-3">
-                                    <div className="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h4 className="mb-0">32</h4>
-                                            <p className="mb-0">Failed</p>
-                                        </div>
-                                        <div className="avatar">
-                                            <span className="avatar-initial rounded bg-label-secondary text-heading">
-                                                <i className="ri-error-warning-line ri-24px" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* Order List Table */}
+                
                 <div className="card">
                     <div className="card-datatable table-responsive">
                         <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
@@ -398,17 +384,31 @@ function LogisticOrder() {
                                             <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Address}>
                                                 <span className="text-nowrap">{res?.recipient_Address}</span>
                                             </td>
-                                            <td>
-                                                <span
-                                                    className="badge px-2 rounded-pill bg-label-success"
-                                                    text-capitalized=""
-                                                    data-toggle="tooltip" data-placement="top" title={res?.orderStatus}
-                                                >
-                                                    {res?.orderStatus}
-                                                </span>
+                                            <td className=''>
+                                               
+                                                    <select
+                                                        id="alignment-country"
+                                                        typeof="number"
+                                                        className=" form-control  py-1 px-1"
+                                                        name="orderStatus"
+                                                        value={res?.orderStatus}
+                                                        onChange={(e)=>handleChangeStatusOrder(e,res.orderId)}
+                                                    >
+                                                        {oderStatus?.map((res) => (
+                                                            <option key={res?.statusId} value={Number(res?.statusId)}>
+                                                                {res?.statusName}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                <div className="badge px-2 position-relative rounded-pill ">
+                                                    {/* <button style={{position: "absolute", right: "-20px", top: "2px"}} className='btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record'>
+                                                        <i class="ri-pencil-fill editSO"/>
+                                                    </button> */}
+                                                </div>
+
                                             </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.orderDate}>
-                                                <span className="text-nowrap" >{res?.orderDate}</span>
+                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={formatDate(res?.orderDate)}>
+                                                <span className="text-nowrap" >{formatDate(res?.orderDate)}</span>
                                             </td>
                                             <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.totalAmount}>
                                                 <span className="text-nowrap">{res?.totalAmount}$</span>
@@ -432,9 +432,7 @@ function LogisticOrder() {
                                                         >
                                                             View
                                                         </a>
-                                                        <a href="javascript:0;" className="dropdown-item delete-record">
-                                                            Delete
-                                                        </a>
+                                                      
                                                     </div>
                                                 </div>
                                             </td>
@@ -450,7 +448,7 @@ function LogisticOrder() {
                                         role="status"
                                         aria-live="polite"
                                     >
-                                        Displaying 1 to 10 of 100 entries
+                                       
                                     </div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">

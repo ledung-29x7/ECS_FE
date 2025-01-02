@@ -34,6 +34,7 @@ import ProductAdminWithClient from '~/pages/Product/productAdminWithClient';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 import LogisticOrder from '~/pages/Shipping/logistic';
 import LogisticLayout from '~/layouts/DefaultLayout/LogisticLayout';
+import InformationEmployee from '~/pages/Employee/informationEmployee';
 
 // Public routes
 export const publicRoutes = [
@@ -211,6 +212,15 @@ export const publicRoutes = [
         icon:"ri-truck-line",
         layout: LogisticLayout
     }, 
+    {
+        path:config.routes.infomationEmployee,
+        component: InformationEmployee,
+        role: "employee",
+        name: "Infomation",
+        icon: "ri-file-info-line",
+        profession: "manageEmployee",
+        layout: EmployeeLayout
+    }
 ];
 
 // Private routes

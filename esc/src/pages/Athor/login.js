@@ -20,7 +20,11 @@ function Login() {
    const handleChange =(e) =>{
     setFormData({...formData,[e.target.name]: e.target.value})
    }
+   const [showPassword, setShowPassword] = useState(false);
 
+   const togglePasswordVisibility = () => {
+       setShowPassword((prevState) => !prevState);
+   };
    useEffect(() => {
            checkLoggedIn();
          }, [checklogin]);
@@ -61,16 +65,16 @@ function Login() {
             .then(res =>{
                 if(res.status === 200){
                     toast.success("login success")
-                    console.log(res)
+                   
                     window.localStorage.setItem("token",res.data.token);
-                    window.localStorage.getItem("name",res.data?.userName)
+                    window.localStorage.setItem("name",res.data.userName)
                     window.localStorage.setItem('employeeID',res.data.employeeID);
                     window.localStorage.setItem('role',res.data.role)
                     dispatch(actions.checkLogin(true))
                     switch (res.data.role) {
                         
                         case "Admin":
-                            console.log(res.data.role)
+                            
                             return(navigate("/admin"))
                         case "Service":
                             return(navigate("/worklist"))
@@ -79,6 +83,11 @@ function Login() {
                         default:
                             return(navigate("/client"))
                     }
+                }
+            })
+            .catch(res => {
+                if(res.status === 401){
+                    toast.error("account or password is incorrect")
                 }
             })
             } catch (error) {
@@ -96,12 +105,17 @@ function Login() {
         .then(res =>{
             if(res.status === 200){
                 toast.success("loginClient success")
-                console.log(res)
+                
                 window.localStorage.setItem('idClient',res.data.userId);
                 window.localStorage.setItem('userName',res.data.userName);
                 window.localStorage.setItem("token",res.data.token)
                 dispatch(actions.checkLogin(true))
                 navigate("/product")
+            }
+        })
+        .catch(res => {
+            if(res.status === 401){
+                toast.error("account or password is incorrect")
             }
         })
         } catch (error) {
@@ -264,7 +278,7 @@ function Login() {
                                                             <div className="input-group input-group-merge">
                                                                 <div className="form-floating form-floating-outline">
                                                                     <input
-                                                                        type="password"
+                                                                        type={showPassword ? "text" : "password"}
                                                                         id="password"
                                                                         className="form-control"
                                                                         name="password"
@@ -274,8 +288,10 @@ function Login() {
                                                                     />
                                                                     <label htmlFor="password">Password</label>
                                                                 </div>
-                                                                <span className="input-group-text cursor-pointer">
-                                                                    <i className="ri-eye-off-line ri-20px" />
+                                                                <span 
+                                                                 onClick={togglePasswordVisibility}
+                                                                className="input-group-text cursor-pointer">
+                                                                    <i   className={`ri-${showPassword ? "eye-line" : "eye-off-line"} ri-20px`} />
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -417,7 +433,7 @@ function Login() {
                                                                 <div className="input-group input-group-merge">
                                                                     <div className="form-floating form-floating-outline">
                                                                         <input
-                                                                            type="password"
+                                                                             type={showPassword ? "text" : "password"}
                                                                             id="password"
                                                                             className="form-control"
                                                                             name="password"
@@ -427,8 +443,10 @@ function Login() {
                                                                         />
                                                                         <label htmlFor="password">Password</label>
                                                                     </div>
-                                                                    <span className="input-group-text cursor-pointer">
-                                                                        <i className="ri-eye-off-line ri-20px" />
+                                                                    <span 
+                                                                        onClick={togglePasswordVisibility}
+                                                                        className="input-group-text cursor-pointer">
+                                                                        <i className={`ri-${showPassword ? "eye-line" : "eye-off-line"} ri-20px`}/>
                                                                     </span>
                                                                 </div>
                                                             </div>

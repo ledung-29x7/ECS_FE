@@ -10,3 +10,8 @@
         text-overflow: ellipsis; 
         vertical-align: middle; 
     }
+    .badge:hover, .badge:target {
+        .editSO {
+            display: block !important;
+        }
+    }
