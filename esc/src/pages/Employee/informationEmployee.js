@@ -52,7 +52,6 @@ function InformationEmployee() {
                 <div className="d-flex flex-column flex-sm-row align-items-center justify-content-sm-between mb-6 text-center text-sm-start gap-2">
                     <div className="mb-2 mb-sm-0">
                         <h4 className="mb-1">Customer ID #634759</h4>
-                  
                     </div>
                    
                 </div>
