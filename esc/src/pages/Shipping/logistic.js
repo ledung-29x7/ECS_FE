@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 function LogisticOrder() {
     const employeeID = window.localStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
+    const [invoice, setInvoice] = useState({});
     const [oderStatus,setOrderStatus] = useState([])
     const [product,setProduct] = useState([])
     const [orderDetail,setOrderDetail] = useState();
@@ -129,19 +130,33 @@ function LogisticOrder() {
                 .then(res =>{
                     if(res.status === 200){
                         setOrderDetail(res.data)
-                        FetchProduct();
+
                     }
                 })
             } catch (error) {
                 toast.error("Get not Order detail")
             }
         }
+        const FetchOrder = async() =>{
+            try {
+                await apis.GetOrderById(id)
+                .then(res =>{
+                    if(res.status === 200){
+                        setInvoice(res.data)
+
+                    }
+                })
+            } catch (error) {
+                toast.error("Get not Order")
+            }
+        }
+        FetchOrder()
         FetchDetailOrder()
     }
 
     const handleChangeStatusOrder = (e,orderId) =>{
         const {value} = e.target;
-        console.log(value)
+       
         const payload = {
             statusid:value
         };
@@ -180,7 +195,8 @@ function LogisticOrder() {
 
     useEffect(() => {
         FetchApi();
-        FetchOrderStatus()
+        FetchOrderStatus();
+        FetchProduct();
     }, []);
 
     return (
@@ -521,6 +537,52 @@ function LogisticOrder() {
                             <div className="text-center mb-6">
                                 <h4 className="mb-2">Order Detail</h4>
                             </div>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">OderId</dt>
+                                <dd className="col-6 text-start">{invoice?.orderId}</dd>
+                                
+                            </dl>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Oderer</dt>
+                                <dd className="col-6 text-start">{invoice?.orderer}</dd>
+                                
+                            </dl>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Total Amount</dt>
+                                <dd className="col-6 text-start">{invoice?.totalAmount}</dd>
+                                
+                            </dl>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Recipient Name</dt>
+                                <dd className="col-6 text-start">{invoice?.recipient_Name}</dd>
+                                
+                            </dl>
+                           
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Recipient Phone</dt>
+                                <dd className="col-6 text-start">{invoice?.recipient_Phone}</dd>
+                                
+                            </dl>
+                           
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Recipient Address</dt>
+                                <dd className="col-6 text-start">{invoice?.recipient_Address}</dd>
+                                
+                            </dl>
+                         
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Order Status</dt>
+                                <dd className="col-6 text-start">{oderStatus?.find(o => o.statusId === invoice?.orderStatus)?.statusName}</dd>
+                                
+                            </dl>
+                          
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Order Date</dt>
+                                <dd className="col-6 text-start">{formatDate(invoice?.orderDate)}</dd>
+                                
+                            </dl>
+                            <hr className="mx-n5 my-5" />
+                            <h5 className='fs-5'>Products</h5>
                             <table
                                 className="datatables-order table dataTable no-footer dtr-column"
                                 id="DataTables_Table_0"
