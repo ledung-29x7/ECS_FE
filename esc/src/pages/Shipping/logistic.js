@@ -9,10 +9,10 @@ function LogisticOrder() {
     const employeeID = window.localStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
     const [invoice, setInvoice] = useState({});
-    const [oderStatus,setOrderStatus] = useState([])
-    const [product,setProduct] = useState([])
-    const [orderDetail,setOrderDetail] = useState();
-    const navigate = useNavigate()
+    const [oderStatus, setOrderStatus] = useState([]);
+    const [product, setProduct] = useState([]);
+    const [orderDetail, setOrderDetail] = useState();
+    const navigate = useNavigate();
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const formatDate = (dateString) => {
@@ -25,7 +25,7 @@ function LogisticOrder() {
     };
     const renderPageNumbers = () => {
         const pages = [];
-        if(totalPage > 0){
+        if (totalPage > 0) {
             for (let i = 1; i <= totalPage; i++) {
                 pages.push(
                     <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
@@ -37,9 +37,7 @@ function LogisticOrder() {
                             data-dt-idx={0}
                             tabIndex={0}
                             className="page-link"
-                            onClick={()=>
-                                handlePageClick(i)
-                            }
+                            onClick={() => handlePageClick(i)}
                         >
                             {i}
                         </a>
@@ -51,57 +49,54 @@ function LogisticOrder() {
     };
     const [filters, setFilters] = useState({
         pageNumber: 1,
-       
     });
     const handlePageClick = (newPage) => {
         setFilters({
-            pageNumber: newPage ,
+            pageNumber: newPage,
         });
     };
-        // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
-     const [debouncedFilters, setDebouncedFilters] = useState(filters);
-    
-        // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebouncedFilters(filters);
-            }, 500); // 1 giây
-    
-            return () => {
-                clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
-            };
-        }, [filters]);
-    
-        // Gọi API khi `debouncedFilters` thay đổi
-        useEffect(() => {
-            const fetchData = async () => {
-                try {
-                    const response = await apis.GetAllOrder(debouncedFilters);
-                    console.log(response);
-                    if (response.status === 200) {
-                        setCurrentPage(debouncedFilters.pageNumber);
-                        setOrder(response.data.orders);
-                        setTotalPage(response.data.totalPages);
-                    }
-                } catch (error) {
-                    console.error('Error fetching data:', error);
+    // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 500); // 1 giây
+
+        return () => {
+            clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+        };
+    }, [filters]);
+
+    // Gọi API khi `debouncedFilters` thay đổi
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await apis.GetAllOrder(debouncedFilters);
+                console.log(response);
+                if (response.status === 200) {
+                    setCurrentPage(debouncedFilters.pageNumber);
+                    setOrder(response.data.orders);
+                    setTotalPage(response.data.totalPages);
                 }
-            };
-    
-            fetchData();
-        }, [debouncedFilters]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [debouncedFilters]);
 
     const FetchApi = async () => {
         try {
             await apis.GetAllOrder().then((res) => {
                 if (res.status === 200) {
                     setOrder(res.data.orders);
-                    
                 }
             });
         } catch (error) {
             console.log(error);
-            
         }
     };
     const FetchProduct = async () => {
@@ -123,75 +118,65 @@ function LogisticOrder() {
     };
 
     const handleViewOrderDetail = (id) => {
-
-        const FetchDetailOrder = async() =>{
+        const FetchDetailOrder = async () => {
             try {
-                await apis.GetOrderDetailById(id)
-                .then(res =>{
-                    if(res.status === 200){
-                        setOrderDetail(res.data)
-
+                await apis.GetOrderDetailById(id).then((res) => {
+                    if (res.status === 200) {
+                        setOrderDetail(res.data);
                     }
-                })
+                });
             } catch (error) {
-                toast.error("Get not Order detail")
+                toast.error('Get not Order detail');
             }
-        }
-        const FetchOrder = async() =>{
-            try {
-                await apis.GetOrderById(id)
-                .then(res =>{
-                    if(res.status === 200){
-                        setInvoice(res.data)
-
-                    }
-                })
-            } catch (error) {
-                toast.error("Get not Order")
-            }
-        }
-        FetchOrder()
-        FetchDetailOrder()
-    }
-
-    const handleChangeStatusOrder = (e,orderId) =>{
-        const {value} = e.target;
-       
-        const payload = {
-            statusid:value
         };
-        const UpdateOrder = async() =>{
+        const FetchOrder = async () => {
             try {
-                await apis.UpdateOrderStatus(payload,orderId)
-                .then(res => {
-                    if(res.status === 200)
-                    {
-                        FetchApi();
-                        toast.success("Order updated successfully.")
+                await apis.GetOrderById(id).then((res) => {
+                    if (res.status === 200) {
+                        setInvoice(res.data);
                     }
-                })
+                });
             } catch (error) {
-                toast.error(error.message)
+                toast.error('Get not Order');
             }
-        }
+        };
+        FetchOrder();
+        FetchDetailOrder();
+    };
+
+    const handleChangeStatusOrder = (e, orderId) => {
+        const { value } = e.target;
+
+        const payload = {
+            statusid: value,
+        };
+        const UpdateOrder = async () => {
+            try {
+                await apis.UpdateOrderStatus(payload, orderId).then((res) => {
+                    if (res.status === 200) {
+                        FetchApi();
+                        toast.success('Order updated successfully.');
+                    }
+                });
+            } catch (error) {
+                toast.error(error.message);
+            }
+        };
         UpdateOrder();
-    }
+    };
 
-    const FetchOrderStatus = async() =>{
-
+    const FetchOrderStatus = async () => {
         try {
-            await apis.GetOrderStatus()
-            .then(res => {
-                if(res.status === 200)
-                {
-                    setOrderStatus(res.data)
+            await apis.GetOrderStatus().then((res) => {
+                if (res.status === 200) {
+                    setOrderStatus(res.data);
                 }
-            })
+            });
         } catch (error) {
-            console.log(error)
-            toast.error("Get not order status")
+            console.log(error);
+            toast.error('Get not order status');
         }
-    }
+    };
 
     useEffect(() => {
         FetchApi();
@@ -200,11 +185,9 @@ function LogisticOrder() {
     }, []);
 
     return (
-        
         <div className="content-wrapper">
             {/* Content */}
             <div className="container-xxl flex-grow-1 container-p-y">
-                
                 <div className="card">
                     <div className="card-datatable table-responsive">
                         <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
@@ -222,21 +205,6 @@ function LogisticOrder() {
                                     </div>
                                 </div>
                                 <div className="d-flex align-items-md-baseline justify-content-md-end gap-4">
-                                    <div className="dataTables_length my-0" id="DataTables_Table_0_length">
-                                        <label>
-                                            <select
-                                                name="DataTables_Table_0_length"
-                                                aria-controls="DataTables_Table_0"
-                                                className="form-select form-select-sm"
-                                            >
-                                                <option value={10}>10</option>
-                                                <option value={40}>40</option>
-                                                <option value={60}>60</option>
-                                                <option value={80}>80</option>
-                                                <option value={100}>100</option>
-                                            </select>
-                                        </label>
-                                    </div>
                                     <div className="dt-action-buttons pt-0">
                                         <div className="dt-buttons btn-group flex-wrap">
                                             <div className="btn-group">
@@ -255,15 +223,6 @@ function LogisticOrder() {
                                                 </button>
                                             </div>{' '}
                                         </div>
-                                    </div>
-                                    <div className="add-new">
-                                        <button
-                                            className="btn btn-primary waves-effect waves-light"
-                                            onClick={()=> navigate('/addOrder')}
-                                        >
-                                            <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
-                                            <span className="d-none d-sm-inline-block"> Add Order </span>
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -289,7 +248,9 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 40 }}
-                                            data-toggle="tooltip" data-placement="top" title="order"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="order"
                                             aria-label="order: activate to sort column ascending"
                                         >
                                             order
@@ -301,7 +262,9 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 20 }}
-                                            data-toggle="tooltip" data-placement="top" title="Recipient Name"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Recipient Name"
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -314,7 +277,9 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 30 }}
-                                            data-toggle="tooltip" data-placement="top" title=" Recipient Phone"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title=" Recipient Phone"
                                             aria-label="payment: activate to sort column ascending"
                                         >
                                             recipient Phone
@@ -326,7 +291,9 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 40 }}
-                                            data-toggle="tooltip" data-placement="top" title=" recipient Address"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title=" recipient Address"
                                             aria-label="status: activate to sort column ascending"
                                         >
                                             recipient Address
@@ -339,7 +306,9 @@ function LogisticOrder() {
                                             colSpan={1}
                                             style={{ width: 20 }}
                                             aria-label="method: activate to sort column ascending"
-                                            data-toggle="tooltip" data-placement="top" title="Order Status"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Order Status"
                                         >
                                             order Status
                                         </th>
@@ -351,7 +320,9 @@ function LogisticOrder() {
                                             colSpan={1}
                                             style={{ width: 40 }}
                                             aria-label="method: activate to sort column ascending"
-                                            data-toggle="tooltip" data-placement="top" title="Order Date"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Order Date"
                                         >
                                             orderDate
                                         </th>
@@ -363,7 +334,9 @@ function LogisticOrder() {
                                             colSpan={1}
                                             style={{ width: 30 }}
                                             aria-label="method: activate to sort column ascending"
-                                            data-toggle="tooltip" data-placement="top" title="Total Amount"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Total Amount"
                                         >
                                             total Amount
                                         </th>
@@ -390,43 +363,66 @@ function LogisticOrder() {
                                             <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
                                                 <span>{res?.orderer}</span>
                                             </td>
-                                            <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Name}
+                                            >
                                                 <span className="text-nowrap">{res?.recipient_Name}</span>
                                             </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Phone}
+                                            >
                                                 <span className="text-nowrap">{res?.recipient_Phone}</span>
                                             </td>
 
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Address}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Address}
+                                            >
                                                 <span className="text-nowrap">{res?.recipient_Address}</span>
                                             </td>
-                                            <td className=''>
-                                               
-                                                    <select
-                                                        id="alignment-country"
-                                                        typeof="number"
-                                                        className=" form-control  py-1 px-1"
-                                                        name="orderStatus"
-                                                        value={res?.orderStatus}
-                                                        onChange={(e)=>handleChangeStatusOrder(e,res.orderId)}
-                                                    >
-                                                        {oderStatus?.map((res) => (
-                                                            <option key={res?.statusId} value={Number(res?.statusId)}>
-                                                                {res?.statusName}
-                                                            </option>
-                                                        ))}
-                                                    </select>
+                                            <td className="">
+                                                <select
+                                                    id="alignment-country"
+                                                    typeof="number"
+                                                    className=" form-control  py-1 px-1"
+                                                    name="orderStatus"
+                                                    value={res?.orderStatus}
+                                                    onChange={(e) => handleChangeStatusOrder(e, res.orderId)}
+                                                >
+                                                    {oderStatus?.map((res) => (
+                                                        <option key={res?.statusId} value={Number(res?.statusId)}>
+                                                            {res?.statusName}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                                 <div className="badge px-2 position-relative rounded-pill ">
                                                     {/* <button style={{position: "absolute", right: "-20px", top: "2px"}} className='btn btn-sm btn-icon btn-text-secondary rounded-pill waves-effect dropdown-item view-record'>
                                                         <i class="ri-pencil-fill editSO"/>
                                                     </button> */}
                                                 </div>
-
                                             </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={formatDate(res?.orderDate)}>
-                                                <span className="text-nowrap" >{formatDate(res?.orderDate)}</span>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={formatDate(res?.orderDate)}
+                                            >
+                                                <span className="text-nowrap">{formatDate(res?.orderDate)}</span>
                                             </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.totalAmount}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.totalAmount}
+                                            >
                                                 <span className="text-nowrap">{res?.totalAmount}$</span>
                                             </td>
                                             <td className="" style={{}}>
@@ -443,12 +439,10 @@ function LogisticOrder() {
                                                             className="dropdown-item delete-record"
                                                             data-bs-target="#editUser"
                                                             data-bs-toggle="modal"
-                                                            onClick={()=>handleViewOrderDetail(res.orderId)}
-                                                            
+                                                            onClick={() => handleViewOrderDetail(res.orderId)}
                                                         >
                                                             View
                                                         </a>
-                                                      
                                                     </div>
                                                 </div>
                                             </td>
@@ -463,63 +457,59 @@ function LogisticOrder() {
                                         id="DataTables_Table_0_info"
                                         role="status"
                                         aria-live="polite"
-                                    >
-                                       
-                                    </div>
+                                    ></div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
                                     <div
                                         className="dataTables_paginate paging_simple_numbers"
                                         id="DataTables_Table_0_paginate"
                                     >
-                                            <ul className="pagination">
-                                                <li
-                                                    className={`paginate_button page-item previous ${
-                                                        currentPage === 1 ? 'disabled' : ''
-                                                    }`}
-                                                    id="DataTables_Table_0_previous"
+                                        <ul className="pagination">
+                                            <li
+                                                className={`paginate_button page-item previous ${
+                                                    currentPage === 1 ? 'disabled' : ''
+                                                }`}
+                                                id="DataTables_Table_0_previous"
+                                            >
+                                                <a
+                                                    aria-controls="DataTables_Table_0"
+                                                    aria-disabled="true"
+                                                    role="link"
+                                                    data-dt-idx="previous"
+                                                    tabIndex={-1}
+                                                    className="page-link"
+                                                    onClick={() => {
+                                                        if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                    }}
                                                 >
-                                                    <a
-                                                        aria-controls="DataTables_Table_0"
-                                                        aria-disabled="true"
-                                                        role="link"
-                                                        data-dt-idx="previous"
-                                                        tabIndex={-1}
-                                                        className="page-link"
-                                                        onClick={() => {
-                                                            
-                                                            if (currentPage > 1) handlePageClick(currentPage - 1);
-                                                        }}
-                                                    >
-                                                        <i className="ri-arrow-left-s-line" />
-                                                    </a>
-                                                </li>
+                                                    <i className="ri-arrow-left-s-line" />
+                                                </a>
+                                            </li>
 
-                                                {renderPageNumbers()}
+                                            {renderPageNumbers()}
 
-                                                <li
-                                                    className={`paginate_button page-item next ${
-                                                        currentPage === totalPage ? 'disabled' : ''
-                                                    }`}
-                                                    id="DataTables_Table_0_next"
+                                            <li
+                                                className={`paginate_button page-item next ${
+                                                    currentPage === totalPage ? 'disabled' : ''
+                                                }`}
+                                                id="DataTables_Table_0_next"
+                                            >
+                                                <a
+                                                    href="#"
+                                                    aria-controls="DataTables_Table_0"
+                                                    role="link"
+                                                    data-dt-idx="next"
+                                                    tabIndex={0}
+                                                    className="page-link"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage < totalPage) handlePageClick(currentPage + 1);
+                                                    }}
                                                 >
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx="next"
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            if (currentPage < totalPage)
-                                                                handlePageClick(currentPage + 1);
-                                                        }}
-                                                    >
-                                                        <i className="ri-arrow-right-s-line" />
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                                    <i className="ri-arrow-right-s-line" />
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -540,49 +530,43 @@ function LogisticOrder() {
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">OderId</dt>
                                 <dd className="col-6 text-start">{invoice?.orderId}</dd>
-                                
                             </dl>
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Oderer</dt>
                                 <dd className="col-6 text-start">{invoice?.orderer}</dd>
-                                
                             </dl>
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Total Amount</dt>
                                 <dd className="col-6 text-start">{invoice?.totalAmount}</dd>
-                                
                             </dl>
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Recipient Name</dt>
                                 <dd className="col-6 text-start">{invoice?.recipient_Name}</dd>
-                                
                             </dl>
-                           
+
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Recipient Phone</dt>
                                 <dd className="col-6 text-start">{invoice?.recipient_Phone}</dd>
-                                
                             </dl>
-                           
+
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Recipient Address</dt>
                                 <dd className="col-6 text-start">{invoice?.recipient_Address}</dd>
-                                
                             </dl>
-                         
+
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Order Status</dt>
-                                <dd className="col-6 text-start">{oderStatus?.find(o => o.statusId === invoice?.orderStatus)?.statusName}</dd>
-                                
+                                <dd className="col-6 text-start">
+                                    {oderStatus?.find((o) => o.statusId === invoice?.orderStatus)?.statusName}
+                                </dd>
                             </dl>
-                          
+
                             <dl className="row mb-0">
                                 <dt className="col-6 fw-bolder text-heading">Order Date</dt>
                                 <dd className="col-6 text-start">{formatDate(invoice?.orderDate)}</dd>
-                                
                             </dl>
                             <hr className="mx-n5 my-5" />
-                            <h5 className='fs-5'>Products</h5>
+                            <h5 className="fs-5">Products</h5>
                             <table
                                 className="datatables-order table dataTable no-footer dtr-column"
                                 id="DataTables_Table_0"
@@ -591,7 +575,6 @@ function LogisticOrder() {
                             >
                                 <thead>
                                     <tr>
-                                        
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -599,7 +582,9 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 40 }}
-                                            data-toggle="tooltip" data-placement="top" title="order"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="order"
                                             aria-label="order: activate to sort column ascending"
                                         >
                                             Product
@@ -611,7 +596,9 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 20 }}
-                                            data-toggle="tooltip" data-placement="top" title="Recipient Name"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Recipient Name"
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -624,29 +611,37 @@ function LogisticOrder() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 30 }}
-                                            data-toggle="tooltip" data-placement="top" title=" Recipient Phone"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title=" Recipient Phone"
                                             aria-label="payment: activate to sort column ascending"
                                         >
                                             Total Price
                                         </th>
-
-                                       
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {orderDetail?.map((res) => (
                                         <tr className="odd">
-                                           
                                             <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
                                                 <span>{res?.productName}</span>
                                             </td>
-                                            <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Name}
+                                            >
                                                 <span className="text-nowrap">{res?.quantity}</span>
                                             </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Phone}
+                                            >
                                                 <span className="text-nowrap">{res?.totalPrice}</span>
                                             </td>
-
                                         </tr>
                                     ))}
                                 </tbody>
@@ -656,8 +651,7 @@ function LogisticOrder() {
                 </div>
             </div>
             {/* / Content */}
-            
         </div>
     );
 }
-export default  LogisticOrder;
+export default LogisticOrder;

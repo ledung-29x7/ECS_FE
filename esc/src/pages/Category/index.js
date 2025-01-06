@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function Category() {
     const [category, setCategory] = useState([]);
     const [valueAdd, setValueAdd] = useState({
-        categoryName: ''
+        categoryName: '',
     });
     function handleChange(e) {
         setValueAdd({ ...valueAdd, [e.target.name]: e.target.value });
@@ -20,53 +20,52 @@ function Category() {
             try {
                 await apis.AddCategory(valueAdd).then((res) => {
                     if (res.status === 200) {
-                        toast.success("AddCategory success")
+                        toast.success('AddCategory success');
                         window.location.reload();
                     }
                 });
             } catch (error) {
-                toast.error(error)
+                toast.error(error);
             }
         };
         FetchData();
     };
-    const handleSumbitEdit = async (e) =>{
+    const handleSumbitEdit = async (e) => {
         e.preventDefault();
-        const FetchData = async ()=>{
+        const FetchData = async () => {
             try {
-                await apis.PutCategory(valueAdd.categoryId,valueAdd).then((res)=>{
-                    if(res.status === 200){
-                        toast.success("PutCategory success")
-                        FetchApi()
+                await apis.PutCategory(valueAdd.categoryId, valueAdd).then((res) => {
+                    if (res.status === 200) {
+                        toast.success('PutCategory success');
+                        FetchApi();
                         const closeButton = document.querySelector('#editUser .btn-close');
                         if (closeButton) {
                             closeButton.click(); // Kích hoạt sự kiện click trên nút đóng
                         }
                     }
-                })
+                });
             } catch (error) {
-                                toast.error('edit error');
+                toast.error('edit error');
             }
-        }
+        };
         FetchData();
-    }
-     const handleDelete = async (id)=>{
-            try {
-                const res = await apis.DeleteCategory(id);
-                if(res.status === 200){
-                    toast.success("DeleteCategory success")
-                    FetchApi();
-                }
-            } catch (error) {
-                toast.error("delete error")
+    };
+    const handleDelete = async (id) => {
+        try {
+            const res = await apis.DeleteCategory(id);
+            if (res.status === 200) {
+                toast.success('DeleteCategory success');
+                FetchApi();
             }
+        } catch (error) {
+            toast.error('delete error');
         }
-    console.log(valueAdd)
+    };
+    console.log(valueAdd);
     const FetchApi = async () => {
         try {
             await apis.GetAllCategory().then((res) => {
                 if (res.status === 200) {
-                   
                     setCategory(res.data);
                 }
             });
@@ -74,18 +73,17 @@ function Category() {
             toast.error('get error');
         }
     };
-    const GetCategoryById = async (id)=>{
+    const GetCategoryById = async (id) => {
         try {
             const res = await apis.GetCategoryById(id);
-                if(res.status === 200){
-                    toast.success("GetCategoryById success")
-                    setValueAdd(res.data)
-                }
+            if (res.status === 200) {
+                toast.success('GetCategoryById success');
+                setValueAdd(res.data);
+            }
         } catch (error) {
             toast.error('get error');
-            
         }
-    }
+    };
     useEffect(() => {
         FetchApi();
     }, []);
@@ -93,10 +91,8 @@ function Category() {
         <div className="content-wrapper">
             {/* Content */}
             <div className="container-xxl flex-grow-1 container-p-y">
-                
                 {/* Users List Table */}
                 <div className="card">
-                   
                     <div className="card-datatable table-responsive">
                         <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                             <div className="row mx-1">
@@ -157,35 +153,6 @@ function Category() {
                                 <thead>
                                     <tr>
                                         <th
-                                            className="control sorting_disabled dtr-hidden"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 0, display: 'none' }}
-                                            aria-label=""
-                                        />
-                                        <th
-                                            className="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 18 }}
-                                            data-col={1}
-                                            aria-label=""
-                                        >
-                                            <input type="checkbox" className="form-check-input" />
-                                        </th>
-                                        <th
-                                            className="sorting sorting_desc"
-                                            tabIndex={0}
-                                            aria-controls="DataTables_Table_0"
-                                            rowSpan={1}
-                                            colSpan={1}
-                                            style={{ width: 272 }}
-                                            aria-label="User: activate to sort column ascending"
-                                            aria-sort="descending"
-                                        >
-                                            category Id
-                                        </th>
-                                        <th
                                             className="sorting"
                                             tabIndex={0}
                                             aria-controls="DataTables_Table_0"
@@ -210,23 +177,6 @@ function Category() {
                                 <tbody>
                                     {category.map((res) => (
                                         <tr className="odd">
-                                            <td
-                                                className="control dtr-hidden"
-                                                tabIndex={0}
-                                                style={{ display: 'none' }}
-                                            />
-                                            <td className="  dt-checkboxes-cell">
-                                                <input type="checkbox" className="dt-checkboxes form-check-input" />
-                                            </td>
-                                            <td className="sorting_1">
-                                                <div className="d-flex justify-content-start align-items-center user-name">
-                                                    <div className="d-flex flex-column">
-                                                        <a className="text-heading text-truncate">
-                                                            <span className="fw-medium">{res.categoryId}</span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
                                             <td>
                                                 <span className="text-truncate d-flex align-items-center text-heading">
                                                     <i className="ri-pie-chart-line ri-22px text-success me-2" />
@@ -298,7 +248,6 @@ function Category() {
                                     ))}
                                 </tbody>
                             </table>
-                           
                         </div>
                     </div>
                     {/* Offcanvas to add new user */}
@@ -497,8 +446,6 @@ function Category() {
                 </div>
             </div>
             {/* getbyid */}
-
-            
         </div>
     );
 }

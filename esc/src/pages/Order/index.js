@@ -8,14 +8,16 @@ import { useNavigate } from 'react-router-dom';
 function Order() {
     const employeeID = window.localStorage.getItem('employeeID');
     const [order, setOrder] = useState([]);
-    const [product,setProduct] = useState([])
-    const [orderDetail,setOrderDetail] = useState([]);
-    const navigate = useNavigate()
+    const [product, setProduct] = useState([]);
+    const [orderDetail, setOrderDetail] = useState([]);
+    const [oderStatus, setOrderStatus] = useState([]);
+    const [invoice, setInvoice] = useState({});
+    const navigate = useNavigate();
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const renderPageNumbers = () => {
         const pages = [];
-        if(totalPage > 0){
+        if (totalPage > 0) {
             for (let i = 1; i <= totalPage; i++) {
                 pages.push(
                     <li key={i} className={`paginate_button page-item ${currentPage === i ? 'active' : ''}`}>
@@ -27,9 +29,7 @@ function Order() {
                             data-dt-idx={0}
                             tabIndex={0}
                             className="page-link"
-                            onClick={()=>
-                                handlePageClick(i)
-                            }
+                            onClick={() => handlePageClick(i)}
                         >
                             {i}
                         </a>
@@ -39,42 +39,45 @@ function Order() {
         }
         return pages;
     };
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+    };
     const [filters, setFilters] = useState({
         pageNumber: 1,
-       
     });
     const handlePageClick = (newPage) => {
         setFilters({
-            pageNumber: newPage ,
+            pageNumber: newPage,
         });
     };
-        // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
-     const [debouncedFilters, setDebouncedFilters] = useState(filters);
-    
-        // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebouncedFilters(filters);
-            }, 500); // 1 giây
-    
-            return () => {
-                clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
-            };
-        }, [filters]);
-    
-        
+    // Hàm xử lý khi thay đổi tìm kiếm hoặc phân trang
+    const [debouncedFilters, setDebouncedFilters] = useState(filters);
+
+    // Debounce logic: Cập nhật giá trị `debouncedFilters` sau 2 giây
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilters(filters);
+        }, 500); // 1 giây
+
+        return () => {
+            clearTimeout(handler); // Clear timeout nếu filters thay đổi trong thời gian debounce
+        };
+    }, [filters]);
 
     const FetchApi = async () => {
         try {
             await apis.GetOrderByEmloyeeId(employeeID).then((res) => {
                 if (res.status === 200) {
                     setOrder(res.data);
-                    
                 }
             });
         } catch (error) {
             console.log(error);
-            
         }
     };
     const FetchProduct = async () => {
@@ -93,35 +96,57 @@ function Order() {
             console.log(error);
         }
     };
-
+    const FetchOrderStatus = async () => {
+        try {
+            await apis.GetOrderStatus().then((res) => {
+                if (res.status === 200) {
+                    setOrderStatus(res.data);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            toast.error('Get not order status');
+        }
+    };
     const handleViewOrderDetail = (id) => {
-
-        const FetchDetailOrder = async() =>{
+        const FetchDetailOrder = async () => {
             try {
-                await apis.GetOrderDetailById(id)
-                .then(res =>{
-                    if(res.status === 200){
-                        setOrderDetail(res.data)
+                await apis.GetOrderDetailById(id).then((res) => {
+                    if (res.status === 200) {
+                        setOrderDetail(res.data);
                         FetchProduct();
                     }
-                })
+                });
             } catch (error) {
-                toast.error("Get not Order detail")
+                toast.error('Get not Order detail');
             }
-        }
-        FetchDetailOrder()
-    }
+        };
+
+        const FetchOrder = async () => {
+            try {
+                await apis.GetOrderById(id).then((res) => {
+                    if (res.status === 200) {
+                        setInvoice(res.data);
+                    }
+                });
+            } catch (error) {
+                toast.error('Get not Order');
+            }
+        };
+        FetchOrder();
+
+        FetchDetailOrder();
+    };
 
     useEffect(() => {
         FetchApi();
+        FetchOrderStatus();
     }, []);
 
     return (
-        
         <div className="content-wrapper">
             {/* Content */}
             <div className="container-xxl flex-grow-1 container-p-y">
-               
                 <div className="card">
                     <div className="card-datatable table-responsive">
                         <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
@@ -176,7 +201,7 @@ function Order() {
                                     <div className="add-new">
                                         <button
                                             className="btn btn-primary waves-effect waves-light"
-                                            onClick={()=> navigate('/addOrder')}
+                                            onClick={() => navigate('/addOrder')}
                                         >
                                             <i className="ri-add-line me-0 me-sm-1 d-inline-block d-sm-none" />
                                             <span className="d-none d-sm-inline-block"> Add Order </span>
@@ -206,7 +231,9 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 40 }}
-                                            data-toggle="tooltip" data-placement="top" title="order"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="order"
                                             aria-label="order: activate to sort column ascending"
                                         >
                                             order
@@ -218,7 +245,9 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 20 }}
-                                            data-toggle="tooltip" data-placement="top" title="Recipient Name"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Recipient Name"
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -231,7 +260,9 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 30 }}
-                                            data-toggle="tooltip" data-placement="top" title=" Recipient Phone"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title=" Recipient Phone"
                                             aria-label="payment: activate to sort column ascending"
                                         >
                                             recipient Phone
@@ -243,7 +274,9 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 40 }}
-                                            data-toggle="tooltip" data-placement="top" title=" recipient Address"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title=" recipient Address"
                                             aria-label="status: activate to sort column ascending"
                                         >
                                             recipient Address
@@ -256,7 +289,9 @@ function Order() {
                                             colSpan={1}
                                             style={{ width: 20 }}
                                             aria-label="method: activate to sort column ascending"
-                                            data-toggle="tooltip" data-placement="top" title="Order Status"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Order Status"
                                         >
                                             order Status
                                         </th>
@@ -268,7 +303,9 @@ function Order() {
                                             colSpan={1}
                                             style={{ width: 40 }}
                                             aria-label="method: activate to sort column ascending"
-                                            data-toggle="tooltip" data-placement="top" title="Order Date"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Order Date"
                                         >
                                             orderDate
                                         </th>
@@ -280,7 +317,9 @@ function Order() {
                                             colSpan={1}
                                             style={{ width: 30 }}
                                             aria-label="method: activate to sort column ascending"
-                                            data-toggle="tooltip" data-placement="top" title="Total Amount"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Total Amount"
                                         >
                                             total Amount
                                         </th>
@@ -297,77 +336,106 @@ function Order() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {order.length > 0 ?
+                                    {order.length > 0 ? (
                                         <>
-                                        {order?.map((res) => (
-                                            <tr className="odd">
-                                                <td
-                                                    className="control dtr-hidden"
-                                                    tabIndex={0}
-                                                    style={{ display: 'none' }}
-                                                />
-                                                <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
-                                                    <span>{res?.orderer}</span>
-                                                </td>
-                                                <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
-                                                    <span className="text-nowrap">{res?.recipient_Name}</span>
-                                                </td>
-                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
-                                                    <span className="text-nowrap">{res?.recipient_Phone}</span>
-                                                </td>
-    
-                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Address}>
-                                                    <span className="text-nowrap">{res?.recipient_Address}</span>
-                                                </td>
-                                                <td>
-                                                    <span
-                                                        className="badge px-2 rounded-pill bg-label-success"
-                                                        text-capitalized=""
-                                                        data-toggle="tooltip" data-placement="top" title={res?.orderStatus}
+                                            {order?.map((res) => (
+                                                <tr className="odd">
+                                                    <td
+                                                        className="control dtr-hidden"
+                                                        tabIndex={0}
+                                                        style={{ display: 'none' }}
+                                                    />
+                                                    <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
+                                                        <span>{res?.orderer}</span>
+                                                    </td>
+                                                    <td
+                                                        className="sorting_1"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title={res?.recipient_Name}
                                                     >
-                                                        {res?.orderStatus}
-                                                    </span>
-                                                </td>
-                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.orderDate}>
-                                                    <span className="text-nowrap" >{res?.orderDate}</span>
-                                                </td>
-                                                <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.totalAmount}>
-                                                    <span className="text-nowrap">{res?.totalAmount}$</span>
-                                                </td>
-                                                <td className="" style={{}}>
-                                                    <div>
-                                                        <button
-                                                            className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
-                                                            data-bs-toggle="dropdown"
+                                                        <span className="text-nowrap">{res?.recipient_Name}</span>
+                                                    </td>
+                                                    <td
+                                                        className="sorting_1"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title={res?.recipient_Phone}
+                                                    >
+                                                        <span className="text-nowrap">{res?.recipient_Phone}</span>
+                                                    </td>
+
+                                                    <td
+                                                        className="sorting_1"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title={res?.recipient_Address}
+                                                    >
+                                                        <span className="text-nowrap">{res?.recipient_Address}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            className="badge px-2 rounded-pill bg-label-success"
+                                                            text-capitalized=""
+                                                            data-toggle="tooltip"
+                                                            data-placement="top"
+                                                            title={res?.orderStatus}
                                                         >
-                                                            <i className="ri-more-2-line" />
-                                                        </button>
-                                                        <div className="dropdown-menu dropdown-menu-end m-0">
-                                                            <a
-                                                                href="#"
-                                                                className="dropdown-item delete-record"
-                                                                data-bs-target="#editUser"
-                                                                data-bs-toggle="modal"
-                                                                onClick={()=>handleViewOrderDetail(res?.orderId)}
-                                                                
+                                                            {
+                                                                oderStatus?.find((o) => o.statusId === res?.orderStatus)
+                                                                    ?.statusName
+                                                            }
+                                                        </span>
+                                                    </td>
+                                                    <td
+                                                        className="sorting_1"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title={res?.orderDate}
+                                                    >
+                                                        <span className="text-nowrap">{res?.orderDate}</span>
+                                                    </td>
+                                                    <td
+                                                        className="sorting_1"
+                                                        data-toggle="tooltip"
+                                                        data-placement="top"
+                                                        title={res?.totalAmount}
+                                                    >
+                                                        <span className="text-nowrap">{res?.totalAmount}$</span>
+                                                    </td>
+                                                    <td className="" style={{}}>
+                                                        <div>
+                                                            <button
+                                                                className="btn btn-sm btn-icon btn-text-secondary text-body waves-effect rounded-pill dropdown-toggle hide-arrow"
+                                                                data-bs-toggle="dropdown"
                                                             >
-                                                                View
-                                                            </a>
-                                                            <a href="javascript:0;" className="dropdown-item delete-record">
-                                                                Delete
-                                                            </a>
+                                                                <i className="ri-more-2-line" />
+                                                            </button>
+                                                            <div className="dropdown-menu dropdown-menu-end m-0">
+                                                                <a
+                                                                    href="#"
+                                                                    className="dropdown-item delete-record"
+                                                                    data-bs-target="#editUser"
+                                                                    data-bs-toggle="modal"
+                                                                    onClick={() => handleViewOrderDetail(res?.orderId)}
+                                                                >
+                                                                    View
+                                                                </a>
+                                                                <a
+                                                                    href="javascript:0;"
+                                                                    className="dropdown-item delete-record"
+                                                                >
+                                                                    Delete
+                                                                </a>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </>
-                                       :
-                                       <div>
-                                            No data
-                                       </div>
-                                    }
+                                    ) : (
+                                        <div>No data</div>
+                                    )}
                                 </tbody>
                             </table>
                             <div className="row mx-1">
@@ -386,54 +454,52 @@ function Order() {
                                         className="dataTables_paginate paging_simple_numbers"
                                         id="DataTables_Table_0_paginate"
                                     >
-                                            <ul className="pagination">
-                                                <li
-                                                    className={`paginate_button page-item previous ${
-                                                        currentPage === 1 ? 'disabled' : ''
-                                                    }`}
-                                                    id="DataTables_Table_0_previous"
+                                        <ul className="pagination">
+                                            <li
+                                                className={`paginate_button page-item previous ${
+                                                    currentPage === 1 ? 'disabled' : ''
+                                                }`}
+                                                id="DataTables_Table_0_previous"
+                                            >
+                                                <a
+                                                    aria-controls="DataTables_Table_0"
+                                                    aria-disabled="true"
+                                                    role="link"
+                                                    data-dt-idx="previous"
+                                                    tabIndex={-1}
+                                                    className="page-link"
+                                                    onClick={() => {
+                                                        if (currentPage > 1) handlePageClick(currentPage - 1);
+                                                    }}
                                                 >
-                                                    <a
-                                                        aria-controls="DataTables_Table_0"
-                                                        aria-disabled="true"
-                                                        role="link"
-                                                        data-dt-idx="previous"
-                                                        tabIndex={-1}
-                                                        className="page-link"
-                                                        onClick={() => {
-                                                            
-                                                            if (currentPage > 1) handlePageClick(currentPage - 1);
-                                                        }}
-                                                    >
-                                                        <i className="ri-arrow-left-s-line" />
-                                                    </a>
-                                                </li>
+                                                    <i className="ri-arrow-left-s-line" />
+                                                </a>
+                                            </li>
 
-                                                {renderPageNumbers()}
+                                            {renderPageNumbers()}
 
-                                                <li
-                                                    className={`paginate_button page-item next ${
-                                                        currentPage === totalPage ? 'disabled' : ''
-                                                    }`}
-                                                    id="DataTables_Table_0_next"
+                                            <li
+                                                className={`paginate_button page-item next ${
+                                                    currentPage === totalPage ? 'disabled' : ''
+                                                }`}
+                                                id="DataTables_Table_0_next"
+                                            >
+                                                <a
+                                                    href="#"
+                                                    aria-controls="DataTables_Table_0"
+                                                    role="link"
+                                                    data-dt-idx="next"
+                                                    tabIndex={0}
+                                                    className="page-link"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage < totalPage) handlePageClick(currentPage + 1);
+                                                    }}
                                                 >
-                                                    <a
-                                                        href="#"
-                                                        aria-controls="DataTables_Table_0"
-                                                        role="link"
-                                                        data-dt-idx="next"
-                                                        tabIndex={0}
-                                                        className="page-link"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            if (currentPage < totalPage)
-                                                                handlePageClick(currentPage + 1);
-                                                        }}
-                                                    >
-                                                        <i className="ri-arrow-right-s-line" />
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                                    <i className="ri-arrow-right-s-line" />
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -451,6 +517,46 @@ function Order() {
                             <div className="text-center mb-6">
                                 <h4 className="mb-2">Order Detail</h4>
                             </div>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">OderId</dt>
+                                <dd className="col-6 text-start">{invoice?.orderId}</dd>
+                            </dl>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Oderer</dt>
+                                <dd className="col-6 text-start">{invoice?.orderer}</dd>
+                            </dl>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Total Amount</dt>
+                                <dd className="col-6 text-start">{invoice?.totalAmount}</dd>
+                            </dl>
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Recipient Name</dt>
+                                <dd className="col-6 text-start">{invoice?.recipient_Name}</dd>
+                            </dl>
+
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Recipient Phone</dt>
+                                <dd className="col-6 text-start">{invoice?.recipient_Phone}</dd>
+                            </dl>
+
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Recipient Address</dt>
+                                <dd className="col-6 text-start">{invoice?.recipient_Address}</dd>
+                            </dl>
+
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Order Status</dt>
+                                <dd className="col-6 text-start">
+                                    {oderStatus?.find((o) => o.statusId === invoice?.orderStatus)?.statusName}
+                                </dd>
+                            </dl>
+
+                            <dl className="row mb-0">
+                                <dt className="col-6 fw-bolder text-heading">Order Date</dt>
+                                <dd className="col-6 text-start">{formatDate(invoice?.orderDate)}</dd>
+                            </dl>
+                            <hr className="mx-n5 my-5" />
+                            <h5 className="fs-5">Products</h5>
                             <table
                                 className="datatables-order table dataTable no-footer dtr-column"
                                 id="DataTables_Table_0"
@@ -459,7 +565,6 @@ function Order() {
                             >
                                 <thead>
                                     <tr>
-                                        
                                         <th
                                             className="sorting"
                                             tabIndex={0}
@@ -467,7 +572,9 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 40 }}
-                                            data-toggle="tooltip" data-placement="top" title="order"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="order"
                                             aria-label="order: activate to sort column ascending"
                                         >
                                             Product
@@ -479,7 +586,9 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 20 }}
-                                            data-toggle="tooltip" data-placement="top" title="Recipient Name"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Recipient Name"
                                             aria-label="date: activate to sort column descending"
                                             aria-sort="ascending"
                                         >
@@ -492,29 +601,37 @@ function Order() {
                                             rowSpan={1}
                                             colSpan={1}
                                             style={{ width: 30 }}
-                                            data-toggle="tooltip" data-placement="top" title=" Recipient Phone"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title=" Recipient Phone"
                                             aria-label="payment: activate to sort column ascending"
                                         >
                                             Total Price
                                         </th>
-
-                                       
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {orderDetail?.map((res) => (
                                         <tr className="odd">
-                                           
                                             <td data-toggle="tooltip" data-placement="top" title={res?.orderer}>
                                                 <span>{res?.productName}</span>
                                             </td>
-                                            <td className="sorting_1" data-toggle="tooltip" data-placement="top" title={res?.recipient_Name}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Name}
+                                            >
                                                 <span className="text-nowrap">{res?.quantity}</span>
                                             </td>
-                                            <td className="sorting_1"  data-toggle="tooltip" data-placement="top" title={res?.recipient_Phone}>
+                                            <td
+                                                className="sorting_1"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title={res?.recipient_Phone}
+                                            >
                                                 <span className="text-nowrap">{res?.totalPrice}</span>
                                             </td>
-
                                         </tr>
                                     ))}
                                 </tbody>
@@ -524,7 +641,6 @@ function Order() {
                 </div>
             </div>
             {/* / Content */}
-            
         </div>
     );
 }

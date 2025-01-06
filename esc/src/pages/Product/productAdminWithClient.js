@@ -38,7 +38,6 @@ function ProductAdminWithClient() {
 
     useEffect(() => {
         FetchApi();
-     
     }, []);
 
     const FetchApi = async () => {
@@ -53,10 +52,10 @@ function ProductAdminWithClient() {
                     }
                 })
                 .catch((error) => {
-                    toast.error(error)
+                    toast.error(error);
                 });
         } catch (error) {
-           toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -70,7 +69,7 @@ function ProductAdminWithClient() {
                     setCategory(res.data);
                 }
             } catch (error) {
-                toast.error(error)
+                toast.error(error);
             }
         };
         fetchCategories();
@@ -122,23 +121,23 @@ function ProductAdminWithClient() {
                 productImageId: 0,
             }));
         } else {
-            toast.error("error")
+            toast.error('error');
         }
     };
 
-        const handleActive = async (productId) => {
-            try {
-                await apis.ActiveProduct(productId).then((res) => {
-                    if (res.status === 200) {
-                        toast.success('Active success');
-                        FetchApi();
-                    }
-                });
-            } catch (error) {
-                toast.error('active fail');
-                console.log(error);
-            }
-        };
+    const handleActive = async (productId) => {
+        try {
+            await apis.ActiveProduct(productId).then((res) => {
+                if (res.status === 200) {
+                    toast.success('Active success');
+                    FetchApi();
+                }
+            });
+        } catch (error) {
+            toast.error('active fail');
+            console.log(error);
+        }
+    };
 
     const handleShowEdit = (pram) => {
         const FetchData = async () => {
@@ -152,7 +151,7 @@ function ProductAdminWithClient() {
                     }
                 });
             } catch (error) {
-                toast.error(error)
+                toast.error(error);
             }
         };
         FetchData();
@@ -164,11 +163,11 @@ function ProductAdminWithClient() {
             const res = await apis.DeleteDepartment(id);
             console.log(res);
             if (res.status === 204) {
-                toast.success("delete success")
+                toast.success('delete success');
                 FetchApi();
             }
         } catch (error) {
-            toast.error(error)
+            toast.error(error);
         }
     };
 
@@ -178,14 +177,13 @@ function ProductAdminWithClient() {
                 await apis.UpdateProduct(valueEdit).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
-                        toast.success("UpdateProduct success")
+                        toast.success('UpdateProduct success');
                         setIsShowEdit(false);
                         FetchApi();
-                        
                     }
                 });
             } catch (error) {
-                toast.error(error)
+                toast.error(error);
             }
         };
         FetchData();
@@ -387,7 +385,6 @@ function ProductAdminWithClient() {
                 <div className="container-xxl flex-grow-1 container-p-y">
                     {/* Product List Widget */}
                     <div className="card mb-6">
-                       
                         <div className="card-datatable table-responsive">
                             <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                                 <div className="card-header d-flex border-top rounded-0 flex-wrap py-0 pb-5 pb-md-0">
@@ -401,56 +398,6 @@ function ProductAdminWithClient() {
                                                     aria-controls="DataTables_Table_0"
                                                 />
                                             </label>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex justify-content-start justify-content-md-end align-items-baseline">
-                                        <div className="dt-action-buttons d-flex align-items-start align-items-md-center justify-content-sm-center gap-4 pt-0">
-                                            <div className="dataTables_length my-0" id="DataTables_Table_0_length">
-                                                <label>
-                                                    <select
-                                                        name="DataTables_Table_0_length"
-                                                        aria-controls="DataTables_Table_0"
-                                                        className="form-select form-select-sm"
-                                                    >
-                                                        <option value={7}>7</option>
-                                                        <option value={10}>10</option>
-                                                        <option value={20}>20</option>
-                                                        <option value={50}>50</option>
-                                                        <option value={70}>70</option>
-                                                        <option value={100}>100</option>
-                                                    </select>
-                                                </label>
-                                            </div>
-                                            <div className="dt-buttons btn-group flex-wrap d-flex">
-                                                {' '}
-                                                <div className="btn-group">
-                                                    <button
-                                                        className="btn btn-secondary buttons-collection dropdown-toggle btn-outline-secondary me-4 waves-effect waves-light"
-                                                        tabIndex={0}
-                                                        aria-controls="DataTables_Table_0"
-                                                        type="button"
-                                                        aria-haspopup="dialog"
-                                                        aria-expanded="false"
-                                                    >
-                                                        <span>
-                                                            <i className="ri-download-line ri-16px me-2" />
-                                                            <span className="d-none d-sm-inline-block">Export </span>
-                                                        </span>
-                                                    </button>
-                                                </div>{' '}
-                                                <button
-                                                    className="btn btn-secondary btn-primary waves-effect waves-light"
-                                                    tabIndex={0}
-                                                 
-                                                    aria-controls="DataTables_Table_0"
-                                                    type="button"
-                                                >
-                                                    <span>
-                                                        <i className="ri-add-line ri-16px me-0 me-sm-1_5" />
-                                                        <span className="d-none d-sm-inline-block">Add Product</span>
-                                                    </span>
-                                                </button>{' '}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

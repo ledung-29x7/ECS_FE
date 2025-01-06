@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 function AddOrder() {
     const navigate = useNavigate();
     const employeeID = window.localStorage.getItem('employeeID');
-    const callId = window.localStorage.getItem("callId")
+    const callId = window.localStorage.getItem('callId');
     const [workList, setWorkList] = useState([]);
     const [valueAdd, setValueAdd] = useState({
         order: {
@@ -26,7 +26,6 @@ function AddOrder() {
         totalPrice: 0,
     });
 
-    
     const [product, setProduct] = useState([]);
     useEffect(() => {
         const FetchProduct = async () => {
@@ -37,12 +36,12 @@ function AddOrder() {
                     setProduct(res.data.products);
                 }
             } catch (error) {
-                toast.error(error)
+                toast.error(error);
             }
         };
         FetchProduct();
     }, []);
-    
+
     useEffect(() => {
         if (!employeeID) {
             console.error('Employee ID not found in session storage');
@@ -53,11 +52,10 @@ function AddOrder() {
             try {
                 const response = await apis.WorkList(employeeID); // Gọi API WorkList
                 if (response.status === 200) {
-                    toast.success("WorkList success")
-                    setWorkList(response.data); 
+                    setWorkList(response.data);
                 }
             } catch (error) {
-                toast.error('Error fetching work list:', error)
+                toast.error('Error fetching work list:', error);
             }
         };
 
@@ -125,12 +123,12 @@ function AddOrder() {
                 await apis.AddOrderWithDetails(valueAdd).then((res) => {
                     console.log(res);
                     if (res.status === 200) {
-                        toast.success("AddOrderWithDetails success")
+                        toast.success('AddOrderWithDetails success');
                         navigate('/order');
                     }
                 });
             } catch (error) {
-                toast.error(error)
+                toast.error(error);
             }
         };
         FetchApi();
@@ -149,12 +147,12 @@ function AddOrder() {
                         </div>
                         <div className="d-flex align-content-center flex-wrap gap-4">
                             <button
-                                // onClick={() => navigate('/product')}
+                                onClick={() => navigate('/order')}
                                 className="btn btn-outline-secondary waves-effect"
                             >
                                 Discard
                             </button>
-                            <button className="btn btn-outline-primary waves-effect">Save draft</button>
+
                             <button onClick={handleSubmit} className="btn btn-primary waves-effect waves-light">
                                 Publish order
                             </button>
@@ -235,7 +233,7 @@ function AddOrder() {
                                     <form className="card-body">
                                         <div className="d-flex flex-column">
                                             <label className="text-sm-start" htmlFor="alignment-phone">
-                                                quantity
+                                                Quantity
                                             </label>
                                             <div>
                                                 <input
@@ -401,18 +399,6 @@ function AddOrder() {
                             </div>
                             <div className="d-flex justify-content-end align-items-center m-4 p-1 mb-0 pb-0">
                                 <div className="order-calculations">
-                                    <div className="d-flex justify-content-start gap-4 mb-2">
-                                        <span className="w-px-100 text-heading">Subtotal:</span>
-                                        <h6 className="mb-0">$5000.25</h6>
-                                    </div>
-                                    <div className="d-flex justify-content-start gap-4 mb-2">
-                                        <span className="w-px-100 text-heading">Discount:</span>
-                                        <h6 className="mb-0">$00.00</h6>
-                                    </div>
-                                    <div className="d-flex justify-content-start gap-4 mb-2">
-                                        <span className="w-px-100 text-heading">Tax:</span>
-                                        <h6 className="mb-0">$100.00</h6>
-                                    </div>
                                     <div className="d-flex justify-content-start gap-4">
                                         <h6 className="w-px-100 mb-0">Total:</h6>
                                         <h6 className="mb-0">{valueAdd?.order?.totalAmount}</h6>

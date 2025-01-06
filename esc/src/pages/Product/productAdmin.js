@@ -70,10 +70,10 @@ function ProductAdmin() {
                 ...prev,
                 [name]: value,
             }));
-        } else if (type === 'checkbox') {
+        } else {
             setFilters((prev) => ({
                 ...prev,
-                [name]: checked,
+                [name]: value,
             }));
         }
     };
@@ -215,13 +215,12 @@ function ProductAdmin() {
                 {/* Content */}
                 <div className="container-xxl flex-grow-1 container-p-y">
                     <div className="card">
-                       
                         <div className="card-datatable table-responsive">
                             <div id="DataTables_Table_0_wrapper" className="dataTables_wrapper dt-bootstrap5 no-footer">
                                 <div className="card-header row d-flex border-top rounded-0 flex-wrap py-0 pb-5 pb-md-0">
                                     <div className=" col-4">
                                         <div id="DataTables_Table_0_filter" className="">
-                                            <label className='w-75'>
+                                            <label className="w-75">
                                                 <input
                                                     type="search"
                                                     className="form-control w-100 form-control-sm"
@@ -272,34 +271,18 @@ function ProductAdmin() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-md-2">
-                                                <div class="form-check form-switch">
-                                                    <input
-                                                        class="form-check-input"
-                                                        type="checkbox"
-                                                        id="flexSwitchCheckChecked"
-                                                        name="isActive"
-                                                        checked={filters.isActive || false}
-                                                        onChange={handlePriceRangeChange}
-                                                    />
-                                                    <label class="form-check-label" for="flexSwitchCheckChecked">
-                                                        Active
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="dt-buttons btn-group flex-wrap d-flex">
-                                                <button
-                                                    className="btn btn-secondary btn-primary waves-effect waves-light"
-                                                    tabIndex={0}
-                                                    aria-controls="DataTables_Table_0"
-                                                    type="button"
+                                            <div className="col-md-3">
+                                                <select
+                                                    id="select2Basic"
+                                                    className="form-control py-1"
+                                                    name="isActive"
+                                                    value={filters.isActive}
+                                                    onChange={handlePriceRangeChange}
                                                 >
-                                                    <span>
-                                                        <i className="ri-add-line ri-16px me-0 me-sm-1_5" />
-                                                        <span className="d-none d-sm-inline-block">Add Product</span>
-                                                    </span>
-                                                </button>
+                                                    <option value={''}>Select Active</option>
+                                                    <option value={true}> Active</option>
+                                                    <option value={false}>DeActive</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>

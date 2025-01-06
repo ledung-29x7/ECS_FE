@@ -132,7 +132,7 @@ function AddProducts() {
                 }
             } catch (error) {
                 // console.error('Lỗi khi lấy danh mục:', error);
-                toast.error("Lỗi khi lấy danh mục:")
+                toast.error('Lỗi khi lấy danh mục:');
             }
         };
         fetchCategories();
@@ -244,7 +244,7 @@ function AddProducts() {
                             >
                                 Discard
                             </button>
-                            
+
                             <button onClick={handleSumbit} className="btn btn-primary waves-effect waves-light">
                                 Publish product
                             </button>
@@ -284,7 +284,7 @@ function AddProducts() {
                                                             onChange={handleChange} // Gọi hàm xử lý sự kiện
                                                             aria-hidden="true"
                                                         >
-                                                            <option value="">Option</option>
+                                                            <option value="">Category</option>
                                                             {category?.map((res, key) => (
                                                                 <option key={key} value={res.categoryId}>
                                                                     {res.categoryName}
@@ -292,7 +292,7 @@ function AddProducts() {
                                                             ))}
                                                         </select>
                                                     </div>
-                                                    <label htmlFor="select2Basic">Option</label>
+                                                    <label htmlFor="select2Basic">Select Category</label>
                                                 </div>
                                             </div>
                                             <div className="col">
@@ -551,7 +551,6 @@ function AddProducts() {
                                         <dl className="row mb-0">
                                             <dt className="col-6 fw-normal text-heading">Order Total</dt>
                                             <dd className="col-6 text-end">${totalCost}</dd>
-                                            
                                         </dl>
                                         <hr className="mx-n5 my-5" />
                                         <dl className="row mb-0">
@@ -571,7 +570,6 @@ function AddProducts() {
                 </div>
             </div>
             {/* / Content */}
-           
         </div>
     );
 }
