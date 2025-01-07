@@ -9,19 +9,7 @@ function Thank({ children }) {
     const idClient = window.localStorage.getItem('idClient');
     return (
         <>
-              {idClient !== null ? (
-                  <div className="layout-wrapper layout-content-navbar">
-                      <div className="layout-container">
-                          <SidebarClient routes={publicRoutes} />
-                          <div class="layout-page">
-                              <Header />
-                              <div className="">
-                                  <div className="">{children}</div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-            ) : (
+          
                 <div className="misc-wrapper"  style={{
                     background: `url(https://cdn.create.vista.com/api/media/small/285625338/stock-photo-cropped-view-man-giving-white-card-frame-thank-you-lettering) no-repeat center`,
                     backgroundSize: 'cover'
@@ -63,7 +51,7 @@ function Thank({ children }) {
                         </div>
                     </div>
                 </div>
-            )}
+           
         </>
     );
 }
